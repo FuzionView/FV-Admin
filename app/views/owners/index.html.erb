@@ -1,0 +1,31 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Owners</h1>
+
+<div id="owners">
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @owners.each do |owner| %>
+        <tr>
+          <td><%= owner.id %></td>
+          <td><%= owner.name %></td>
+          <td>
+            <%= link_to 'Show', owner_path(owner) %>
+            <%= link_to 'Edit', owner_path(owner) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<p>
+<%= link_to "New owner", new_owner_path %>
+</p>

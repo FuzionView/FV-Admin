@@ -1,0 +1,10 @@
+<h1>Editing dataset <%= @dataset.name %></h1>
+
+<%= render "form", dataset: @dataset %>
+
+<br>
+
+<div>
+  <%= link_to "Show this dataset", @dataset %> |
+  <%= link_to "Back to owner", owner_path(@dataset.owner) %>
+</div>

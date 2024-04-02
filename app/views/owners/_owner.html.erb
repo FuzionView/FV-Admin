@@ -1,0 +1,11 @@
+<h1>Owner: <%= owner.name %></h1>
+
+<h2>Datasets</h2>
+
+<ul>
+  <% owner.datasets.each do |dataset| %>
+    <li>
+      <%= link_to dataset.name, dataset_path(dataset) %>
+    </li>
+  <% end %>
+</ul>
