@@ -12,7 +12,8 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/new
   def new
-    @dataset = Dataset.new
+    @owner = Owner.find(params[:owner_id])
+    @dataset = @owner.datasets.build
   end
 
   # GET /datasets/1/edit
@@ -53,7 +54,10 @@ class DatasetsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def dataset_params
-      params.fetch(:dataset, {}).permit(:name,
+      params.fetch(:dataset, {}).permit(:owner_id,
+                                        :source_dataset,
+                                        :source_sql,
+                                        :name,
                                         :source_co,
                                         :source_srs,
                                         :cache_whole_dataset,

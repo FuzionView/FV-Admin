@@ -6,5 +6,5 @@
   <%= link_to "Edit this dataset", edit_dataset_path(@dataset) %> |
   <%= link_to "Back to owner", owner_path(@dataset.owner) %>
 
-  <%= button_to "Destroy this dataset", @dataset, method: :delete %>
+  <%= button_to "Delete this dataset", @dataset, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
 </div>

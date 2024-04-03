@@ -1,3 +1,61 @@
 <h1><%= dataset.owner&.name %>: <%= dataset.name %></h1>
-<div id="<%= dom_id dataset %>">
-</div>
+<table>
+  <tr>
+    <td>
+      Name:
+    </td>
+    <td>
+      <%= dataset.name %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Source Dataset:
+    </td>
+    <td>
+      <%= dataset.source_dataset %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Source Sql:
+    </td>
+    <td>
+      <pre class="prettyprint">
+      <%= dataset.source_sql %>
+      </pre>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Source CO:
+    </td>
+    <td>
+      <%= dataset.source_co %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Source Srs:
+    </td>
+    <td>
+      <%= dataset.source_srs %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Cache whole dataset?:
+    </td>
+    <td>
+      <%= dataset.cache_whole_dataset %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Enabled?:
+    </td>
+    <td>
+      <%= dataset.enabled %>
+    </td>
+  </tr>
+</table>
