@@ -1,4 +1,5 @@
 class DatasetsController < ApplicationController
+  before_action :set_owner, only: %i[ show edit new create update destroy ]
   before_action :set_dataset, only: %i[ show edit update destroy ]
 
   # GET /datasets
@@ -12,7 +13,6 @@ class DatasetsController < ApplicationController
 
   # GET /datasets/new
   def new
-    @owner = Owner.find(params[:owner_id])
     @dataset = @owner.datasets.build
   end
 
@@ -22,10 +22,10 @@ class DatasetsController < ApplicationController
 
   # POST /datasets
   def create
-    @dataset = Dataset.new(dataset_params)
+    @dataset = @owner.datasets.new(dataset_params)
 
     if @dataset.save
-      redirect_to @dataset, notice: "Dataset was successfully created."
+      redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -34,7 +34,7 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1
   def update
     if @dataset.update(dataset_params)
-      redirect_to @dataset, notice: "Dataset was successfully updated.", status: :see_other
+      redirect_to [@owner, @dataset], notice: "Dataset was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -43,13 +43,17 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1
   def destroy
     @dataset.destroy!
-    redirect_to datasets_url, notice: "Dataset was successfully destroyed.", status: :see_other
+    redirect_to owner_url(@owner), notice: "Dataset was successfully destroyed.", status: :see_other
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_dataset
-      @dataset = Dataset.find(params[:id])
+      @dataset = @owner.datasets.find(params[:id])
+    end
+
+    def set_owner
+      @owner = Owner.find(params[:owner_id])
     end
 
     # Only allow a list of trusted parameters through.

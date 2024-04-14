@@ -1,0 +1,9 @@
+<h1><%= @owner.name %>: New user</h1>
+
+<%= render "form", user: @user, url: owner_users_path(@owner) %>
+
+<br>
+
+<div>
+  <%= link_to "Back to data provider", owner_path(@owner) %>
+</div>

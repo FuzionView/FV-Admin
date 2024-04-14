@@ -6,7 +6,7 @@
   <ul>
     <% owner.datasets.each do |dataset| %>
       <li>
-        <%= link_to dataset.name, dataset_path(dataset) %>
+        <%= link_to dataset.name, owner_dataset_path(owner, dataset) %>
       </li>
     <% end %>
   </ul>
@@ -16,4 +16,24 @@
   </p>
 <% end %>
 
-<%= link_to 'New dataset', new_dataset_path(owner_id: owner) %>
+<%= link_to 'New dataset', new_owner_dataset_path(@owner) %>
+
+<div class="pt-3">
+  <h2>Users</h2>
+
+  <% if owner.users.any? %>
+    <ul>
+      <% owner.users.each do |user| %>
+        <li>
+          <%= link_to user.email_address, owner_user_path(owner, user) %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>
+    No users yet.
+    </p>
+  <% end %>
+
+  <%= link_to 'New user', new_owner_user_path(@owner) %>
+</div>
