@@ -1,12 +1,19 @@
-<h1>Owner: <%= owner.name %></h1>
+<h1>Data Provider: <%= owner.name %></h1>
 
 <h2>Datasets</h2>
 
-<ul>
-  <% owner.datasets.each do |dataset| %>
-    <li>
-      <%= link_to dataset.name, dataset_path(dataset) %>
-    </li>
-  <% end %>
-</ul>
+<% if owner.datasets.any? %>
+  <ul>
+    <% owner.datasets.each do |dataset| %>
+      <li>
+        <%= link_to dataset.name, dataset_path(dataset) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>
+    No datasets yet.
+  </p>
+<% end %>
+
 <%= link_to 'New dataset', new_dataset_path(owner_id: owner) %>

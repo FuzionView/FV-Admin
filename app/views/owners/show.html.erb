@@ -1,10 +1,8 @@
-<p style="color: green"><%= notice %></p>
-
 <%= render @owner %>
 
 <div>
-  <%= link_to "Edit owner", edit_owner_path(@owner) %> |
-  <%= link_to "Back to owners", owners_path %>
+  <%= link_to "Edit data provider", edit_owner_path(@owner) %> |
+  <%= link_to "Back to data providers", owners_path %>
 
-  <%= button_to "Delete this owner", @owner, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+  <%= button_to "Delete this data provider", @owner, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
 </div>

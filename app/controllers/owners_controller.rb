@@ -24,7 +24,7 @@ class OwnersController < ApplicationController
     @owner = Owner.new(owner_params)
 
     if @owner.save
-      redirect_to @owner, notice: "Owner was successfully created."
+      redirect_to @owner, notice: "Data provider was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class OwnersController < ApplicationController
   # PATCH/PUT /owners/1
   def update
     if @owner.update(owner_params)
-      redirect_to @owner, notice: "Owner was successfully updated.", status: :see_other
+      redirect_to @owner, notice: "Data provider was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -42,7 +42,7 @@ class OwnersController < ApplicationController
   # DELETE /owners/1
   def destroy
     @owner.destroy!
-    redirect_to owners_url, notice: "Owner was successfully destroyed.", status: :see_other
+    redirect_to owners_url, notice: "Data provider was successfully destroyed.", status: :see_other
   end
 
   private

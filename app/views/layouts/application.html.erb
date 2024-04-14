@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>FvAdmin</title>
+    <title>FuzionView Admin</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -13,8 +13,53 @@
   </head>
 
   <body>
-    <div class="m-2">
-      <%= yield %>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <%= link_to 'FuzionView Admin', root_path, class: 'navbar-brand' %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                                     data-bs-target="#navbarSupportedContent"
+                                                     aria-controls="navbarSupportedContent"
+                                                     aria-expanded="false"
+                                                     aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="https://uumpt.sharedgeo.net/start.html">
+                FuzionView Home
+              </a>
+              <%= link_to 'Owners', owners_path, class: 'nav-link active', 'aria-current': 'page' %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="m-2">
+        <%
+            flash.each do |k,m|
+          content_class = case k.to_s
+                          when 'notice' then 'alert-success'
+                          when 'error' then 'alert-danger'
+                          when 'info' then 'alert-info'
+                          end
+          content_class = "alert #{content_class}"
+        %>
+      <br>
+      <% if !m.nil? %>
+        <div class="alert alert-block <%=content_class%> alert-dismissible" role="alert">
+          <div></div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+          <%= m %>
+        </div>
+      <% end %>
+      <%
+          flash.delete(k)
+        end
+      %>
+        <%= yield %>
+      </div>
     </div>
   </body>
 </html>

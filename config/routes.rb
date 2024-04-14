@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  match "/auth/:provider/callback" => "application#authentication_callback",
+    via: [:get, :post]
+  get "application/login"
   resources :datasets
   resources :owners
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -8,5 +11,5 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+   root "owners#index"
 end
