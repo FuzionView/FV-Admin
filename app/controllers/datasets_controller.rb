@@ -60,6 +60,8 @@ class DatasetsController < ApplicationController
     def dataset_params
       params.fetch(:dataset, {}).permit(:owner_id,
                                         :source_dataset,
+                                        :geometry_name,
+                                        :layer_name,
                                         :source_sql,
                                         :name,
                                         :source_co,

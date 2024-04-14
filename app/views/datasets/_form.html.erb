@@ -6,10 +6,14 @@
     <div class="col-6 col-md-6 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
-        <%= f.input :source_dataset, as: :string %>
-        <%= f.input :source_sql %>
+        <%= f.input :source_dataset, as: :string, hint: 'The URI for the source ESRI or WFS.' %>
+        <%= f.input :geometry_name %>
+        <%= f.input :layer_name %>
+        <% if f.object.persisted? %>
+          <%= f.input :source_sql %>
+        <% end %>
         <%= f.input :source_co, as: :string %>
-        <%= f.input :source_srs, as: :string %>
+        <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
         <%= f.input :cache_whole_dataset, as: :boolean %>
         <%= f.input :enabled, as: :boolean %>
         <%= f.input :owner_id, as: :hidden %>
