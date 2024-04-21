@@ -1,9 +1,18 @@
-PG_DB=PG_DB
-PG_USER=PG_USER
-PG_PASS=PG_PASS
-PG_HOST=PG_HOST
-PG_PORT=PG_PORT
+PG_DB=
+PG_USER=
+PG_PASS=
+PG_HOST=
+PG_PORT=
 
 OP_CLIENT_ID=
 OP_SECRET_KEY=
 OP_REDIRECT_URI=
+OP_HOST=
+OP_REALM=
+OP_AUTH_ENDPOINT="/protocol/openid-connect/auth"
+OP_TOKEN_ENDPOINT="/protocol/openid-connect/token"
+OP_USERINFO_ENDPOINT="/protocol/openid-connect/userinfo"
+OP_JWKS_ENDPOINT="/protocol/openid-connect/certs"
+
+FV_ADMININSTRATOR=Administrator
+FV_DATA_PROVIDER="Data Provider"

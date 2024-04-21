@@ -59,3 +59,5 @@ gem "omniauth_openid_connect", "~> 0.7.1"
 gem "omniauth-rails_csrf_protection"
 
 # gem "httparty", "~> 0.21.0"
+
+gem "pundit", "~> 2.3"

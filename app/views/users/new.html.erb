@@ -1,5 +1,7 @@
 <h1><%= @owner.name %>: New user</h1>
 
+<p>Allow this user to manage <%= @owner.name %> datasets.</p>
+
 <%= render "form", user: @user, url: owner_users_path(@owner) %>
 
 <br>

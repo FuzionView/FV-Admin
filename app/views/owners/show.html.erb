@@ -1,9 +1,13 @@
 <%= render @owner %>
 
 <div class="pt-3">
-  <%= link_to "Edit data provider", edit_owner_path(@owner) %> |
+  <% if policy(@owner).edit? %>
+    <%= link_to "Edit data provider", edit_owner_path(@owner) %> |
+  <% end %>
   <%= link_to "Back to data providers", owners_path %>
 
-  <%= button_to "Delete this data provider", @owner,
-    method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+  <% if policy(@owner).destroy? %>
+    <%= button_to "Delete this data provider", @owner,
+      method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+  <% end %>
 </div>

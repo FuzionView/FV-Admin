@@ -1,0 +1,23 @@
+<h1>Set a role</h2>
+<%= form_tag(application_role_path,
+            class: 'form-signin') do %>
+              <div class="row">
+                <div class="col-sm-12 col-lg-6 col-xl-5">
+                </div>
+              <div class="row">
+                <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 mt-3">
+                  <label for="inputEmail">Select a role:</label>
+                  <%= select("user", "role", AuthorizedUser::ROLES) %>
+                  <br>
+                  <br>
+
+                  <%= submit_tag('Set role', :class=>'btn btn-large btn-success') %>
+                  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                    application_login_path,
+                    method: :get,
+                    :class => 'btn btn-default' %>
+                  <br />
+                  <br />
+                </div>
+              </div>
+<% end %>

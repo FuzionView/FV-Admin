@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   match "/auth/:provider/callback" => "application#authentication_callback",
     via: [:get, :post]
   get "application/login"
+  # match "application/role", via: [:get, :post]
 
   resources :owners do
     resources :datasets

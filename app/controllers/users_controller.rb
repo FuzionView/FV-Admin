@@ -1,27 +1,33 @@
 class UsersController < ApplicationController
+  include Pundit::Authorization
+  after_action :verify_authorized
   before_action :set_owner, only: %i[ show edit new create update destroy ]
   before_action :set_user, only: %i[ show edit update destroy ]
 
   # GET /users
   def index
-    @users = User.all
+    @users =  policy_scope(User).all
   end
 
   # GET /users/1
   def show
+    authorize @user
   end
 
   # GET /users/new
   def new
+    authorize User
     @user = User.new
   end
 
   # GET /users/1/edit
   def edit
+    authorize @user
   end
 
   # POST /users
   def create
+    authorize User
     @user = @owner.users.build(user_params)
 
     if @user.save
@@ -33,6 +39,7 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   def update
+    authorize @user
     if @user.update(user_params)
       redirect_to owner_path(@owner), notice: "User was successfully updated.", status: :see_other
     else
@@ -42,6 +49,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
+    authorize @user
     @user.destroy!
     redirect_to owner_url(@owner), notice: "User was successfully destroyed.", status: :see_other
   end
@@ -53,7 +61,7 @@ class UsersController < ApplicationController
     end
 
     def set_owner
-      @owner = Owner.find(params[:owner_id])
+      @owner = policy_scope(Owner).find(params[:owner_id])
     end
 
     # Only allow a list of trusted parameters through.

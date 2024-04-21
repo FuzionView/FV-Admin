@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
 
   OIDC_FLOW_START = "#{ENV['RAILS_RELATIVE_URL_ROOT']}/auth/oidc".freeze
 
-  before_action :authorize, except: %w(authentication_callback login not_authorized logout)
+  before_action :authorize_user, except: %w(authentication_callback login not_authorized logout)
   helper_method :current_user
 
   def authentication_callback
@@ -24,7 +24,27 @@ class ApplicationController < ActionController::Base
   def not_authorized
   end
 
-  def authorize
+  def role
+    if request.post?
+      session[:roles] = [params['user']['role']]
+      redirect_to root_path
+    else
+      # display page
+    end
+  end
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  private
+
+  def user_not_authorized
+    flash[:error] = "You are not authorized to perform this action."
+    redirect_back(fallback_location: root_path)
+  end
+
+  private
+
+  def authorize_user
     return true if current_user.present?
 
     session[:return_to] = request.fullpath if request.get?

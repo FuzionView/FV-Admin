@@ -1,5 +1,4 @@
 <h1>Data Providers</h1>
-
 <div id="owners">
   <table class="table">
     <thead>
@@ -16,14 +15,18 @@
           <td><%= owner.name %></td>
           <td>
             <%= link_to 'Show', owner_path(owner) %>
-            <%= link_to 'Edit', owner_path(owner) %>
+            <% if policy(owner).edit? %>
+              <%= link_to 'Edit', owner_path(owner) %>
+            <% end %>
           </td>
         </tr>
       <% end %>
-    </tbody>
+      </body>
   </table>
 </div>
 
-<p>
-<%= link_to "New data provider", new_owner_path %>
-</p>
+<% if policy(Owner).new? %>
+  <p>
+  <%= link_to "New data provider", new_owner_path %>
+  </p>
+<% end %>

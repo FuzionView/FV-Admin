@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
   <head>
     <title>FuzionView Admin</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -26,10 +26,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="https://uumpt.sharedgeo.net/start.html">
+              <a class="nav-link" href="https://uumpt.sharedgeo.net/start.html">
                 FuzionView Home
               </a>
-              <%= link_to 'Owners', owners_path, class: 'nav-link active', 'aria-current': 'page' %>
+              <%= link_to 'Data Providers', owners_path, class: 'nav-link active', 'aria-current': 'page' %>
+              <%# link_to "Change role (current: #{current_user&.current_role})", application_role_path, class: 'nav-link' %>
             </li>
           </ul>
         </div>

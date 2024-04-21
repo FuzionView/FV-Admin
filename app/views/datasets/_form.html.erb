@@ -7,8 +7,10 @@
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
         <%= f.input :source_dataset, as: :string, hint: 'The URI for the source ESRI or WFS.' %>
-        <%= f.input :geometry_name %>
-        <%= f.input :layer_name %>
+        <% if f.object.new_record? %>
+          <%= f.input :geometry_name %>
+          <%= f.input :layer_name %>
+        <% end %>
         <% if f.object.persisted? %>
           <%= f.input :source_sql %>
         <% end %>

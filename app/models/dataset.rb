@@ -1,9 +1,10 @@
 class Dataset < ApplicationRecord
   belongs_to :owner
-  validates :name, :source_dataset, :source_sql,
-            :geometry_name, :layer_name, presence: true
-  before_validation :set_sql_from_template, on: :create
 
+  attr_accessor :geometry_name, :layer_name
+  validates :name, :source_dataset, :source_sql,
+    :geometry_name, :layer_name, presence: true
+  before_validation :set_sql_from_template, on: :create
 
   def set_sql_from_template
     sql_template = <<-END_SQL
