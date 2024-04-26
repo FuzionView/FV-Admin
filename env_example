@@ -14,5 +14,5 @@ OP_TOKEN_ENDPOINT="/protocol/openid-connect/token"
 OP_USERINFO_ENDPOINT="/protocol/openid-connect/userinfo"
 OP_JWKS_ENDPOINT="/protocol/openid-connect/certs"
 
-FV_ADMININSTRATOR=Administrator
+FV_ADMINISTRATOR=Administrator
 FV_DATA_PROVIDER="Data Provider"
