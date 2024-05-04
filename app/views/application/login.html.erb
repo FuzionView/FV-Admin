@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>
-      Keycloak Login
-    </title>
-  </head>
-  <body onload="document.getElementById('login').submit()">
-    <p>
-    Redirecting to Keycloak for login.
-    </p>
-    <%= form_with url: ApplicationController::OIDC_FLOW_START, method: :post,
-      id: 'login' do |form| %>
-    <% end %>
-  </body>
-</html>
+<p>
+Redirecting to Keycloak for login.
+</p>
+<%= form_with url: ApplicationController::OIDC_FLOW_START,
+  method: :post,
+  id: 'login',
+  data: { controller: 'login-form' } do |form| %>
+<% end %>

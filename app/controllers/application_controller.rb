@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   end
 
   def login
-    render :login, layout: nil
+    render :login
   end
 
   def logout
