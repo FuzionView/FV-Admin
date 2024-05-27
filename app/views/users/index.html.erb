@@ -1,14 +1,28 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Users</h1>
+<h1><%= @owner.name %>: Users</h1>
 
-<div id="users">
-  <% @users.each do |user| %>
-    <%= render user %>
+<div class="pt-3">
+  <h2>Users</h2>
+  <p>People in this list who are assigned the 'Data Provider' role
+     will be able to add, modify and delete datasets for this data provider.</p>
+
+  <% if @owner.users.any? %>
+    <ul>
+      <% @owner.users.each do |user| %>
+        <li>
+          <%= link_to_if policy(user).edit?,
+            user.email_address,
+            owner_user_path(@owner, user) %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
     <p>
-      <%= link_to "Show this user", user %>
+    No users yet.
     </p>
   <% end %>
+  <% if policy(User).create? %>
+    <%= link_to 'New user', new_owner_user_path(@owner) %>
+  <% end %>
 </div>
-
-<%= link_to "New user", new_user_path %>

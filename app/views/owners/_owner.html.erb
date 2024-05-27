@@ -17,28 +17,3 @@
 <% end %>
 
 <%= link_to 'New dataset', new_owner_dataset_path(@owner) %>
-
-<div class="pt-3">
-  <h2>Users</h2>
-  <p>People in this list who are assigned the 'Data Provider' role
-     will be able to add, modify and delete datasets for this data provider.</p>
-
-  <% if owner.users.any? %>
-    <ul>
-      <% owner.users.each do |user| %>
-        <li>
-          <%= link_to_if policy(user).edit?,
-            user.email_address,
-            owner_user_path(owner, user) %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p>
-    No users yet.
-    </p>
-  <% end %>
-  <% if policy(User).create? %>
-    <%= link_to 'New user', new_owner_user_path(@owner) %>
-  <% end %>
-</div>

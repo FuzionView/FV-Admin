@@ -1,11 +1,12 @@
 class UsersController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit new create update destroy ]
+  before_action :set_owner, only: %i[ index show edit new create update destroy ]
   before_action :set_user, only: %i[ show edit update destroy ]
 
   # GET /users
   def index
+    authorize User
     @users =  policy_scope(User).all
   end
 

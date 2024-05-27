@@ -71,6 +71,9 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
+    # session[:email_address] = 'bpellinen@gmail.com'
+    # session[:roles] = ['Data Provider']
+    # session[:roles] = ['Administrator']
     return nil if session[:email_address].blank? || session[:roles].nil?
 
     @current_user ||= AuthorizedUser.new(session[:email_address], session[:roles])

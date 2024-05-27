@@ -7,6 +7,7 @@
     <%= csp_meta_tag %>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src=" https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <%= stylesheet_link_tag "application" %>
@@ -27,14 +28,64 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="https://uumpt.sharedgeo.net/start.html">
-                FuzionView Home
-              </a>
-              <%= link_to 'Data Providers', owners_path, class: 'nav-link active', 'aria-current': 'page' %>
-              <%= link_to 'Log out', application_logout_path, class: 'nav-link' %>
+              <% if current_user.administrator? %>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    System Operator Dashboard
+                  </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a class="dropdown-item" href="#">Ticket Map</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Ticket List</a>
+                      </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    System Operator Admin
+                  </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <%= link_to 'Data Providers', owners_path,
+                          class: 'dropdown-item'%>
+                      <li>
+                        <%= link_to 'New Data Provider', new_owner_path,
+                          class: 'dropdown-item'%>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">System Settings</a>
+                      </li>
+                    </ul>
+                </li>
+              <% elsif current_user.data_provider? %>
+                <% policy_scope(Owner.order(:name)).each do |owner| %>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <%= owner.name %>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <%= link_to 'Datasets', owner_path(owner), class: 'dropdown-item' %>
+                      <%= link_to 'Users', owner_users_path(owner), class: 'dropdown-item' %>
+                    </ul>
+                  </li>
+                <% end %>
+              <% end  %>
+              <li class="nav-item">
+                <a class="nav-link" href="https://uumpt.sharedgeo.net/start.html">
+                  System Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://uumpt.sharedgeo.net/start.html">
+                  Documentation
+                </a>
+              </li>
+              <li class="nav-item">
+                <%= link_to 'Log out', application_logout_path, class: 'nav-link' %>
+              </li>
               <%# link_to "Change role (current: #{current_user&.current_role})", application_role_path, class: 'nav-link' %>
-            </li>
           </ul>
         </div>
       <% end %>

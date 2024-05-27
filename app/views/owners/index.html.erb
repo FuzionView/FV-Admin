@@ -14,9 +14,9 @@
           <td><%= owner.id %></td>
           <td><%= owner.name %></td>
           <td>
-            <%= link_to 'Show', owner_path(owner) %>
+            <%= link_to 'View', owner_path(owner) %>
             <% if policy(owner).edit? %>
-              <%= link_to 'Edit', owner_path(owner) %>
+              <%= link_to 'Users', owner_users_path(owner) %>
             <% end %>
           </td>
         </tr>

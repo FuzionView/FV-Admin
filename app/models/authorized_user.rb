@@ -15,9 +15,9 @@ class AuthorizedUser
     User.where(email_address: @email_address).pluck(:owner_id)
   end
 
-  def users
-    User.where(email_address: @email_address).pluck(:id)
-  end
+  # def users
+  #   User.where(email_address: @email_address).pluck(:id)
+  # end
 
   def administrator?
     @roles.include?(FV_ADMINISTRATOR)
