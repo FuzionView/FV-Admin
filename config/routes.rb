@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   match "/auth/:provider/callback" => "application#authentication_callback",
     via: [:get, :post]
   get "application/login"
@@ -10,6 +9,12 @@ Rails.application.routes.draw do
     resources :datasets
     resources :users
   end
+
+  get "system_settings" => "system_settings#index"
+  resources :feature_classes, except: [:show]
+  resources :ticket_types, except: [:show]
+  resources :feature_statuses, except: [:show]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -17,5 +22,5 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-   root "owners#index"
+  root "owners#index"
 end

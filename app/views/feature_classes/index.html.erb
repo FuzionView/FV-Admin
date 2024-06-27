@@ -1,0 +1,31 @@
+<h1>Feature classes</h1>
+<div id="feature_class">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Description</th>
+        <th>Color Mapserver</th>
+        <th>Color Hex</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @feature_classes.each do |feature_class| %>
+        <tr>
+          <td><%= feature_class.id %></td>
+          <td><%= feature_class.name %></td>
+          <td><%= feature_class.color_mapserv %></td>
+          <td><%= feature_class.color_hex %></td>
+          <td>
+            <%= link_to 'Edit', edit_feature_class_path(feature_class) %>
+            <%= button_to "Delete", feature_class, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+<%= link_to "New feature class", new_feature_class_path %>

@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @feature_status %>
+
+<div>
+  <%= link_to "Edit this feature status", edit_feature_status_path(@feature_status) %> |
+  <%= link_to "Back to feature statuses", feature_statuses_path %>
+
+  <%= button_to "Destroy this feature status", @feature_status, method: :delete %>
+</div>
