@@ -14,8 +14,9 @@
           <td><%= feature_status.id %></td>
           <td><%= feature_status.status %></td>
           <td>
-             <%= link_to 'Edit', edit_feature_status_path(feature_status) %>
-             <%= button_to "Delete", feature_status, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+            <%= edit_link(edit_feature_status_path(feature_status), 'Edit') %>
+            &nbsp;
+            <%= delete_link(feature_status, 'Delete',  "Delete feature status?") %>
           </td>
         </tr>
       <% end %>

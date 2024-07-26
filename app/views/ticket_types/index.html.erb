@@ -18,8 +18,9 @@
           <td><%= ticket_type.color_mapserv %></td>
           <td><%= ticket_type.color_hex %></td>
           <td>
-            <%= link_to 'Edit', edit_ticket_type_path(ticket_type) %>
-            <%= button_to "Delete", ticket_type, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+            <%= edit_link(edit_ticket_type_path(ticket_type), 'Edit') %>
+            &nbsp;
+            <%= delete_link(ticket_type, 'Delete',  "Delete ticket type?") %>
           </td>
         </tr>
       <% end %>

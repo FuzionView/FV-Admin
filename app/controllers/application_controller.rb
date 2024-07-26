@@ -46,6 +46,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authorize_user
+    logger.debug("!!!!!!!#{current_user.inspect}")
     return true if current_user.present?
 
     session[:return_to] = request.fullpath if request.get?
@@ -66,7 +67,7 @@ class ApplicationController < ActionController::Base
 
     session[:email_address] = email_address
     session[:roles] = roles
-  rescue AuthorizationExceptionException => _e
+  rescue AuthorizationException => _e
     redirect_to application_not_authorized_path
   end
 

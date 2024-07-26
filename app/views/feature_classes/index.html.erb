@@ -18,8 +18,9 @@
           <td><%= feature_class.color_mapserv %></td>
           <td><%= feature_class.color_hex %></td>
           <td>
-            <%= link_to 'Edit', edit_feature_class_path(feature_class) %>
-            <%= button_to "Delete", feature_class, method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+            <%= edit_link(edit_feature_class_path(feature_class), 'Edit') %>
+            &nbsp;
+            <%= delete_link(feature_class, 'Delete',  "Delete feature class?") %>
           </td>
         </tr>
       <% end %>
