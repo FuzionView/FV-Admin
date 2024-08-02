@@ -1,28 +1,42 @@
-<p style="color: green"><%= notice %></p>
-
 <h1><%= @owner.name %>: Users</h1>
 
 <div class="pt-3">
   <h2>Users</h2>
   <p>People in this list who are assigned the 'Data Provider' role
-     will be able to add, modify and delete datasets for this data provider.</p>
+  will be able to add, modify and delete datasets for this data provider.</p>
 
   <% if @owner.users.any? %>
-    <ul>
-      <% @owner.users.each do |user| %>
-        <li>
-          <%= link_to_if policy(user).edit?,
-            user.email_address,
-            owner_user_path(@owner, user) %>
-        </li>
-      <% end %>
-    </ul>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Email Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @owner.users.each do |user| %>
+          <tr>
+            <td>
+              <%= user.email_address %>
+            </td>
+            <td>
+              <% if policy(user).edit? %>
+                <%= edit_link 'Edit', edit_owner_user_path(@owner, user) %>
+                <%= delete_link 'Delete', [@owner, user], 'Delete this user?' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   <% else %>
     <p>
     No users yet.
     </p>
   <% end %>
   <% if policy(User).create? %>
-    <%= link_to 'New user', new_owner_user_path(@owner) %>
+    <%= new_user_link 'New user', new_owner_user_path(@owner) %>
   <% end %>
+  <br>
+  <%= link_to "Back to data providers", owners_path %>
 </div>

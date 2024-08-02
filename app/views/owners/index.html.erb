@@ -14,9 +14,17 @@
           <td><%= owner.id %></td>
           <td><%= owner.name %></td>
           <td>
-            <%= link_to 'View', owner_path(owner) %>
+            <%= view_link 'View', owner_path(owner) %>
             <% if policy(owner).edit? %>
-              <%= link_to 'Users', owner_users_path(owner) %>
+              &nbsp;
+              <%= edit_link 'Edit data provider', edit_owner_path(owner) %>
+              &nbsp;
+              <%= users_link 'Manage Users', owner_users_path(owner) %>
+            <% end %>
+            <% if policy(owner).destroy? %>
+              &nbsp;
+              <%= delete_link "Delete this data provider", owner,
+                'Delete this data provider?' %>
             <% end %>
           </td>
         </tr>
@@ -27,6 +35,6 @@
 
 <% if policy(Owner).new? %>
   <p>
-  <%= link_to "New data provider", new_owner_path %>
+  <%= new_link "New data provider", new_owner_path %>
   </p>
 <% end %>

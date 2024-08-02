@@ -1,18 +1,13 @@
 class UsersController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ index show edit new create update destroy ]
-  before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_owner, only: %i[ index edit new create update destroy ]
+  before_action :set_user, only: %i[ edit update destroy ]
 
   # GET /users
   def index
     authorize User
     @users =  policy_scope(User).all
-  end
-
-  # GET /users/1
-  def show
-    authorize @user
   end
 
   # GET /users/new
@@ -32,7 +27,7 @@ class UsersController < ApplicationController
     @user = @owner.users.build(user_params)
 
     if @user.save
-      redirect_to owner_path(@owner), notice: "User was successfully created."
+      redirect_to owner_users_path(@owner), notice: "User was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -42,7 +37,7 @@ class UsersController < ApplicationController
   def update
     authorize @user
     if @user.update(user_params)
-      redirect_to owner_path(@owner), notice: "User was successfully updated.", status: :see_other
+      redirect_to owner_users_path(@owner), notice: "User was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -52,7 +47,7 @@ class UsersController < ApplicationController
   def destroy
     authorize @user
     @user.destroy!
-    redirect_to owner_url(@owner), notice: "User was successfully destroyed.", status: :see_other
+    redirect_to owner_users_path(@owner), notice: "User was successfully destroyed.", status: :see_other
   end
 
   private

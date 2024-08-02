@@ -14,9 +14,9 @@
           <td><%= feature_status.id %></td>
           <td><%= feature_status.status %></td>
           <td>
-            <%= edit_link(edit_feature_status_path(feature_status), 'Edit') %>
+            <%= edit_link('Edit', edit_feature_status_path(feature_status)) %>
             &nbsp;
-            <%= delete_link(feature_status, 'Delete',  "Delete feature status?") %>
+            <%= delete_link('Delete', feature_status, "Delete feature status?") %>
           </td>
         </tr>
       <% end %>
@@ -25,4 +25,4 @@
 </div>
 
 
-<%= link_to "New feature status", new_feature_status_path %>
+<%= new_link "New feature status", new_feature_status_path %>

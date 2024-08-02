@@ -18,9 +18,9 @@
           <td><%= feature_class.color_mapserv %></td>
           <td><%= feature_class.color_hex %></td>
           <td>
-            <%= edit_link(edit_feature_class_path(feature_class), 'Edit') %>
+            <%= edit_link('Edit', edit_feature_class_path(feature_class)) %>
             &nbsp;
-            <%= delete_link(feature_class, 'Delete',  "Delete feature class?") %>
+            <%= delete_link('Delete', feature_class, "Delete feature class?") %>
           </td>
         </tr>
       <% end %>
@@ -29,4 +29,4 @@
 </div>
 
 
-<%= link_to "New feature class", new_feature_class_path %>
+<%= new_link "New feature class", new_feature_class_path %>

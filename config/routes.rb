@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   resources :owners do
     resources :datasets
-    resources :users
+    resources :users, except: [:show]
   end
 
   get "system_settings" => "system_settings#index"

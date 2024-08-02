@@ -18,9 +18,9 @@
           <td><%= ticket_type.color_mapserv %></td>
           <td><%= ticket_type.color_hex %></td>
           <td>
-            <%= edit_link(edit_ticket_type_path(ticket_type), 'Edit') %>
+            <%= edit_link('Edit', edit_ticket_type_path(ticket_type)) %>
             &nbsp;
-            <%= delete_link(ticket_type, 'Delete',  "Delete ticket type?") %>
+            <%= delete_link('Delete', ticket_type, "Delete ticket type?") %>
           </td>
         </tr>
       <% end %>
@@ -29,4 +29,4 @@
 </div>
 
 
-<%= link_to "New ticket type", new_ticket_type_path %>
+<%= new_link "New ticket type", new_ticket_type_path %>

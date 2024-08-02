@@ -1,5 +1,5 @@
 class Owner < ApplicationRecord
-  has_many :datasets
-  has_many :users
+  has_many :datasets, dependent: :destroy
+  has_many :users, dependent: :destroy
   validates :name, presence: true
 end

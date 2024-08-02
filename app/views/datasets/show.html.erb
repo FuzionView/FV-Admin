@@ -1,8 +1,7 @@
 <%= render @dataset %>
 
 <div class="pt-3">
-  <%= link_to "Edit this dataset", edit_owner_dataset_path(@owner, @dataset) %> |
-  <%= link_to "Back to data provider", owner_path(@dataset.owner) %>
+  <%= link_to "Back to datasets", owner_path(@owner) %> |
 
-  <%= button_to "Delete this dataset", [@owner, @dataset], method: :delete, class: 'btn btn-outline-danger btn-sm' %>
+  <%= delete_link "Delete this dataset", [@owner, @dataset], 'Delete this dataset?' %>
 </div>

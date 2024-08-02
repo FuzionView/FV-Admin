@@ -3,17 +3,35 @@
 <h2>Datasets</h2>
 
 <% if owner.datasets.any? %>
-  <ul>
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Source</th>
+      <th>Actions</th>
+    </tr>
     <% owner.datasets.each do |dataset| %>
-      <li>
-        <%= link_to dataset.name, owner_dataset_path(owner, dataset) %>
-      </li>
+      <tr>
+        <td>
+          <%= dataset.name %>
+        </td>
+        <td>
+          <%= dataset.source_dataset %>
+        </td>
+        <td>
+          <%= view_link('View', owner_dataset_path(owner, dataset)) %>
+          &nbsp;
+          <%= edit_link('Edit', edit_owner_dataset_path(owner, dataset)) %>
+          &nbsp;
+          <%= delete_link('Delete', [owner, dataset], "Delete this dataset") %>
+        </td>
+        </td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
 <% else %>
   <p>
     No datasets yet.
   </p>
 <% end %>
 
-<%= link_to 'New dataset', new_owner_dataset_path(@owner) %>
+<%= new_link 'New dataset', new_owner_dataset_path(@owner) %>

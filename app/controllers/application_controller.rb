@@ -46,7 +46,6 @@ class ApplicationController < ActionController::Base
   private
 
   def authorize_user
-    logger.debug("!!!!!!!#{current_user.inspect}")
     return true if current_user.present?
 
     session[:return_to] = request.fullpath if request.get?

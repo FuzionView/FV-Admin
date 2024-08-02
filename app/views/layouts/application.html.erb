@@ -84,7 +84,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <%= link_to 'Log out', application_logout_path, class: 'nav-link' %>
+                <%= link_to 'Log out', application_logout_path, class: 'nav-link', data: { turbo: false } %>
               </li>
               <%# link_to "Change role (current: #{current_user&.current_role})", application_role_path, class: 'nav-link' %>
           </ul>
