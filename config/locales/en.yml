@@ -28,6 +28,8 @@
 #       enabled: "ON"
 
 en:
+  attributes:
+    id: "ID"
   activerecord:
     models:
       owner: "Data Provider"
