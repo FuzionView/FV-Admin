@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" class="h-100">
   <head>
     <title>FuzionView Admin</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -15,7 +15,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="d-flex flex-column h-100">
     <nav class="navbar navbar-light bg-light">
       <div class="container">
         <%= link_to 'FuzionView Admin', root_path, class: 'navbar-brand' %>
@@ -92,6 +92,7 @@
       <% end %>
       </div>
     </nav>
+   <main class="flex-shrink-0">
     <div class="container">
       <div class="m-2">
         <%
@@ -117,5 +118,12 @@
         <%= yield %>
       </div>
     </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+      <div class="container">
+        <span class="fs-6 text-muted"><%= "Version #{`git describe --tags --always`.strip}" rescue '' %></span>
+      </div>
+    </footer>
   </body>
 </html>
