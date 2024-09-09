@@ -1,7 +1,7 @@
 class DatasetsController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit new create update destroy ]
+  before_action :set_owner, only: %i[ show edit new create update destroy test_ticket ]
   before_action :set_dataset, only: %i[ show edit update destroy ]
 
   # GET /datasets
@@ -52,6 +52,22 @@ class DatasetsController < ApplicationController
     authorize @dataset
     @dataset.destroy!
     redirect_to owner_url(@owner), notice: "Dataset was successfully destroyed.", status: :see_other
+  end
+
+  def test_ticket
+    @dataset = @owner.datasets.find(params[:dataset_id])
+    authorize @dataset
+    if request.post?
+      @ticket = Ticket.new(params.fetch(:ticket, {}).permit(:geom))
+      @ticket.init_test_ticket
+      if @ticket.save
+        redirect_to [@owner, @dataset], notice: "Test ticket created.", status: :see_other
+      else
+        render :test_ticket, status: :unprocessable_entity
+      end
+    else
+      @ticket = Ticket.new
+    end
   end
 
   private

@@ -1,0 +1,27 @@
+<h1>Test Ticket for <%= @dataset.owner&.name %>: <%= @dataset.name %></h1>
+
+<p>Create a test ticket. This will verify end-to-end system
+functionality. Select an area on the map to start.</p>
+
+<div id="map" class="leaflet-container" style="min-height: 400px">
+  <div data-controller="map"></div>
+</div>
+
+<%= simple_form_for(@ticket, url: owner_dataset_test_ticket_path(@dataset.owner, @dataset),
+                    data: { turbo: false }) do |f| %>
+  <%# f.error_notification %>
+  <%# f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+
+<div id="polygon"></div>
+
+  <%= f.input :geom, as: :hidden %>
+
+  <div class="form-actions">
+    <%= f.button :submit, 'Submit', form: 'new_ticket', class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<div class="pt-3">
+  <%= link_to "Back to datasets", owner_path(@dataset.owner) %>
+</div>

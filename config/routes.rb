@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   # match "application/role", via: [:get, :post]
 
   resources :owners do
-    resources :datasets
+    resources :datasets do
+      match :test_ticket, via: [:get, :post]
+    end
     resources :users, except: [:show]
   end
 

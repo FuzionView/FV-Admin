@@ -17,6 +17,10 @@ class DatasetPolicy < ApplicationPolicy
     true
   end
 
+  def test_ticket?
+    true
+  end
+
   def edit?
     update?
   end

@@ -22,6 +22,8 @@
           &nbsp;
           <%= edit_link('Edit', edit_owner_dataset_path(owner, dataset)) %>
           &nbsp;
+          <%= ticket_link('Test Ticket', owner_dataset_test_ticket_path(owner, dataset)) %>
+          &nbsp;
           <%= delete_link('Delete', [owner, dataset], "Delete this dataset") %>
         </td>
         </td>

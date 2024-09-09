@@ -20,6 +20,13 @@ module ApplicationHelper
     end
   end
 
+  def ticket_link(text, path)
+    link_to path, class: 'text-body' do
+      content_tag(:span, text, class: 'visually-hidden',) +
+        content_tag(:i, '', title: text, class: 'bi-map', style: 'font-size: 2rem;')
+    end
+  end
+
   def new_user_link(text, path)
     link_to path, class: 'text-body' do
           content_tag(:i, '', title: text, class: 'bi-person-add', style: 'font-size: 2rem;') +
