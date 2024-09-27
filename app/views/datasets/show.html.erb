@@ -1,7 +1,5 @@
 <%= render @dataset %>
 
 <div class="pt-3">
-  <%= link_to "Back to datasets", owner_path(@owner) %>
-
-  <%= delete_link "Delete this dataset", [@owner, @dataset], 'Delete this dataset?' %>
+ <%= link_to "Back to data provider", owner_path(@owner) %>
 </div>

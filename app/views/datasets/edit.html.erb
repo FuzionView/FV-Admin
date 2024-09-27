@@ -1,10 +1,13 @@
-<h1>Editing dataset <%= @dataset.name %></h1>
+<h1>Editing dataset <%= @dataset.name %>
+<span class="float-end">
+  <%= view_link('Show dataset', owner_dataset_path(@owner, @dataset)) %>
+</span>
+</h1>
 
 <%= render "form", dataset: @dataset, url: owner_dataset_path(@owner, @dataset) %>
 
 <br>
 
 <div>
-  <%= link_to "Show this dataset", [@owner, @dataset] %> |
   <%= link_to "Back to data provider", owner_path(@dataset.owner) %>
 </div>

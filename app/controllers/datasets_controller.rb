@@ -18,6 +18,8 @@ class DatasetsController < ApplicationController
   def new
     authorize Dataset
     @dataset = @owner.datasets.build
+    @layers = []
+    @options = []
   end
 
   # GET /datasets/1/edit
@@ -29,10 +31,28 @@ class DatasetsController < ApplicationController
   def create
     @dataset = @owner.datasets.new(dataset_params)
     authorize @dataset
-
-    if @dataset.save
+    if @dataset.source_dataset.present? &&
+        @dataset.layer_name.present? &&
+        @dataset.layer_selected.present? &&
+        @dataset.save
       redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
     else
+      @layers = []
+      @options = []
+      begin
+        if @dataset.source_dataset.present?
+          @layers, @geomFields, @options = @dataset.get_metadata
+          if @layers.size == 1 && @dataset.layer_selected.blank?
+            @dataset.layer_name = @layers.first
+          end
+          if @geomFields.size == 1
+            @dataset.geometry_name = @geomFields.first
+          end
+        end
+        @dataset.valid? unless @dataset.layer_selected.blank?
+      rescue StandardError => e
+        flash[:error] = "Error: #{e.message}"
+      end
       render :new, status: :unprocessable_entity
     end
   end
@@ -84,13 +104,21 @@ class DatasetsController < ApplicationController
     def dataset_params
       params.fetch(:dataset, {}).permit(:owner_id,
                                         :source_dataset,
+                                        :layer_name,
                                         :geometry_name,
                                         :layer_name,
+                                        :feature_class,
+                                        :status_id,
+                                        :size,
+                                        :depth,
+                                        :accuracy_value,
+                                        :description,
                                         :source_sql,
                                         :name,
                                         :source_co,
                                         :source_srs,
                                         :cache_whole_dataset,
-                                        :enabled)
+                                        :enabled,
+                                        :layer_selected)
     end
 end

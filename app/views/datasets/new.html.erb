@@ -1,6 +1,9 @@
 <h1><%= @owner.name %>: New dataset</h1>
 
-<%= render "form", dataset: @dataset, url: owner_datasets_path(@owner) %>
+<%= render "form",
+           dataset: @dataset,
+           url: owner_datasets_path(@owner),
+           options: @options %>
 
 <br>
 

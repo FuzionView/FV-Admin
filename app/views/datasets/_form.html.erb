@@ -1,24 +1,116 @@
 <%= simple_form_for(@dataset, url: url) do |f| %>
   <%= f.error_notification %>
   <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <% if f.object.source_dataset.blank? %>
+    <p>Enter the name and URL of your dataset.</p>
+  <% end %>
+  <% if f.object.source_dataset.present? && f.object.layer_name.blank? %>
+    <p>Your datasource has multiple layers. Please select one.</p>
+  <% end %>
+  <% if f.object.source_dataset.present? && @options.any? %>
+    <p>"Map" your data attributes to the FuztionView Schema.</p>
+  <% end %>
 
   <div class="row">
-    <div class="col-6 col-md-6 col-sm-12">
+    <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
-        <%= f.input :source_dataset, as: :string, hint: 'The URI for the source ESRI or WFS.' %>
+        <% if f.object.source_dataset.present?  %>
+          <div class='mb-1'>Source Dataset:</div>
+           <%= f.hidden_field :source_dataset %>
+           <p><%= f.object.source_dataset %></p>
+        <% else %>
+          <%= f.input :source_dataset, as: :string,
+            hint: 'The URL for the source ESRI or WFS.' %>
+        <% end %>
         <% if f.object.new_record? %>
-          <%= f.input :geometry_name %>
-          <%= f.input :layer_name %>
+          <% if @layers.any? %>
+            <% if f.object.layer_name.present? %>
+              <div class='mb-1'>Layer name:</div>
+              <%= f.hidden_field :layer_name %>
+              <p><%= f.object.layer_name %></p>
+            <% else %>
+              <%= f.input :layer_name, collection: @layers %>
+            <% end %>
+          <% end %>
+          <% if @options.any? %>
+            <div class="row">
+              <div class="col">
+                <strong>Your Data</strong>
+              </div>
+              <div class="col">
+                <strong>FuzionView Schema Attribute</strong>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :geometry_name, collection: @geomFields %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Geometry
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :feature_class, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Feature Class
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :status_id, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Status ID
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :size, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Size
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :depth, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Depth
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :accuracy_value, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Accuracy Value
+              </div>
+            </div>
+            <div class="row">
+              <div class="col d-flex align-items-center">
+                <%= f.input :description, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Description
+              </div>
+            </div>
+          <%= f.hidden_field :layer_selected, value: 'true' %>
+        <% end %>
         <% end %>
         <% if f.object.persisted? %>
           <%= f.input :source_sql %>
+          <%= f.input :source_co, as: :string %>
+          <%= f.input :cache_whole_dataset, as: :boolean %>
+          <%= f.input :enabled, as: :boolean %>
         <% end %>
-        <%= f.input :source_co, as: :string %>
-        <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
-        <%= f.input :cache_whole_dataset, as: :boolean %>
-        <%= f.input :enabled, as: :boolean %>
-        <%= f.input :owner_id, as: :hidden %>
+        <% if f.object.source_dataset.present? && f.object.layer_name.present? %>
+          <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
+        <% end %>
+        <%# f.input :owner_id, as: :hidden %>
       </div>
     </div>
   </div>
