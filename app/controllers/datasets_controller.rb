@@ -78,7 +78,7 @@ class DatasetsController < ApplicationController
     @dataset = @owner.datasets.find(params[:dataset_id])
     authorize @dataset
     if request.post?
-      @ticket = Ticket.new(params.fetch(:ticket, {}).permit(:geom))
+      @ticket = @dataset.test_tickets.build(params.fetch(:ticket, {}).permit(:geom))
       @ticket.init_test_ticket
       if @ticket.save
         redirect_to [@owner, @dataset], notice: "Test ticket created.", status: :see_other
@@ -86,7 +86,7 @@ class DatasetsController < ApplicationController
         render :test_ticket, status: :unprocessable_entity
       end
     else
-      @ticket = Ticket.new
+      @ticket = @dataset.test_tickets.build
     end
   end
 

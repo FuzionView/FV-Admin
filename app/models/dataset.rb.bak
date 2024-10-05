@@ -1,0 +1,117 @@
+require 'httparty'
+
+class Dataset < ApplicationRecord
+  OGRINFO_BIN = "docker run --rm -v /home:/home ghcr.io/osgeo/gdal:alpine-small-latest ogrinfo -json -fields YES -nocount -noextent -nomd -geom SUMMARY"
+  belongs_to :owner
+
+  validates :name, :source_dataset, :source_sql, presence: true
+
+  attr_accessor :geometry_name, :layer_name, :feature_class,
+                :status_id, :size, :depth, :accuracy_value,
+                :description
+
+  validates :geometry_name, :layer_name, :feature_class,
+            :status_id, presence: true, on: :create
+
+  before_validation :set_sql_from_template, on: :create
+
+  def set_sql_from_template
+    sql_template = <<-END_SQL
+   SELECT
+       id,
+       "#{geometry_name}" geom,
+       "#{feature_class}" feature_class,
+       "#{status_id}" status_id,
+       "#{size}" size,
+       "#{depth}" depth,
+       "#{accuracy_value}" accuracy_value,
+       "#{description}" description
+    FROM
+      "#{layer_name}"
+    END_SQL
+    self.source_sql = sql_template
+  end
+
+  def get_metadata
+    if source_dataset&.downcase.include?('featureserver')
+      get_metadata_esri
+    else
+      get_metadata_wfs
+    end
+  end
+
+  def get
+
+  def get_metadata_wfs
+    ogrinfo = "#{OGRINFO_BIN} #{source_dataset} #{layer_name}"
+    result = `#{ogrinfo}`
+    json = JSON.parse(result)
+    layers = json["layers"].map{ |layer| layer['name'] }
+    layer = if layer_name.blank?
+              layers.first
+            else
+              layer_name
+            end
+    layer_hash = json["layers"]&.first{ |l| l[layer_name] } || {}
+    geomFields = layer_hash['geometryFields'].map{ |fields| fields['name'] }
+    options = layer_hash['fields'].map{ |fields| fields['name'] }
+    coords = layer_hash['geometryFields']&.first['coordinateSystem']#.map { |fields| fields['coordinate_system'].map{ |cos| cos['id'] } }
+    # raise coords.insect
+    [layers, geomFields, options]
+  end
+
+  def get_metadata_esri
+    query = { f: 'json',
+      returnGeometry: 'false',
+      where: '1=1',
+      outfields: '*',
+      'resultRecordCount': 1
+    }
+    response = request(source_dataset + '/query', query, 3)
+    json = JSON.parse(response.body)
+
+    layers = []
+    geomFields = ['geometry']
+    options = json['fields'].map{ |f| f['name'] }
+    [layers, geomFields, options]
+  rescue StandardError => e
+    Rails.logger.error("Error: #{e.message}: \n\t#{e.backtrace.join("\n\t")}")
+    raise e
+  end
+
+  def self.test_esri
+    d = new(source_dataset: 'https://services1.arcgis.com/3fjYPqJf7qalQMlb/ArcGIS/rest/services/Control_Points/FeatureServer/0')
+    d.get_metadata_esri
+  end
+
+  def self.test_wfs
+    source_dataset = "WFS:https://webgist.dot.state.mn.us/65ags/services/Hosted/SURFACE_ITS_UTILITIES/MapServer/WFSServer"
+    d = new(source_dataset: source_dataset)
+    d.get_metadata_wfs
+  end
+
+  def self.test_wfs_xml
+    cap_url = URI('https://webgist.dot.state.mn.us/65ags/services/Hosted/SURFACE_ITS_UTILITIES/MapServer/WFSServer?service=WFS&request=GetCapabilities')
+    cap_xml = Net::HTTP.get(cap_url)
+    cap_doc = Nokogiri::XML(cap_xml)
+    feature_types = cap_doc.xpath('//wfs:FeatureType/wfs:Name').map(&:text)
+    feat_url = URI("https://webgist.dot.state.mn.us/65ags/services/Hosted/SURFACE_ITS_UTILITIES/MapServer/WFSServer?service=WFS&request=DescribeFeatureType&typeName=#{feature_types.first}")
+    feat_xml = Net::HTTP.get(feat_url)
+    feat_doc = Nokogiri::XML(feat_xml)
+		feature_attributes = feat_doc.xpath("//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@name and not(@type='gml:GeometryPropertyType')]/@name").map(&:value)
+		puts feature_attributes
+    geom_name = feat_doc.xpath("//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@type='gml:GeometryPropertyType']/@name").map(&:value)
+    puts geom_name
+  end
+
+  private
+
+  def request(url, query, timeout)
+    HTTParty.post(url, body: query, timeout: timeout)
+  rescue StandardError => e
+    Rails.logger.error('ArcGIS query: ' \
+                       "#{url}?" \
+                       "#{query.map { |k, v| "#{k}=#{v}" }.join('&')}")
+    raise e
+  end
+end

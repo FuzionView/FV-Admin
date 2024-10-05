@@ -1,0 +1,31 @@
+<% tickets = @dataset.test_tickets %>
+<% if tickets.size.positive? %>
+  <div class="alert alert-secondary" role="alert">
+    Test Tickets
+  </div>
+
+  <table class="table caption-top">
+    <thead>
+      <tr>
+        <th>Ticket No.</th>
+        <th>Status</th>
+        <th>Feature Count</th>
+        <th>Attempt</th>
+        <th>Updated At</th>
+      </tr>
+    </thead>
+  <% end %>
+  <% tickets.each do |t| %>
+    <tbody>
+      <tr>
+        <td><%= report_link(t.ticket_no) %></td>
+        <td><%= t.status&.sub(/: \d+/, '') || 'PENDING' %></td>
+        <td><%= t.feature_count %></td>
+        <td><%= t.attempt %></td>
+        <td><%= t.updated_at %></td>
+      </tr>
+    </tbody>
+  <% end %>
+  <% if tickets.size.positive? %>
+    </table>
+  <% end %>

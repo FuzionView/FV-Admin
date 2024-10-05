@@ -1,4 +1,9 @@
 module ApplicationHelper
+  def report_link(ticket_no)
+    base_link = ENV['TEST_TICKET_URL']
+    link_to ticket_no, "#{base_link}#{ticket_no}/report", target: '_blank'
+  end
+
   def new_link(text, path, hide_text='')
     link_to path, class: 'text-body' do
           content_tag(:i, '', title: text, class: 'bi-file-earmark-plus ms-2 me-2', style: 'font-size: 1.75rem;') +

@@ -18,3 +18,5 @@ OP_JWKS_ENDPOINT="/protocol/openid-connect/certs"
 
 FV_ADMINISTRATOR=Administrator
 FV_DATA_PROVIDER="Data Provider"
+
+TEST_TICKET_URL=https://localhost/api/tickets/

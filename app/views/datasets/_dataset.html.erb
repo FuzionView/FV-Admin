@@ -2,6 +2,7 @@
   <%= dataset.owner&.name %>: <%= dataset.name %>
   <span class="float-end">
     <%= edit_link('Edit', edit_owner_dataset_path(@owner, @dataset)) %>
+    <%= ticket_link('Test Ticket', owner_dataset_test_ticket_path(@owner, @dataset)) %>
     <%= delete_link "Delete this dataset", [@owner, @dataset], 'Delete this dataset?' %>
   </span>
 </h1>
