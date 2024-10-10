@@ -7,7 +7,7 @@
   <% if f.object.source_dataset.present? && f.object.layer_name.blank? %>
     <p>Your datasource has multiple layers. Please select one.</p>
   <% end %>
-  <% if f.object.source_dataset.present? && @options.any? %>
+  <% if f.object.source_dataset.present? && @options&.any? %>
     <p>"Map" your data attributes to the FuztionView Schema.</p>
   <% end %>
 

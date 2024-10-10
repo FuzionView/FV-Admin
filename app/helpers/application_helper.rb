@@ -1,4 +1,10 @@
 module ApplicationHelper
+  def sdt(time, format = :d_with_hour)
+    return if time.nil?
+
+    l(time, format: format)
+  end
+
   def report_link(ticket_no)
     base_link = ENV['TEST_TICKET_URL']
     link_to ticket_no, "#{base_link}#{ticket_no}/report", target: '_blank'

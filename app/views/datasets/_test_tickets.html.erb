@@ -11,7 +11,7 @@
         <th>Status</th>
         <th>Feature Count</th>
         <th>Attempt</th>
-        <th>Updated At</th>
+        <th>Publish Date</th>
       </tr>
     </thead>
   <% end %>
@@ -22,7 +22,7 @@
         <td><%= t.status&.sub(/: \d+/, '') || 'PENDING' %></td>
         <td><%= t.feature_count %></td>
         <td><%= t.attempt %></td>
-        <td><%= t.updated_at %></td>
+        <td><%= sdt t.publish_date %></td>
       </tr>
     </tbody>
   <% end %>

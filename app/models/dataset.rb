@@ -2,7 +2,7 @@ require 'httparty'
 
 class Dataset < ApplicationRecord
   belongs_to :owner
-  has_many :test_tickets, class_name: 'Ticket'
+  has_many :test_tickets, ->{ order(publish_date: :desc) }, class_name: 'Ticket'
   has_many :ticket_dataset_statuses, through: :test_tickets
 
   attribute :layers, default: []

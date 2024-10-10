@@ -28,6 +28,20 @@
 #       enabled: "ON"
 
 en:
+  time:
+    formats:
+      d: "%m/%d/%Y"
+      default: "%m/%d/%Y"
+      d_with_hour: "%m/%d/%Y %I:%M %p"
+      formal_time_date: "%A %b %d, %Y at %I:%M %p"
+      date_time_zone: "%b %e, %Y %I:%M:%S %p %Z"
+  date:
+    formats:
+      default: "%m/%d/%Y"
+      d: "%m/%d/%Y"
+      short: "%m/%d/%y"
+      d_with_hour: "%m/%d/%Y %I:%M %p"
+      long: "%B %d, %Y"
   attributes:
     id: "ID"
   activerecord:
