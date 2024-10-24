@@ -51,6 +51,7 @@ class DatasetsController < ApplicationController
         end
         @dataset.valid? unless @dataset.layer_selected.blank?
       rescue StandardError => e
+        @dataset.source_error = e.message
         flash[:error] = "Error: #{e.message}"
       end
       render :new, status: :unprocessable_entity

@@ -15,7 +15,7 @@
     <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
-        <% if f.object.source_dataset.present?  %>
+        <% if f.object.source_dataset.present? && !f.object.source_error.present? %>
           <div class='mb-1'>Source Dataset:</div>
            <%= f.hidden_field :source_dataset %>
            <p><%= f.object.source_dataset %></p>
@@ -107,7 +107,7 @@
           <%= f.input :cache_whole_dataset, as: :boolean %>
           <%= f.input :enabled, as: :boolean %>
         <% end %>
-        <% if f.object.source_dataset.present? && f.object.layer_name.present? %>
+        <% if f.object.persisted? || (f.object.source_dataset.present? && f.object.layer_name.present?) %>
           <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
         <% end %>
         <%# f.input :owner_id, as: :hidden %>

@@ -2,8 +2,8 @@ require 'httparty'
 
 class Dataset < ApplicationRecord
   belongs_to :owner
-  has_many :test_tickets, ->{ order(publish_date: :desc) }, class_name: 'Ticket'
-  has_many :ticket_dataset_statuses, through: :test_tickets
+  has_many :test_tickets, ->{ order(publish_date: :desc) }, class_name: 'Ticket', dependent: :destroy
+  has_many :ticket_dataset_statuses, through: :test_tickets, dependent: :destroy
 
   attribute :layers, default: []
   attribute :layer, default: {}
@@ -12,7 +12,7 @@ class Dataset < ApplicationRecord
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status_id, :size, :depth, :accuracy_value,
-                :description, :layer_selected
+                :description, :layer_selected, :source_error
 
   validates :geometry_name, :layer_name, :feature_class,
             :status_id, presence: true, on: :create
@@ -45,7 +45,7 @@ class Dataset < ApplicationRecord
   end
 
   def get_metadata_wfs_xml
-    url = source_dataset.sub('WFS:', '')
+    url = source_dataset.sub('WFS:', '').sub('?', '')
     cap_url = URI("#{url}?service=WFS&request=GetCapabilities")
     cap_request = get_request(cap_url, 3)
     cap_xml = cap_request.body
