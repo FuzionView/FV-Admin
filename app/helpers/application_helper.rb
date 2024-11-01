@@ -7,7 +7,7 @@ module ApplicationHelper
 
   def report_link(ticket_no)
     base_link = ENV['TEST_TICKET_URL']
-    link_to ticket_no, "#{base_link}#{ticket_no}/report", target: '_blank'
+    link_to ticket_no, "#{base_link}#{ticket_no}/map", target: '_blank'
   end
 
   def new_link(text, path, hide_text='')
