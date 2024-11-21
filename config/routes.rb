@@ -8,6 +8,12 @@ Rails.application.routes.draw do
   resources :owners do
     resources :datasets do
       match :test_ticket, via: [:get, :post]
+      member do
+        get :new_wizard
+        post :create_step1
+        post :create_step2
+        post :create_step3
+      end
     end
     resources :users, except: [:show]
   end

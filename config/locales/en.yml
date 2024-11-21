@@ -53,4 +53,5 @@ en:
       dataset:
         source_sql: "Source SQL"
         source_co: "Source CO"
+        source_co_v: "Source CO"
         source_srs: "Source SRS"

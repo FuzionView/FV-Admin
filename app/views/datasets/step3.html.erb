@@ -1,0 +1,102 @@
+<h1><%= @owner.name %>: New dataset</h1>
+
+<%= simple_form_for(@dataset, url: @url, data: { turbo: false }) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <p>"Map" your data attributes to the FuztionView Schema.</p>
+
+  <div class="row">
+    <div class="col-6 col-md-8 col-sm-12">
+      <div class="form-inputs">
+        <%= f.input :name, as: :string %>
+          <div class='mb-1'>Source Dataset:</div>
+           <%= f.hidden_field :source_dataset %>
+           <p><%= f.object.source_dataset %></p>
+          <% if @layers.any? %>
+            <% if f.object.layer_name.present? %>
+              <div class='mb-1'>Layer name:</div>
+              <%= f.hidden_field :layer_name %>
+              <p><%= f.object.layer_name %></p>
+            <% else %>
+              <%= f.input :layer_name, collection: @layers %>
+            <% end %>
+          <% end %>
+          <% if @options.any? %>
+            <div class="row">
+              <div class="col">
+                <strong>Your Data</strong>
+              </div>
+              <div class="col">
+                <strong>FuzionView Schema Attribute</strong>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :geometry_name, collection: @geomFields %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Geometry
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :feature_class, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Feature Class
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :status_id, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Status ID
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :size, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Size
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :depth, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Depth
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <%= f.input :accuracy_value, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Accuracy Value
+              </div>
+            </div>
+            <div class="row">
+              <div class="col d-flex align-items-center">
+                <%= f.input :description, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Description
+              </div>
+            </div>
+        <% end %>
+        <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions">
+    <%= f.button :submit, 'Submit', class: 'btn btn-primary' %>
+  </div>
+<% end %>
+<br>
+
+<div>
+  <%= link_to "Back to data provider", owner_path(@dataset.owner_id) %>
+</div>

@@ -33,8 +33,24 @@ class DatasetPolicy < ApplicationPolicy
     create?
   end
 
+  def new_wizard?
+    create?
+  end
+
   def create?
     user.administrator? || user.data_provider?
+  end
+
+  def create_step1?
+    create?
+  end
+
+  def create_step2?
+    create?
+  end
+
+  def create_step3?
+    create?
   end
 
   def destroy?

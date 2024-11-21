@@ -1,0 +1,36 @@
+<h1><%= @owner.name %>: New dataset</h1>
+
+<%= simple_form_for(@dataset, url: @url, data: { turbo: false }) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <p>Your datasource has multiple layers. Please select one.</p>
+
+  <div class="row">
+    <div class="col-6 col-md-8 col-sm-12">
+      <div class="form-inputs">
+        <%= f.input :name, as: :string %>
+        <div class='mb-1'>Source Dataset:</div>
+        <%= f.hidden_field :source_dataset %>
+        <p><%= f.object.source_dataset %></p>
+        <% if @layers.any? %>
+          <% if f.object.layer_name.present? %>
+            <div class='mb-1'>Layer name:</div>
+            <%= f.hidden_field :layer_name %>
+            <p><%= f.object.layer_name %></p>
+          <% else %>
+            <%= f.input :layer_name, collection: @layers %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, 'Submit', class: 'btn btn-primary' %>
+  </div>
+<% end %>
+<br>
+
+<div>
+  <%= link_to "Back to data provider", owner_path(@dataset.owner_id) %>
+</div>

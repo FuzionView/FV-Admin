@@ -1,7 +1,7 @@
 class DatasetsController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit new create update destroy test_ticket ]
+  before_action :set_owner, only: %i[ show edit new create new_wizard create_step1 create_step2 create_step3 update destroy test_ticket ]
   before_action :set_dataset, only: %i[ show edit update destroy ]
 
   # GET /datasets
@@ -18,8 +18,16 @@ class DatasetsController < ApplicationController
   def new
     authorize Dataset
     @dataset = @owner.datasets.build
-    @layers = []
-    @options = []
+  end
+
+  def create
+    @dataset = @owner.datasets.new(dataset_params)
+    authorize @dataset
+    if @dataset.save(validate: false)
+      redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   # GET /datasets/1/edit
@@ -27,34 +35,88 @@ class DatasetsController < ApplicationController
     authorize @dataset
   end
 
-  # POST /datasets
-  def create
+  def new_wizard
+    authorize Dataset
+    @dataset = @owner.datasets.build
+    @layers = []
+    @options = []
+    @url = create_step1_owner_dataset_path(id: @owner)
+    render :step1
+  end
+
+  def create_step1
     @dataset = @owner.datasets.new(dataset_params)
     authorize @dataset
+    @layers = []
+    @options = []
+    if (@dataset.name.blank? || @dataset.source_dataset.blank?)
+      @dataset.valid?
+      @url = create_step1_owner_dataset_path(id: @owner)
+      render :step1, status: :unprocessable_entity
+    else
+      get_metadata
+      if @layers.size > 1
+        @url = create_step2_owner_dataset_path(id: @owner)
+        render :step2
+      else
+        @url = create_step3_owner_dataset_path(@owner)
+        render :step3
+      end
+    end
+  rescue StandardError => e
+    @url = create_step1_owner_dataset_path(id: @owner)
+    @dataset.source_error = e.message
+    flash[:error] = "Error: #{e.message}"
+    render :step1, status: :unprocessable_entity
+  end
+
+  def create_step2
+    @dataset = @owner.datasets.new(dataset_params)
+    authorize @dataset
+    @layers = []
+    @options = []
+    get_metadata
+    if @dataset.layer_name.blank?
+      @dataset.valid?
+      @url = create_step2_owner_dataset_path(id: @owner)
+      render :step2, status: :unprocessable_entity
+    else
+      @url = create_step3_owner_dataset_path(@owner)
+      render :step3
+    end
+  rescue StandardError => e
+    @dataset.source_error = e.message
+    flash[:error] = "Error: #{e.message}"
+    render :step2, status: :unprocessable_entity
+  end
+
+  def create_step3
+    @dataset = @owner.datasets.new(dataset_params)
+    authorize @dataset
+    @url = owner_datasets_path(@owner)
+    get_metadata
     if @dataset.source_dataset.present? &&
         @dataset.layer_name.present? &&
-        @dataset.layer_selected.present? &&
         @dataset.save
       redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
     else
-      @layers = []
-      @options = []
-      begin
-        if @dataset.source_dataset.present?
-          @layers, @geomFields, @options = @dataset.get_metadata
-          if @layers.size == 1 && @dataset.layer_selected.blank?
-            @dataset.layer_name = @layers.first
-          end
-          if @geomFields.size == 1
-            @dataset.geometry_name = @geomFields.first
-          end
-        end
-        @dataset.valid? unless @dataset.layer_selected.blank?
-      rescue StandardError => e
-        @dataset.source_error = e.message
-        flash[:error] = "Error: #{e.message}"
-      end
-      render :new, status: :unprocessable_entity
+      render :step3, status: :unprocessable_entity
+    end
+  rescue StandardError => e
+    @dataset.source_error = e.message
+    flash[:error] = "Error: #{e.message}"
+    render :step3, status: :unprocessable_entity
+  end
+
+  def get_metadata
+    @layers, @geomFields, @options = @dataset.get_metadata
+    if @layers.size == 0
+      raise "Unable to identify any layers in this service."
+    elsif @layers.size == 1
+      @dataset.layer_name = @layers.first
+    end
+    if @geomFields.size == 1
+      @dataset.geometry_name = @geomFields.first
     end
   end
 
@@ -116,10 +178,9 @@ class DatasetsController < ApplicationController
                                         :description,
                                         :source_sql,
                                         :name,
-                                        :source_co,
                                         :source_srs,
                                         :cache_whole_dataset,
                                         :enabled,
-                                        :layer_selected)
+                                        :source_co_v)
     end
 end
