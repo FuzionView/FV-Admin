@@ -18,8 +18,9 @@ class ApplicationController < ActionController::Base
   end
 
   def logout
+    id_token = session[:id_token]
     reset_session
-    redirect_to root_path
+    redirect_to "#{ENV['OP_LOGOUT_URL']}?id_token_hint=#{id_token}&post_logout_redirect_uri=#{root_url}", allow_other_host: true
   end
 
   def not_authorized
@@ -57,6 +58,7 @@ class ApplicationController < ActionController::Base
   end
 
   def open_id_authorize(auth)
+    id_token = auth.dig('credentials', 'id_token')
     first_name = auth.dig('extra', 'raw_info', 'first_name')
     last_name = auth.dig('extra', 'raw_info', 'last_name')
     email_address = auth.dig('extra', 'raw_info', 'email')
@@ -64,6 +66,7 @@ class ApplicationController < ActionController::Base
 
     raise AuthorizationException, 'No roles assigned.' if roles.empty?
 
+    session[:id_token] = id_token
     session[:email_address] = email_address
     session[:roles] = roles
   rescue AuthorizationException => _e
@@ -71,9 +74,6 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    # session[:email_address] = 'bpellinen@gmail.com'
-    # session[:roles] = ['Data Provider']
-    # session[:roles] = ['Administrator']
     return nil if session[:email_address].blank? || session[:roles].nil?
 
     @current_user ||= AuthorizedUser.new(session[:email_address], session[:roles])
