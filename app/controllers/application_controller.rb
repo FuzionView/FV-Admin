@@ -20,7 +20,8 @@ class ApplicationController < ActionController::Base
   def logout
     id_token = session[:id_token]
     reset_session
-    redirect_to "#{ENV['OP_LOGOUT_URL']}?id_token_hint=#{id_token}&post_logout_redirect_uri=#{root_url}", allow_other_host: true
+    logout_url = "https://#{ENV['OP_HOST']}#{ENV['OP_REALM']}#{ENV['OP_LOGOUT_ENDPOINT']}"
+    redirect_to "#{logout_url}?id_token_hint=#{id_token}&post_logout_redirect_uri=#{root_url}", allow_other_host: true
   end
 
   def not_authorized
