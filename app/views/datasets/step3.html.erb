@@ -40,6 +40,14 @@
             </div>
             <div class="row">
               <div class="col">
+                <%= f.input :owner_fid, collection: @options %>
+              </div>
+              <div class="col d-flex align-items-center">
+                Owner FID
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
                 <%= f.input :feature_class, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">

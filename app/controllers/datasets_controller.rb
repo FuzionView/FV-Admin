@@ -93,7 +93,7 @@ class DatasetsController < ApplicationController
   def create_step3
     @dataset = @owner.datasets.new(dataset_params)
     authorize @dataset
-    @url = owner_datasets_path(@owner)
+    @url = create_step3_owner_dataset_path(@owner)
     get_metadata
     if @dataset.source_dataset.present? &&
         @dataset.layer_name.present? &&
@@ -166,6 +166,7 @@ class DatasetsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def dataset_params
       params.fetch(:dataset, {}).permit(:owner_id,
+                                        :owner_fid,
                                         :source_dataset,
                                         :layer_name,
                                         :geometry_name,

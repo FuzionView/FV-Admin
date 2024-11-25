@@ -1,7 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-// import "leaflet"
-// import "leaflet-css"
-// import { DrawAreaSelection } from '@bopen/leaflet-area-selection';
 
 // Connects to data-controller="map"
 export default class extends Controller {
