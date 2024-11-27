@@ -1,5 +1,7 @@
 <h1><%= @owner.name %>: New dataset</h1>
 
+<p>This method of dataset entry provides minimal validation.</p>
+
 <%= render "form", dataset: @dataset, url: owner_datasets_path(@owner) %>
 
 <br>

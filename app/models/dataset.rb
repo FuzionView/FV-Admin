@@ -20,6 +20,7 @@ class Dataset < ApplicationRecord
   attribute :layer, default: {}
 
   validates :name, :source_dataset, :source_sql, presence: true
+  validates :name, :source_dataset, :source_sql, presence: true, on: :basic
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status_id, :size, :depth, :accuracy_value,
@@ -189,11 +190,11 @@ class Dataset < ApplicationRecord
     end
   end
 
-	def format_feature_server_url(url, number)
-		formatted_url = url.sub(%r{FeatureServer/(\d+)?(query\?)?}, "FeatureServer/#{number}/query?")
-		formatted_url += "/query?" unless formatted_url.include?("/query?")
+  def format_feature_server_url(url, number)
+    formatted_url = url.sub(%r{FeatureServer/(\d+)?(query\?)?}, "FeatureServer/#{number}/query?")
+    formatted_url += "/query?" unless formatted_url.include?("/query?")
     formatted_url.gsub('?/', '?')
-	end
+  end
 
   def adjusted_esri_url(url)
     match = url.match(/.*?FeatureServer/)
@@ -202,47 +203,17 @@ class Dataset < ApplicationRecord
     raise "Expected the path to include 'FeatureServer'"
   end
 
-	def validate_esri_query_string(query_string)
-		expected_keys = %w[f where outFields orderByFields resultRecordCount]
-		parsed_params = CGI.parse(query_string)
-		actual_keys = parsed_params.keys
-		missing_keys = expected_keys - actual_keys
+  def validate_esri_query_string(query_string)
+    expected_keys = %w[f where outFields orderByFields resultRecordCount]
+    parsed_params = CGI.parse(query_string)
+    actual_keys = parsed_params.keys
+    missing_keys = expected_keys - actual_keys
 
     if missing_keys.any?
       raise "Missing query parmeters: #{missing_keys.join(', ')}. ESRIJSON requires a query string similar to the following: '#{ESRI_QUERY_DEFAULT}'"
     else
       query_string
     end
-	end
-
-  def self.test_esri
-    d = new(source_dataset: 'https://services1.arcgis.com/3fjYPqJf7qalQMlb/ArcGIS/rest/services/Control_Points/FeatureServer/0')
-    d.get_layer_metadata_esri
-  end
-
-  def self.test_esri1
-    d = new(source_dataset: 'https://services1.arcgis.com/9meaaHE3uiba0zr8/ArcGIS/rest/services/StreetlightsTrafficSignals/FeatureServer/')
-    d.layer = {"id"=>12, "name"=>"Street Lighting System Lines"}
-    d.get_metadata
-    d.source_dataset
-  end
-
-  def self.test_esri2
-    d = new(source_dataset: 'https://services1.arcgis.com/9meaaHE3uiba0zr8/ArcGIS/rest/services/StreetlightsTrafficSignals/FeatureServer/12/query?f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000')
-    d.layer = {"id"=>12, "name"=>"Street Lighting System Lines"}
-    d.get_metadata
-  end
-
-  def self.test_wfs
-    source_dataset = "WFS:https://webgist.dot.state.mn.us/65ags/services/Hosted/SURFACE_ITS_UTILITIES/MapServer/WFSServer"
-    d = new(source_dataset: source_dataset)
-    d.get_metadata_wfs_xml
-  end
-
-  def self.test_wfs1
-    source_dataset = "https://pwgeo.org/datasets/UTILITIES_COMM/STREET_LIGHTING_SYSTEM/street_lighting_system_public.map?"
-    d = new(source_dataset: source_dataset)
-    d.get_metadata_wfs_xml
   end
 
   private
