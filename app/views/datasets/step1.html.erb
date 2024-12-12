@@ -4,8 +4,8 @@
   <%= f.error_notification %>
   <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
   <p>Enter the name and URL of your dataset. ESRIJSON and WFS are supported.
-  Use a 'WFS:' prefix before WFS dataset urls. ESRIJON Sources should
-  start with http(s). <%= link_to 'Basic dataset entry', new_owner_dataset_path(@owner) %></p>
+  Use a 'WFS:' prefix before WFS dataset urls. ESRIJSON Sources should
+  start with 'ESRIJSON:'. <%= link_to 'Basic dataset entry', new_owner_dataset_path(@owner) %></p>
 
   <div class="row">
     <div class="col-6 col-md-8 col-sm-12">
