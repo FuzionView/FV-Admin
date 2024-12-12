@@ -5,7 +5,7 @@ require 'cgi'
 class Dataset < ApplicationRecord
   WFS = 'WFS:'
   ESRIJSON = 'ESRIJSON:'
-  ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000'
+  ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&'
 
   WFS_XPATH_GEOM = "//xsd:complexType//xsd:element[@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType']/@name"
   ESRI_WFS_XPATH_GEOM = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType']/@name"
@@ -80,13 +80,6 @@ class Dataset < ApplicationRecord
       return get_metadata_esri
     elsif source_dataset.starts_with?(WFS)
       return get_metadata_wfs_xml
-    elsif source_dataset.starts_with?('./')
-      self.source_srs = 'EPSG:6344'
-      self.layer_name = 'unknown'
-      self.feature_class = 'unknown'
-      self.status_id = 'unknown'
-      self.geometry_name = 'geometry'
-      return [['unknown'], ['geometry'], ['unknown']]
     end
 
     raise "Valid sources start with 'WFS:', or 'ESRIJSON:'."
@@ -94,6 +87,8 @@ class Dataset < ApplicationRecord
 
   def get_metadata_wfs_xml
     url = source_dataset.sub(WFS, '').sub('?', '')
+    tmp = URI(url)
+    raise "A URL with a host is required" unless tmp.host
     cap_url = URI("#{url}?service=WFS&request=GetCapabilities")
     cap_request = get_request(cap_url, 3)
     cap_xml = cap_request.body
@@ -120,7 +115,9 @@ class Dataset < ApplicationRecord
         geom_name = feat_doc.xpath(WFS_XPATH_GEOM).map(&:value)
       end
     end
-
+    # WFS urls must end with a ?
+    source_dataset.chomp!('?')
+    self.source_dataset = "#{source_dataset}?"
     [feature_types, geom_name, feature_attributes]
   end
 
@@ -188,6 +185,9 @@ class Dataset < ApplicationRecord
       "#{query_string.present? ? validate_esri_query_string(query_string) : ESRI_QUERY_DEFAULT}"
       self.source_dataset = tmp
     end
+    # ESRIJSON urls must end with a &
+    source_dataset.chomp!('&')
+    self.source_dataset = "#{source_dataset}&"
   end
 
   def format_feature_server_url(url, number)
