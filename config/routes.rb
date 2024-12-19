@@ -6,6 +6,10 @@ Rails.application.routes.draw do
   # match "application/role", via: [:get, :post]
 
   resources :owners do
+    member do
+      match :service_area, via: [:get, :post]
+      post :delete_service_area
+    end
     resources :datasets do
       match :test_ticket, via: [:get, :post]
       member do

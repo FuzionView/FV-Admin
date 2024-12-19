@@ -1,0 +1,37 @@
+<h1>Service Area for <%= @owner&.name %></h1>
+
+<p>Define a service area. This will allow the system to optimize service
+requests.</p>
+
+<div id="map" class="leaflet-container" style="min-height: 500px">
+  <div data-controller="service-area-map"></div>
+</div>
+
+<%= simple_form_for(@owner, url: service_area_owner_path(@owner),
+                    method: :post,
+                    data: { turbo: false }) do |f| %>
+
+  <div id="polygon"></div>
+
+  <%= f.input :service_area, as: :hidden %>
+
+  <div class="form-actions">
+    <%= f.button :submit, 'Submit', class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<br>
+<%= simple_form_for(@owner, url: delete_service_area_owner_path(@owner),
+                    method: :post,
+                    data: { turbo: true }) do |f| %>
+
+
+  <div class="form-actions">
+    <%= f.button :submit, 'Delete service area', class: 'btn btn-danger',
+      data: { turbo: true, turbo_confirm: 'Are you sure?' } %>
+  </div>
+<% end %>
+
+<div class="pt-3">
+  <%= link_to "Back to owner", owner_path(@owner) %>
+</div>

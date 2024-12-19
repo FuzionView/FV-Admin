@@ -10,9 +10,11 @@ functionality. Select an area on the map to start.</p>
 <%= simple_form_for(@ticket, url: owner_dataset_test_ticket_path(@dataset.owner, @dataset),
                     data: { turbo: false }) do |f| %>
 
-<div id="polygon"></div>
+  <div id="polygon"></div>
 
   <%= f.input :geom, as: :hidden %>
+  <input type="hidden" name="owner_service_area" id="owner_service_area"
+   value="<%= @dataset.owner.service_area %>">
 
   <div class="form-actions">
     <%= f.button :submit, 'Submit', form: 'new_ticket', class: 'btn btn-primary' %>

@@ -35,5 +35,14 @@
     No datasets yet.
   </p>
 <% end %>
-
+<span>
 <%= new_link 'New dataset', new_wizard_owner_dataset_path(@owner) %>
+</span>
+<span>
+<%=
+    link_to service_area_owner_path(owner_id: @owner), class: 'text-body' do
+        content_tag(:i, '', title: 'Service Area', class: 'ms-2 bi-map', style: 'font-size: 2rem;') +
+      content_tag(:span, 'Define a Service Area', class: 'ms-2 me-2')
+    end
+%>
+</span>

@@ -13,7 +13,7 @@ export default class extends Controller {
     var areaSelection = new window.leafletAreaSelection.DrawAreaSelection(
       {
         onPolygonReady: (polygon) => {
-          document.getElementById('ticket_geom').value = JSON.stringify(polygon.toGeoJSON(3).geometry, undefined, 2);
+          document.getElementById('owner_service_area').value = JSON.stringify(polygon.toGeoJSON(3).geometry, undefined, 2);
         },
         onPolygonDblClick: (polygon, control, ev) => {
           const geojson = geoJSON(polygon.toGeoJSON(), {
@@ -46,8 +46,8 @@ export default class extends Controller {
       geolayer.eachLayer(function (layer) {
         map.fitBounds(layer.getBounds());
       });
-    }
 
+    }
   }
 
   disconnect(){

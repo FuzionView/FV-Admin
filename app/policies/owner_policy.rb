@@ -33,6 +33,14 @@ class OwnerPolicy < ApplicationPolicy
     user.administrator?
   end
 
+  def service_area?
+    create?
+  end
+
+  def delete_service_area?
+    create?
+  end
+
   def destroy?
     create?
   end

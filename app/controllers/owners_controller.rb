@@ -1,7 +1,7 @@
 class OwnersController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit update destroy ]
+  before_action :set_owner, only: %i[ show edit update destroy service_area delete_service_area ]
 
   # GET /owners
   def index
@@ -52,6 +52,29 @@ class OwnersController < ApplicationController
     authorize @owner
     @owner.destroy!
     redirect_to owners_url, notice: "Data provider was successfully destroyed.", status: :see_other
+  end
+
+  def service_area
+    authorize @owner
+    if request.post?
+      @owner.service_area = params[:owner][:service_area]
+      if @owner.save
+        redirect_to service_area_owner_path(owner_id: @owner), notice: "Service area set.", status: :see_other
+      else
+        render :service_area, status: :unprocessable_entity
+      end
+    end
+  end
+
+  def delete_service_area
+    authorize @owner
+    if request.post?
+      if @owner.update_column(:service_area, nil)
+        redirect_to service_area_owner_path(owner_id: @owner), notice: "Service area deleted.", status: :see_other
+      else
+        render :service_area, status: :unprocessable_entity
+      end
+    end
   end
 
   private
