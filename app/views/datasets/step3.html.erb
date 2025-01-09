@@ -12,7 +12,7 @@
           <div class='mb-1'>Source Dataset:</div>
            <%= f.hidden_field :source_dataset %>
            <p><%= f.object.source_dataset %></p>
-          <% if @layers.any? %>
+          <% if @layers && @layers.any? %>
             <% if f.object.layer_name.present? %>
               <div class='mb-1'>Layer name:</div>
               <%= f.hidden_field :layer_name %>
@@ -21,7 +21,7 @@
               <%= f.input :layer_name, collection: @layers %>
             <% end %>
           <% end %>
-          <% if @options.any? %>
+          <% if @options && @options.any? %>
             <div class="row">
               <div class="col">
                 <strong>Your Data</strong>

@@ -4,11 +4,6 @@ class DatasetsController < ApplicationController
   before_action :set_owner, only: %i[ show edit new create new_wizard create_step1 create_step2 create_step3 update destroy test_ticket ]
   before_action :set_dataset, only: %i[ show edit update destroy ]
 
-  # GET /datasets
-  def index
-    @datasets = policy_scope(Dataset).all
-  end
-
   # GET /datasets/1
   def show
     authorize @dataset

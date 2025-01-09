@@ -3,12 +3,18 @@ require "test_helper"
 class DatasetsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @dataset = datasets(:one)
+    OmniAuth.config.test_mode = true
+    omni_hash =  {  uid: "12345",
+                    extra: { raw_info: { email: "bob@example.org",
+                                         first_name: 'Bob',
+                                         last_name: 'B',
+                                         roles: ['Administrator'] }},
+                  credentials: {token: "abcd"} }
+    OmniAuth.config.add_mock(:oidc, omni_hash)
+    Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
+    get "/auth/oidc/callback"
   end
 
-  test "should get index" do
-    get datasets_url
-    assert_response :success
-  end
 
   test "should get new" do
     get new_dataset_url
@@ -24,25 +30,25 @@ class DatasetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show dataset" do
-    get dataset_url(@dataset)
+    get owner_dataset_url(@dataset.owner, @dataset)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_dataset_url(@dataset)
+    get edit_owner_dataset_url(@dataset.owner, @dataset)
     assert_response :success
   end
 
   test "should update dataset" do
-    patch dataset_url(@dataset), params: { dataset: {  } }
-    assert_redirected_to dataset_url(@dataset)
+    patch owner_dataset_url(@dataset.owner, @dataset), params: { dataset: {  } }
+    assert_redirected_to owner_dataset_url(@dataset.owner, @dataset)
   end
 
   test "should destroy dataset" do
     assert_difference("Dataset.count", -1) do
-      delete dataset_url(@dataset)
+      delete owner_dataset_url(@dataset.owner, @dataset)
     end
 
-    assert_redirected_to datasets_url
+    assert_redirected_to owner_url(@dataset.owner)
   end
 end
