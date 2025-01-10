@@ -60,6 +60,6 @@ class FeatureStatusesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def feature_status_params
-      params.fetch(:feature_status, {}).permit(:status)
+      params.fetch(:feature_status, {}).permit(:id, :status)
     end
 end
