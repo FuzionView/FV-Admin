@@ -5,12 +5,14 @@
 # below each fixture, per the syntax in the comments below
 #
 one:
-  name: "Feature class 1"
-  code: "Code 1"
-  color_mapserv: '255 0 0'
-  color_hex: '#ffffff'
+  name: 'Feature class 1'
+  code: 'Code 1'
+  color_mapserv: '0 0 0'
+  color_hex: '#000000'
 
 
 two:
-  name: "Feature class 2"
-  code: "Code 2"
+  name: 'Feature class 2'
+  code: 'Code 2'
+  color_mapserv: '255 0 0'
+  color_hex: '#ff0000'

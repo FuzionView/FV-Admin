@@ -28,8 +28,8 @@ class FeatureClassesControllerTest < ActionDispatch::IntegrationTest
   test "should create feature_class" do
     assert_difference("FeatureClass.count") do
       post feature_classes_url, params: {
-        feature_class: {id: 'id',  name: 'test', color_hex: 'ffffff',
-                        color_mapserv: '255 255 255', code: 'test'}
+        feature_class: {id: 'id',  name: 'test', color_hex: '#ff00ff',
+                        color_mapserv: '255 0 255', code: 'test'}
       }
     end
 
