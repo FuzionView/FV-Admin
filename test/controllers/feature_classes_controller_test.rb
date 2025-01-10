@@ -3,6 +3,16 @@ require "test_helper"
 class FeatureClassesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @feature_class = feature_classes(:one)
+    OmniAuth.config.test_mode = true
+    omni_hash =  {  uid: "12345",
+                    extra: { raw_info: { email: "bob@example.org",
+                                         first_name: 'Bob',
+                                         last_name: 'B',
+                                         roles: ['Administrator'] }},
+                  credentials: {token: "abcd"} }
+    OmniAuth.config.add_mock(:oidc, omni_hash)
+    Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
+    get "/auth/oidc/callback"
   end
 
   test "should get index" do
@@ -17,15 +27,13 @@ class FeatureClassesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create feature_class" do
     assert_difference("FeatureClass.count") do
-      post feature_classes_url, params: { feature_class: {  } }
+      post feature_classes_url, params: {
+        feature_class: {id: 'id',  name: 'test', color_hex: 'ffffff',
+                        color_mapserv: '255 255 255', code: 'test'}
+      }
     end
 
-    assert_redirected_to feature_class_url(FeatureClass.last)
-  end
-
-  test "should show feature_class" do
-    get feature_class_url(@feature_class)
-    assert_response :success
+    assert_redirected_to feature_classes_url
   end
 
   test "should get edit" do
@@ -34,8 +42,8 @@ class FeatureClassesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update feature_class" do
-    patch feature_class_url(@feature_class), params: { feature_class: {  } }
-    assert_redirected_to feature_class_url(@feature_class)
+    patch feature_class_url(@feature_class), params: { feature_class: { color_mapserv: '255 255 255' } }
+    assert_redirected_to feature_classes_url
   end
 
   test "should destroy feature_class" do

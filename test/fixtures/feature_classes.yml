@@ -4,8 +4,13 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+one:
+  name: "Feature class 1"
+  code: "Code 1"
+  color_mapserv: '255 0 0'
+  color_hex: '#ffffff'
+
+
+two:
+  name: "Feature class 2"
+  code: "Code 2"

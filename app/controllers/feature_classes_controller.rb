@@ -60,6 +60,6 @@ class FeatureClassesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def feature_class_params
-      params.fetch(:feature_class, {}).permit(:id, :name, :color_mapserv, :color_hex)
+      params.fetch(:feature_class, {}).permit(:id, :name, :color_mapserv, :color_hex, :code)
     end
 end
