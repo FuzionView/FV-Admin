@@ -3,6 +3,16 @@ require "test_helper"
 class OwnersControllerTest < ActionDispatch::IntegrationTest
   setup do
     @owner = owners(:one)
+    OmniAuth.config.test_mode = true
+    omni_hash =  {  uid: "12345",
+                    extra: { raw_info: { email: "bob@example.org",
+                                         first_name: 'Bob',
+                                         last_name: 'B',
+                                         roles: ['Administrator'] }},
+                  credentials: {token: "abcd"} }
+    OmniAuth.config.add_mock(:oidc, omni_hash)
+    Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
+    get "/auth/oidc/callback"
   end
 
   test "should get index" do
@@ -17,7 +27,7 @@ class OwnersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create owner" do
     assert_difference("Owner.count") do
-      post owners_url, params: { owner: {  } }
+      post owners_url, params: { owner: { name: 'Owner 3' } }
     end
 
     assert_redirected_to owner_url(Owner.last)
