@@ -5,7 +5,8 @@ class DatasetTest < ActiveSupport::TestCase
     @valid_attributes = {
       name: 'Test Dataset',
       source_dataset: 'WFS:http://example.com/wfs',
-      source_sql: 'SELECT * FROM test_layer;'
+      source_sql: 'SELECT * FROM test_layer;',
+      source_srs: 'EPSG:26915'
     }
     @owner = owners(:one)
     @dataset = @owner.datasets.build(@valid_attributes)

@@ -2,7 +2,8 @@ require "test_helper"
 
 class DatasetsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @dataset = datasets(:one)
+    @owner = owners(:one)
+    @dataset = @owner.datasets.first
     OmniAuth.config.test_mode = true
     omni_hash =  {  uid: "12345",
                     extra: { raw_info: { email: "bob@example.org",
@@ -17,16 +18,22 @@ class DatasetsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "should get new" do
-    get new_dataset_url
+    get new_owner_dataset_url(@owner)
     assert_response :success
   end
 
   test "should create dataset" do
     assert_difference("Dataset.count") do
-      post datasets_url, params: { dataset: {  } }
+      post owner_datasets_url(@owner), params: {
+        dataset: { name: 'Name', source_sql: 'select *',
+                   source_dataset: 'WFS:http://example.com',
+                   source_srs: 'EPSG:26915'
+                 }
+      }
     end
 
-    assert_redirected_to dataset_url(Dataset.last)
+    assert_redirected_to owner_dataset_url(@owner, Dataset.last)
+
   end
 
   test "should show dataset" do

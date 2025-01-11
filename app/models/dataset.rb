@@ -21,8 +21,8 @@ class Dataset < ApplicationRecord
   attribute :layers, default: []
   attribute :layer, default: {}
 
-  validates :name, :source_dataset, :source_sql, presence: true
-  validates :name, :source_dataset, :source_sql, presence: true, on: :basic
+  validates :name, :source_dataset, :source_sql, :source_srs, presence: true
+  validates :name, :source_dataset, :source_sql, :source_srs, presence: true, on: :basic
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status_id, :size, :depth, :accuracy_value,
@@ -60,7 +60,7 @@ class Dataset < ApplicationRecord
   end
 
   def layer_name_for_source
-    if source_dataset&.starts_with?(ESRIJSON, 'http')
+    if source_dataset&.starts_with?(ESRIJSON)
       'ESRIJSON'
     else
       "\"#{layer_name}\""

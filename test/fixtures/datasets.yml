@@ -6,6 +6,7 @@
 #
 one:
   owner: one
+  name: 'Dataset 1'
   source_dataset: 'http://test1.com'
   source_sql: 'select * from source'
   source_srs: 'EPSG:26915'
@@ -13,6 +14,7 @@ one:
 
 two:
   owner: two
+  name: 'Dataset 2'
   source_dataset: 'http://test1.com'
   source_sql: 'select * from source'
   source_srs: 'EPSG:26915'
