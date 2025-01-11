@@ -6,63 +6,63 @@
     <%= delete_link "Delete this dataset", [@owner, @dataset], 'Delete this dataset?' %>
   </span>
 </h1>
-<table>
-  <tr>
-    <td>
+<div class="container">
+  <div class="row">
+    <div class="col-2">
       Name:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <%= dataset.name %>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Source Dataset:
-    </td>
-    <td class="text-wrap">
+    </div>
+    <div class="col text-break">
       <%= dataset.source_dataset %>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Source SQL:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <pre class="prettyprint">
       <%= dataset.source_sql %>
       </pre>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Source CO:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <%= dataset.source_co %>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Source SRS:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <%= dataset.source_srs %>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Cache whole dataset?:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <%= dataset.cache_whole_dataset %>
-    </td>
-  </tr>
-  <tr>
-    <td>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
       Enabled?:
-    </td>
-    <td>
+    </div>
+    <div class="col">
       <%= dataset.enabled %>
-    </td>
-  </tr>
-</table>
+    </div>
+  </div>
+</div>
