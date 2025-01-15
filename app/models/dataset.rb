@@ -25,7 +25,7 @@ class Dataset < ApplicationRecord
   validates :name, :source_dataset, :source_sql, :source_srs, presence: true, on: :basic
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
-                :status_id, :size, :depth, :accuracy_value,
+                :status_id, :size, :depth, :accuracy_class,
                 :description, :source_error, :owner_fid,
                 :source_co_v
 
@@ -50,7 +50,7 @@ class Dataset < ApplicationRecord
        #{sqlquote(:status_id)},
        #{sqlquote(:size)},
        #{sqlquote(:depth)},
-       #{sqlquote(:accuracy_value)},
+       #{sqlquote(:accuracy_class)},
        #{sqlquote(:description)}
      FROM
        #{layer_name_for_source}
@@ -68,25 +68,25 @@ class Dataset < ApplicationRecord
   end
 
   def sqlquote(val)
-    result = eval(val.to_s)
+    result = send(val)
     if result.blank?
       "null #{val}"
     else
-      "\"#{eval(val.to_s)}\" #{val}"
+      "\"#{send(val)}\" #{val}"
     end
   end
 
   def get_metadata
     if source_dataset.starts_with?(ESRIJSON)
-      return get_metadata_esri
+      return esri_metadata
     elsif source_dataset.starts_with?(WFS)
-      return get_metadata_wfs_xml
+      return wfs_metadata
     end
 
     raise "Valid sources start with 'WFS:', or 'ESRIJSON:'."
   end
 
-  def get_metadata_wfs_xml
+  def wfs_metadata
     url = source_dataset.sub(WFS, '').sub('?', '')
     tmp = URI(url)
     raise 'A URL with a host is required' unless tmp.host
@@ -118,7 +118,7 @@ class Dataset < ApplicationRecord
     raise e
   end
 
-  def get_metadata_esri
+  def esri_metadata
     url = source_dataset.sub(ESRIJSON, '')
     json = post_esri_layers(url)
 
@@ -126,7 +126,7 @@ class Dataset < ApplicationRecord
     json_layers = json['layers'] || []
     layer_names = json_layers&.map { |l| l['name'] } || []
 
-    regex = /\/#{esri_service_type(url)}\/(\d+)(\/|\/query|)/
+    regex = %r{/#{esri_service_type(url)}/(\d+)(/|/query|)}
     layer_id = if (match = url.match(regex))
                  match[1]
                end
@@ -183,22 +183,6 @@ class Dataset < ApplicationRecord
     "#{path}/query?"
   end
 
-  def adjusted_esri_url(url)
-    service_type = esri_service_type(url)
-    match = url.match(/.*?#{service_type}/)
-    return match[0] if match
-
-    raise "Expected the path to include 'FeatureServer' or 'Mapserver'"
-  end
-
-  def esri_service_type(url)
-    if  url.include?('FeatureServer')
-      'FeatureServer'
-    elsif url.include?('MapServer')
-      'MapServer'
-    end
-  end
-
   def validate_esri_query_string(query_string)
     expected_keys = %w[f where outFields orderByFields resultRecordCount]
     parsed_params = CGI.parse(query_string)
@@ -213,6 +197,22 @@ class Dataset < ApplicationRecord
   end
 
   private
+
+  def adjusted_esri_url(url)
+    service_type = esri_service_type(url)
+    match = url.match(/.*?#{service_type}/)
+    return match[0] if match
+
+    raise "Expected the path to include 'FeatureServer' or 'Mapserver'"
+  end
+
+  def esri_service_type(url)
+    if url.include?('FeatureServer')
+      'FeatureServer'
+    elsif url.include?('MapServer')
+      'MapServer'
+    end
+  end
 
   def post_esri_layers(url)
     base_query_url = adjusted_esri_url(url)

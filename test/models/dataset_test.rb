@@ -192,7 +192,7 @@ class DatasetTest < ActiveSupport::TestCase
        null status_id,
        null size,
        null depth,
-       null accuracy_value,
+       null accuracy_class,
        null description
      FROM
        \"\"

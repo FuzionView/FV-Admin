@@ -170,7 +170,7 @@ class DatasetsController < ApplicationController
                                         :status_id,
                                         :size,
                                         :depth,
-                                        :accuracy_value,
+                                        :accuracy_class,
                                         :description,
                                         :source_sql,
                                         :name,
