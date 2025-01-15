@@ -18,7 +18,7 @@
   <% tickets.each do |t| %>
     <tbody>
       <tr>
-        <td><%= report_link(t) %></td>
+        <td><%= report_link(t.ticket_no) %></td>
         <td class="text-wrap"><%= t.status&.sub(/: \d+/, '') || 'PENDING' %></td>
         <td><%= t.feature_count %></td>
         <td><%= t.attempt %></td>
