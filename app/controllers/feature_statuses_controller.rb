@@ -1,7 +1,7 @@
 class FeatureStatusesController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_feature_status, only: %i[ edit update destroy ]
+  before_action :set_feature_status, only: %i[edit update destroy]
 
   # GET /feature_statuses
   def index
@@ -26,7 +26,7 @@ class FeatureStatusesController < ApplicationController
     @feature_status = FeatureStatus.new(feature_status_params)
 
     if @feature_status.save
-      redirect_to feature_statuses_path, notice: "Feature status was successfully created."
+      redirect_to feature_statuses_path, notice: 'Feature status was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class FeatureStatusesController < ApplicationController
   def update
     authorize @feature_status
     if @feature_status.update(feature_status_params)
-      redirect_to feature_statuses_path, notice: "Feature status was successfully updated.", status: :see_other
+      redirect_to feature_statuses_path, notice: 'Feature status was successfully updated.', status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,20 +46,21 @@ class FeatureStatusesController < ApplicationController
   def destroy
     authorize @feature_status
     @feature_status.destroy!
-    redirect_to feature_statuses_url, notice: "Feature status was successfully destroyed.", status: :see_other
+    redirect_to feature_statuses_url, notice: 'Feature status was successfully destroyed.', status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
     redirect_to(feature_statuses_url, notice: "Feature status is associated with other records and can't be deleted.",
-                status: :see_other)
+                                      status: :see_other)
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_feature_status
-      @feature_status = FeatureStatus.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def feature_status_params
-      params.fetch(:feature_status, {}).permit(:id, :status)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_feature_status
+    @feature_status = FeatureStatus.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def feature_status_params
+    params.fetch(:feature_status, {}).permit(:id, :name)
+  end
 end

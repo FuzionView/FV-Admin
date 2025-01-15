@@ -16,7 +16,6 @@ SET row_security = off;
 CREATE SCHEMA fv;
 
 CREATE EXTENSION postgis SCHEMA public;
-
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
@@ -39,7 +38,7 @@ CREATE FUNCTION fv.archive_deleted_tickets() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 	begin
-		insert into fv.archived_tickets(id,ticket_no,ticket_type,geom,publish_date,purge_date,is_latest,created_at) values((OLD).*);
+		insert into fv.archived_tickets(id,dataset_id,ticket_no,ticket_type,ticket_url,geom,publish_date,purge_date,is_latest,created_at) values((OLD).*);
 		return old;
 	end
 
@@ -71,6 +70,7 @@ CREATE TABLE fv.archived_tickets (
     dataset_id integer,
     ticket_no text NOT NULL,
     ticket_type text NOT NULL,
+    ticket_url text,
     geom public.geometry(MultiPolygon,6344) NOT NULL,
     publish_date timestamp with time zone NOT NULL,
     purge_date timestamp with time zone NOT NULL,
@@ -101,6 +101,7 @@ CREATE TABLE fv.tickets (
     dataset_id integer,
     ticket_no text NOT NULL,
     ticket_type text NOT NULL,
+    ticket_url text,
     geom public.geometry(MultiPolygon,6344) NOT NULL,
     publish_date timestamp with time zone NOT NULL,
     purge_date timestamp with time zone NOT NULL,
@@ -118,6 +119,7 @@ CREATE VIEW fv.current_tickets AS
     tickets.dataset_id,
     tickets.ticket_no,
     tickets.ticket_type,
+    tickets.ticket_url,
     ticket_type.description AS ticket_type_description,
     ticket_type.color_mapserv AS ticket_type_color_mapserv,
     ticket_type.color_hex AS ticket_type_color_hex,
@@ -138,7 +140,7 @@ CREATE VIEW fv.current_tickets AS
 
 CREATE TABLE fv.datasets (
     id integer NOT NULL,
-    owner_id integer,
+    owner_id integer NOT NULL,
     name text,
     source_dataset text NOT NULL,
     source_sql text NOT NULL,
@@ -170,6 +172,16 @@ ALTER SEQUENCE fv.datasets_id_seq OWNED BY fv.datasets.id;
 
 
 --
+-- Name: feature_accuracy_class; Type: TABLE; Schema: fv; Owner: -
+--
+
+CREATE TABLE fv.feature_accuracy_class (
+    id text NOT NULL,
+    name text NOT NULL
+);
+
+
+--
 -- Name: feature_class; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -187,8 +199,8 @@ CREATE TABLE fv.feature_class (
 --
 
 CREATE TABLE fv.feature_status (
-    id integer NOT NULL,
-    status text NOT NULL
+    id text NOT NULL,
+    name text NOT NULL
 );
 
 
@@ -200,14 +212,14 @@ CREATE TABLE fv.features (
     id bigint NOT NULL,
     dataset_id integer,
     ticket_id integer,
-    owner_fid text,
+    provider_fid text,
     feature_class text NOT NULL,
     geom public.geometry(Geometry,6344) NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    status_id integer,
+    status text,
     size double precision,
     depth double precision,
-    accuracy_value double precision,
+    accuracy_class text,
     description text
 );
 
@@ -256,21 +268,23 @@ CREATE VIEW fv.map_features AS
             features.feature_class,
             feature_class.name AS feature_class_name,
             feature_class.code AS feature_class_code,
-            feature_status.status,
+            features.status,
+            feature_status.name AS status_name,
             features.updated_at,
             features.size,
             features.depth,
-            features.accuracy_value,
+            features.accuracy_class,
             features.description,
             feature_class.color_mapserv,
             feature_class.color_hex,
-            features.ticket_id
+            features.ticket_id,
+            features.provider_fid
            FROM fv.features,
             fv.feature_class,
             fv.datasets,
             fv.owners,
             fv.feature_status
-          WHERE ((features.dataset_id = datasets.id) AND (datasets.owner_id = owners.id) AND (features.feature_class = feature_class.id) AND (features.status_id = feature_status.id))
+          WHERE ((features.dataset_id = datasets.id) AND (datasets.owner_id = owners.id) AND (features.feature_class = feature_class.id) AND (features.status = feature_status.id))
         )
  SELECT f.id,
     f.geom,
@@ -281,14 +295,16 @@ CREATE VIEW fv.map_features AS
     f.feature_class_name,
     f.feature_class_code,
     f.status,
+    f.status_name,
     f.updated_at,
     f.size,
     f.depth,
-    f.accuracy_value,
+    f.accuracy_class,
     f.description,
     f.color_mapserv,
     f.color_hex,
     f.ticket_id,
+    f.provider_fid,
     current_tickets.ticket_no,
     current_tickets.publish_date AS ticket_publish_date,
     current_tickets.purge_date AS ticket_purge_date
@@ -305,14 +321,16 @@ UNION ALL
     f.feature_class_name,
     f.feature_class_code,
     f.status,
+    f.status_name,
     f.updated_at,
     f.size,
     f.depth,
-    f.accuracy_value,
+    f.accuracy_class,
     f.description,
     f.color_mapserv,
     f.color_hex,
     f.ticket_id,
+    f.provider_fid,
     NULL::character varying AS ticket_no,
     NULL::timestamp with time zone AS ticket_publish_date,
     NULL::timestamp with time zone AS ticket_purge_date
@@ -365,6 +383,36 @@ CREATE TABLE fv.ticket_dataset_status (
 
 
 --
+-- Name: ticket_dataset_retry; Type: VIEW; Schema: fv; Owner: -
+--
+
+CREATE VIEW fv.ticket_dataset_retry AS
+ SELECT ticket_dataset_status.ticket_id,
+    ticket_dataset_status.dataset_id,
+    ticket_dataset_status.status,
+    ticket_dataset_status.updated_at,
+    ticket_dataset_status.attempt,
+    l1.success,
+    l3.retry_after,
+    l3.retry_now
+   FROM fv.ticket_dataset_status,
+    LATERAL ( SELECT (ticket_dataset_status.status ~~ 'SUCCESS:%'::text) AS success,
+            (ticket_dataset_status.updated_at + '7 days'::interval) AS retry_success_after,
+            (ticket_dataset_status.updated_at + ('00:05:00'::interval * ((2)::double precision ^ (LEAST(ticket_dataset_status.attempt, 8))::double precision))) AS retry_failed_after) l1(success, retry_success_after, retry_failed_after),
+    LATERAL ( SELECT (now() > l1.retry_success_after) AS "?column?",
+            (now() > l1.retry_failed_after) AS "?column?") l2(retry_success, retry_failed),
+    LATERAL ( SELECT
+                CASE
+                    WHEN l1.success THEN l1.retry_success_after
+                    ELSE l1.retry_failed_after
+                END AS retry_after,
+                CASE
+                    WHEN l1.success THEN l2.retry_success
+                    ELSE l2.retry_failed
+                END AS retry_now) l3(retry_after, retry_now);
+
+
+--
 -- Name: ticket_dataset_status_vw; Type: VIEW; Schema: fv; Owner: -
 --
 
@@ -376,6 +424,7 @@ CREATE VIEW fv.ticket_dataset_status_vw AS
     d.name AS dataset_name,
     t.ticket_no,
     t.ticket_type,
+    t.ticket_url,
     t.publish_date AS ticket_publish_date,
     t.purge_date AS ticket_purge_date,
     t.created_at AS ticket_created_at,
@@ -407,6 +456,73 @@ CREATE SEQUENCE fv.tickets_id_seq
 --
 
 ALTER SEQUENCE fv.tickets_id_seq OWNED BY fv.tickets.id;
+
+
+--
+-- Name: update_feature_cache; Type: VIEW; Schema: fv; Owner: -
+--
+
+CREATE VIEW fv.update_feature_cache AS
+ SELECT datasets.id AS dataset_id,
+    datasets.name AS dataset_name,
+    datasets.source_dataset,
+    datasets.source_sql,
+    datasets.source_co,
+    datasets.source_srs,
+    NULL::bigint AS ticket_id,
+    NULL::text AS ticket_no,
+    NULL::public.geometry AS buffered_geom,
+    NULL::boolean AS in_service_area,
+    tds.attempt,
+    tds.retry_after,
+    (tds.retry_now OR (tds.retry_now IS NULL)) AS update_now,
+    owners.id AS owner_id
+   FROM ((fv.owners
+     JOIN fv.datasets ON ((owners.id = datasets.owner_id)))
+     LEFT JOIN fv.ticket_dataset_retry tds ON (((tds.dataset_id = datasets.id) AND (tds.ticket_id IS NULL))))
+  WHERE (datasets.enabled AND datasets.cache_whole_dataset)
+UNION ALL
+ SELECT datasets.id AS dataset_id,
+    datasets.name AS dataset_name,
+    datasets.source_dataset,
+    datasets.source_sql,
+    datasets.source_co,
+    datasets.source_srs,
+    tickets.id AS ticket_id,
+    tickets.ticket_no,
+    tickets.buffered_geom,
+    l1.in_service_area,
+    tds.attempt,
+    tds.retry_after,
+    (tds.retry_now OR (tds.retry_now IS NULL)) AS update_now,
+    owners.id AS owner_id
+   FROM (((fv.owners
+     JOIN fv.datasets ON ((owners.id = datasets.owner_id)))
+     CROSS JOIN fv.current_tickets tickets)
+     LEFT JOIN fv.ticket_dataset_retry tds ON (((tds.dataset_id = datasets.id) AND (tds.ticket_id = tickets.id)))),
+    LATERAL ( SELECT public.st_intersects(owners.service_area, tickets.buffered_geom) AS st_intersects) l1(in_service_area)
+  WHERE (datasets.enabled AND (NOT datasets.cache_whole_dataset) AND (tickets.dataset_id IS NULL) AND ((owners.service_area IS NULL) OR l1.in_service_area))
+UNION ALL
+ SELECT datasets.id AS dataset_id,
+    datasets.name AS dataset_name,
+    datasets.source_dataset,
+    datasets.source_sql,
+    datasets.source_co,
+    datasets.source_srs,
+    tickets.id AS ticket_id,
+    tickets.ticket_no,
+    tickets.buffered_geom,
+    l1.in_service_area,
+    tds.attempt,
+    tds.retry_after,
+    (tds.retry_now OR (tds.retry_now IS NULL)) AS update_now,
+    owners.id AS owner_id
+   FROM (((fv.owners
+     JOIN fv.datasets ON ((owners.id = datasets.owner_id)))
+     CROSS JOIN fv.current_tickets tickets)
+     LEFT JOIN fv.ticket_dataset_retry tds ON (((tds.dataset_id = datasets.id) AND (tds.ticket_id = tickets.id)))),
+    LATERAL ( SELECT public.st_intersects(owners.service_area, tickets.buffered_geom) AS st_intersects) l1(in_service_area)
+  WHERE (tickets.dataset_id = datasets.id);
 
 
 --
@@ -498,6 +614,14 @@ ALTER TABLE ONLY fv.archived_tickets
 
 ALTER TABLE ONLY fv.datasets
     ADD CONSTRAINT datasets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feature_accuracy_class feature_accuracy_class_pkey; Type: CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.feature_accuracy_class
+    ADD CONSTRAINT feature_accuracy_class_pkey PRIMARY KEY (id);
 
 
 --
@@ -623,11 +747,19 @@ ALTER TABLE ONLY fv.datasets
 
 
 --
+-- Name: features feature_accuracy_class; Type: FK CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.features
+    ADD CONSTRAINT feature_accuracy_class FOREIGN KEY (accuracy_class) REFERENCES fv.feature_accuracy_class(id) MATCH FULL;
+
+
+--
 -- Name: features feature_status; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT feature_status FOREIGN KEY (status_id) REFERENCES fv.feature_status(id) MATCH FULL;
+    ADD CONSTRAINT feature_status FOREIGN KEY (status) REFERENCES fv.feature_status(id) MATCH FULL;
 
 
 --

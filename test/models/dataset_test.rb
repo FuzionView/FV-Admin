@@ -38,13 +38,13 @@ class DatasetTest < ActiveSupport::TestCase
     @dataset.geometry_name = 'geom'
     @dataset.layer_name = 'test_layer'
     @dataset.valid? # Trigger callbacks
-    assert_match /SELECT/, @dataset.source_sql
+    assert_match(/SELECT/, @dataset.source_sql)
   end
 
   test 'should set source_co from source_co_v on update' do
     @dataset.source_co_v = 'value1,value2,value3'
     @dataset.set_source_co
-    assert_equal ['value1', 'value2', 'value3'], @dataset.source_co
+    assert_equal %w[value1 value2 value3], @dataset.source_co
   end
 
   test 'get_metadata should raise error for invalid source_dataset' do
@@ -52,7 +52,7 @@ class DatasetTest < ActiveSupport::TestCase
     assert_raises(RuntimeError) { @dataset.get_metadata }
   end
 
-  test 'get_metadata_wfs_xml should return metadata' do
+  test 'wfs_metadata should return metadata' do
     @dataset.source_dataset = 'WFS:http://example.com/wfs?'
     mock_capabilities_response = <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
@@ -145,13 +145,13 @@ class DatasetTest < ActiveSupport::TestCase
 
     Dataset.any_instance.stubs(:get_wfs_capabilities).returns(mock_capabilities_response)
     Dataset.any_instance.stubs(:get_wfs_describe_feature).returns(mock_feature_response)
-    feature_types, geom_name, feature_attributes = @dataset.get_metadata_wfs_xml
+    feature_types, geom_name, feature_attributes = @dataset.wfs_metadata
     assert_equal ['SURFACE_ITS_UTILITIES:SURFACE_ITS_UTILITIES'], feature_types
     assert geom_name
     assert feature_attributes
   end
 
-  test 'get_metadata_esri should return metadata from FeatureServer' do
+  test 'esri_metadata should return metadata from FeatureServer' do
     @dataset.source_dataset = 'ESRIJSON:http://example.com/FeatureServer/1'
     mock_response = {
       'layers' => [
@@ -160,13 +160,13 @@ class DatasetTest < ActiveSupport::TestCase
       ]
     }.to_json
     HTTParty.stubs(:post).returns(stub(body: mock_response))
-    layer_names, geom_fields, options = @dataset.get_metadata_esri
-    assert_equal ['Layer1', 'Layer2'], layer_names
+    layer_names, geom_fields, options = @dataset.esri_metadata
+    assert_equal %w[Layer1 Layer2], layer_names
     assert_equal ['geometry'], geom_fields
-    assert_equal ['field1', 'field2'], options
+    assert_equal %w[field1 field2], options
   end
 
-  test 'get_metadata_esri should return metadata from MapServer' do
+  test 'esri_metadata should return metadata from MapServer' do
     @dataset.source_dataset = 'ESRIJSON:http://example.com/MapServer'
     mock_response = {
       'layers' => [
@@ -174,26 +174,46 @@ class DatasetTest < ActiveSupport::TestCase
       ]
     }.to_json
     HTTParty.stubs(:post).returns(stub(body: mock_response))
-    layer_names, geom_fields, options = @dataset.get_metadata_esri
+    layer_names, geom_fields, options = @dataset.esri_metadata
     assert_equal ['Layer1'], layer_names
     assert_equal ['geometry'], geom_fields
-    assert_equal ['field1', 'field2'], options
+    assert_equal %w[field1 field2], options
+  end
+
+  test 'format sql' do
+    @dataset.owner_fid = 'objectid'
+    @dataset.geometry_name = 'geom'
+    @dataset.set_sql_from_template
+    assert_equal @dataset.source_sql,
+                 "    SELECT
+       \"geom\" geom,
+       \"objectid\" owner_fid,
+       null feature_class,
+       null status_id,
+       null size,
+       null depth,
+       null accuracy_value,
+       null description
+     FROM
+       \"\"
+     ;
+"
   end
 
   test 'format map server url' do
-    path = "/test/MapServer/1"
+    path = '/test/MapServer/1'
     formatted_url = @dataset.format_feature_server_url(path)
     assert formatted_url.include?('MapServer/1/query?')
   end
 
   test 'can rebuild url' do
-    url = "https://example.com/MapServer/1"
+    url = 'https://example.com/MapServer/1'
     formatted_url = @dataset.rebuild_esri_url(url, 1)
     assert formatted_url.include?(url)
   end
 
   test 'can rebuild url with query' do
-    url = "https://example.com/MapServer/1/query?f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&"
+    url = 'https://example.com/MapServer/1/query?f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&'
     formatted_url = @dataset.rebuild_esri_url(url, 1)
     assert formatted_url.include?(url), "was #{formatted_url}"
   end

@@ -5,7 +5,7 @@
 # below each fixture, per the syntax in the comments below
 #
 one:
-  status: "Status 1"
+  name: "Status 1"
 
 two:
-  status: "Status 2"
+  name: "Status 2"

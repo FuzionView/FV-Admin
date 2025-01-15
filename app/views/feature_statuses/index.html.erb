@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Status</th>
+        <th>Name</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -12,7 +12,7 @@
       <% @feature_statuses.each do |feature_status| %>
         <tr>
           <td><%= feature_status.id %></td>
-          <td><%= feature_status.status %></td>
+          <td><%= feature_status.name %></td>
           <td>
             <%= edit_link('Edit', edit_feature_status_path(feature_status)) %>
             &nbsp;
