@@ -1,7 +1,7 @@
 class AccuracyClassesController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_accuracy_class, only: %i[show edit update destroy]
+  before_action :set_accuracy_class, only: %i[edit update destroy]
 
   # GET /accuracy_classes
   def index
