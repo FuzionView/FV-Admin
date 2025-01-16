@@ -1,0 +1,28 @@
+<h1>Feature accuracy classes</h1>
+
+<div id="accuracy_classes">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accuracy_classes.each do |accuracy_class| %>
+        <tr>
+          <td><%= accuracy_class.id %></td>
+          <td><%= accuracy_class.name %></td>
+          <td>
+            <%= edit_link('Edit', edit_accuracy_class_path(accuracy_class)) %>
+            &nbsp;
+            <%= delete_link('Delete', accuracy_class, "Delete feature accuracy class?") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= link_to "New accuracy class", new_accuracy_class_path %>
