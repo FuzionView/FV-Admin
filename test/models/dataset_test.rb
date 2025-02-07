@@ -186,14 +186,14 @@ class DatasetTest < ActiveSupport::TestCase
     @dataset.set_sql_from_template
     assert_equal @dataset.source_sql,
                  "    SELECT
-       \"geom\" geom,
-       \"objectid\" owner_fid,
-       null feature_class,
-       null status_id,
-       null size,
-       null depth,
-       null accuracy_class,
-       null description
+       \"geom\" as geom,
+       \"objectid\" as owner_fid,
+       null as feature_class,
+       null as status_id,
+       null as size,
+       null as depth,
+       null as accuracy_class,
+       null as description
      FROM
        \"\"
      ;
@@ -216,5 +216,67 @@ class DatasetTest < ActiveSupport::TestCase
     url = 'https://example.com/MapServer/1/query?f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&'
     formatted_url = @dataset.rebuild_esri_url(url, 1)
     assert formatted_url.include?(url), "was #{formatted_url}"
+  end
+
+  test 'removes service and request params' do
+    url = 'http://example.com/path?service=test&request=123&par
+am1=a&param2=b'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_equal 'param1=a&param2=b', modified_query
+  end
+
+  test 'no service or request params' do
+    url = 'http://example.com/path?param1=a&param2=b'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_equal 'param1=a&param2=b', modified_query
+  end
+
+  test 'only service param' do
+    url = 'http://example.com/path?service=test&param1=a'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_equal 'param1=a', modified_query
+  end
+
+  test 'no query string' do
+    url = 'http://example.com/path'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_nil modified_query
+  end
+
+  test 'only service and request params' do
+    url = 'http://example.com/path?service=test&request=123'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_empty modified_query
+  end
+
+  test 'service and request params trailing ampersand' do
+    url = 'http://example.com/path?service=test&request=123&'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_empty modified_query, "expected nil was #{modified_query}"
+  end
+
+  test 'empty query string' do
+    url = 'http://example.com/path?'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com/path', base_url
+    assert_nil modified_query
+  end
+
+  test 'empty string' do
+    url = ''
+    assert_raises(RuntimeError) { @dataset.clean_wfs_url(url) }
+  end
+
+  test 'url with no path' do
+    url = 'http://example.com?service=test&request=123&param1=a&param2=b'
+    base_url, modified_query = @dataset.clean_wfs_url(url)
+    assert_equal 'http://example.com', base_url
+    assert_equal 'param1=a&param2=b', modified_query
   end
 end

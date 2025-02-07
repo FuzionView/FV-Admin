@@ -5,14 +5,37 @@ require 'uri'
 require 'cgi'
 
 class Dataset < ApplicationRecord
+  include Normalization
+
   WFS = 'WFS:'
   ESRIJSON = 'ESRIJSON:'
   ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&'
 
-  WFS_XPATH_GEOM = "//xsd:complexType//xsd:element[@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType']/@name"
-  ESRI_WFS_XPATH_GEOM = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType']/@name"
-  WFS_XPATH_FEATURES = "//xsd:complexType//xsd:element[@name and not(@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType')]/@name"
-  ESRI_WFS_XPATH_FEATURES = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@name and not(@type='gml:GeometryPropertyType' or @type='gml:PointPropertyType' or @type='gml:LineStringPropertyType')]/@name"
+  GEOM_TYPES_BASE = [
+    'gml:PointPropertyType',
+    'gml:LineStringPropertyType',
+    'gml:PolygonPropertyType',
+    'gml:GeometryPropertyType',
+    'gml:MultiPointPropertyType',
+    'gml:MultiLineStringPropertyType',
+    'gml:MultiPolygonPropertyType',
+    'gml:CurvePropertyType',
+    'gml:SurfacePropertyType',
+    'gml:MultiCurvePropertyType',
+    'gml:MultiSurfacePropertyType',
+    'gml:CompositeCurvePropertyType',
+    'gml:CompositeSurfacePropertyType',
+    'gml:OrientableSurfacePropertyType',
+    'gml:RingPropertyType',
+    'gml:LinearRingPropertyType',
+    'gml:GeometryCollectionPropertyType',
+    'gml:MultiGeometryPropertyType'
+  ]
+  GEOM_TYPES = GEOM_TYPES_BASE.map { |g| "@type='#{g}'" }.join(' or ')
+  WFS_XPATH_GEOM = "//xsd:complexType//xsd:element[#{GEOM_TYPES}]/@name"
+  WFS_XPATH_FEATURES = "//xsd:complexType//xsd:element[@name and not(#{GEOM_TYPES})]/@name"
+  ESRI_WFS_XPATH_GEOM = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[#{GEOM_TYPES}]/@name"
+  ESRI_WFS_XPATH_FEATURES = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@name and not(#{GEOM_TYPES})]/@name"
 
   belongs_to :owner
   has_many :test_tickets, -> { order(publish_date: :desc) }, class_name: 'Ticket', dependent: :destroy
@@ -21,19 +44,20 @@ class Dataset < ApplicationRecord
   attribute :layers, default: []
   attribute :layer, default: {}
 
-  validates :name, :source_dataset, :source_sql, :source_srs, presence: true
-  validates :name, :source_dataset, :source_sql, :source_srs, presence: true, on: :basic
-
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status_id, :size, :depth, :accuracy_class,
                 :description, :source_error, :owner_fid,
                 :source_co_v
 
+  validates :name, :source_dataset, :source_sql, :source_srs, presence: true
+  validates :name, :source_dataset, :source_sql, :source_srs, presence: true, on: :basic
   validates :geometry_name, :owner_fid, :layer_name, :feature_class,
             :status_id, presence: true, on: :create
 
   before_validation :set_sql_from_template, on: :create
   before_validation :set_source_co, on: :update
+
+  normalizes :name, :source_srs, :source_dataset, with: ->(attr) { attr&.strip }
 
   def set_source_co
     return if source_co_v.blank?
@@ -44,7 +68,7 @@ class Dataset < ApplicationRecord
   def set_sql_from_template
     sql_template = <<-END_SQL
     SELECT
-       "#{geometry_name}" geom,
+       "#{geometry_name}" as geom,
        #{sqlquote(:owner_fid)},
        #{sqlquote(:feature_class)},
        #{sqlquote(:status_id)},
@@ -70,9 +94,9 @@ class Dataset < ApplicationRecord
   def sqlquote(val)
     result = send(val)
     if result.blank?
-      "null #{val}"
+      "null as #{val}"
     else
-      "\"#{send(val)}\" #{val}"
+      "\"#{send(val)}\" as #{val}"
     end
   end
 
@@ -86,32 +110,43 @@ class Dataset < ApplicationRecord
     raise "Valid sources start with 'WFS:', or 'ESRIJSON:'."
   end
 
-  def wfs_metadata
-    url = source_dataset.sub(WFS, '').sub('?', '')
-    tmp = URI(url)
-    raise 'A URL with a host is required' unless tmp.host
+  def clean_wfs_url(url_string)
+    uri = URI.parse(url_string)
+    raise 'Invalid URL' unless uri.scheme && uri.host
 
-    cap_url = URI("#{url}?service=WFS&request=GetCapabilities")
+    modified_query = if uri.query.present?
+                       params = CGI.parse(uri.query)
+                       params.delete('service')
+                       params.delete('request')
+                       tmp = []
+                       params.each do |k, v|
+                         tmp << "#{k}=#{v.first}" if v.first.present?
+                       end
+                       tmp.join('&')
+                     end
+    base_url = "#{uri.scheme}://#{uri.host}#{uri.path}"
+    [base_url, modified_query]
+  end
+
+  def wfs_metadata
+    url = source_dataset.sub(WFS, '')
+    clean_base, clean_query = clean_wfs_url(url)
+
+    cap_url = "#{clean_base}?service=WFS&request=GetCapabilities&#{clean_query}"
     cap_xml = get_wfs_capabilities(cap_url)
-    cap_doc = Nokogiri::XML(cap_xml)
-    feature_types = cap_doc.xpath('//wfs:FeatureType/wfs:Name').map(&:text)
+    feature_types = parse_get_capabilities(cap_xml)
     self.layer_name = feature_types.first if feature_types.size == 1
 
     if layer_name.blank?
       geom_name = []
       feature_attributes = []
     else
-      feat_url = URI("#{url}?service=WFS&request=DescribeFeatureType&version=1.1.0&typeName=#{layer_name}")
+      feat_url = "#{clean_base}?service=WFS&request=DescribeFeatureType&version=1.1.0&typeName=#{layer_name}&#{clean_query}"
       feat_xml = get_wfs_describe_feature(feat_url)
-      feat_doc = Nokogiri::XML(feat_xml)
-      feature_attributes = feat_doc.xpath(ESRI_WFS_XPATH_FEATURES).map(&:value)
-      feature_attributes = feat_doc.xpath(WFS_XPATH_FEATURES).map(&:value) if feature_attributes.empty?
-      geom_name = feat_doc.xpath(ESRI_WFS_XPATH_GEOM).map(&:value)
-      geom_name = feat_doc.xpath(WFS_XPATH_GEOM).map(&:value) if geom_name.blank?
+      feature_attributes, geom_name = parse_describe_feature(feat_xml)
     end
-    # WFS urls must end with a ?
-    source_dataset.chomp!('?')
-    self.source_dataset = "#{source_dataset}?"
+    # WFS urls must end with a ? or & b/c additional parameters are added to ogrinfo in FV-Engine
+    self.source_dataset = "WFS:#{clean_base}#{clean_query.present? ? "?#{clean_query}&" : '?'}"
     [feature_types, geom_name, feature_attributes]
   rescue StandardError => e
     Rails.logger.error("Error: #{e.message}: \n\t#{e.backtrace.join("\n\t")}")
@@ -197,6 +232,21 @@ class Dataset < ApplicationRecord
   end
 
   private
+
+  def parse_get_capabilities(xml)
+    cap_doc = Nokogiri::XML(xml)
+    cap_doc.remove_namespaces!
+    cap_doc.xpath('//FeatureType/Name').map(&:text)
+  end
+
+  def parse_describe_feature(xml)
+    feat_doc = Nokogiri::XML(xml)
+    feature_attributes = feat_doc.xpath(ESRI_WFS_XPATH_FEATURES).map(&:value)
+    feature_attributes = feat_doc.xpath(WFS_XPATH_FEATURES).map(&:value) if feature_attributes.empty?
+    geom_name = feat_doc.xpath(ESRI_WFS_XPATH_GEOM).map(&:value)
+    geom_name = feat_doc.xpath(WFS_XPATH_GEOM).map(&:value) if geom_name.blank?
+    [feature_attributes, geom_name]
+  end
 
   def adjusted_esri_url(url)
     service_type = esri_service_type(url)
