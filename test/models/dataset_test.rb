@@ -181,15 +181,15 @@ class DatasetTest < ActiveSupport::TestCase
   end
 
   test 'format sql' do
-    @dataset.owner_fid = 'objectid'
+    @dataset.provider_fid = 'objectid'
     @dataset.geometry_name = 'geom'
     @dataset.set_sql_from_template
     assert_equal @dataset.source_sql,
                  "    SELECT
        \"geom\" as geom,
-       \"objectid\" as owner_fid,
+       \"objectid\" as provider_fid,
        null as feature_class,
-       null as status_id,
+       null as status,
        null as size,
        null as depth,
        null as accuracy_class,

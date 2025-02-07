@@ -161,13 +161,13 @@ class DatasetsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def dataset_params
       params.fetch(:dataset, {}).permit(:owner_id,
-                                        :owner_fid,
+                                        :provider_fid,
                                         :source_dataset,
                                         :layer_name,
                                         :geometry_name,
                                         :layer_name,
                                         :feature_class,
-                                        :status_id,
+                                        :status,
                                         :size,
                                         :depth,
                                         :accuracy_class,

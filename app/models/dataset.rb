@@ -45,14 +45,14 @@ class Dataset < ApplicationRecord
   attribute :layer, default: {}
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
-                :status_id, :size, :depth, :accuracy_class,
-                :description, :source_error, :owner_fid,
+                :status, :size, :depth, :accuracy_class,
+                :description, :source_error, :provider_fid,
                 :source_co_v
 
   validates :name, :source_dataset, :source_sql, :source_srs, presence: true
   validates :name, :source_dataset, :source_sql, :source_srs, presence: true, on: :basic
-  validates :geometry_name, :owner_fid, :layer_name, :feature_class,
-            :status_id, presence: true, on: :create
+  validates :geometry_name, :provider_fid, :layer_name, :feature_class,
+            :status, presence: true, on: :create
 
   before_validation :set_sql_from_template, on: :create
   before_validation :set_source_co, on: :update
@@ -69,9 +69,9 @@ class Dataset < ApplicationRecord
     sql_template = <<-END_SQL
     SELECT
        "#{geometry_name}" as geom,
-       #{sqlquote(:owner_fid)},
+       #{sqlquote(:provider_fid)},
        #{sqlquote(:feature_class)},
-       #{sqlquote(:status_id)},
+       #{sqlquote(:status)},
        #{sqlquote(:size)},
        #{sqlquote(:depth)},
        #{sqlquote(:accuracy_class)},
