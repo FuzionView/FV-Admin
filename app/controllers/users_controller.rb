@@ -47,7 +47,7 @@ class UsersController < ApplicationController
   def destroy
     authorize @user
     @user.destroy!
-    redirect_to owner_users_path(@owner), notice: "User was successfully destroyed.", status: :see_other
+    redirect_to owner_users_path(@owner), notice: "User was successfully deleted.", status: :see_other
   end
 
   private

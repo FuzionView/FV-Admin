@@ -46,7 +46,7 @@ class FeatureStatusesController < ApplicationController
   def destroy
     authorize @feature_status
     @feature_status.destroy!
-    redirect_to feature_statuses_url, notice: 'Feature status was successfully destroyed.', status: :see_other
+    redirect_to feature_statuses_url, notice: 'Feature status was successfully deleted.', status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
     redirect_to(feature_statuses_url, notice: "Feature status is associated with other records and can't be deleted.",
                                       status: :see_other)

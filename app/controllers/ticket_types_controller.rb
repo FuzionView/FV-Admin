@@ -46,7 +46,7 @@ class TicketTypesController < ApplicationController
   def destroy
     authorize @ticket_type
     @ticket_type.destroy!
-    redirect_to ticket_types_path, notice: "Ticket type was successfully destroyed.", status: :see_other
+    redirect_to ticket_types_path, notice: "Ticket type was successfully deleted.", status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
     redirect_to(ticket_types_path, notice: "Ticket type is associated with other records and can't be deleted.",
                 status: :see_other)

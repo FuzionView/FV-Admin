@@ -51,7 +51,7 @@ class OwnersController < ApplicationController
   def destroy
     authorize @owner
     @owner.destroy!
-    redirect_to owners_url, notice: "Data provider was successfully destroyed.", status: :see_other
+    redirect_to owners_url, notice: "Data provider was successfully deleted.", status: :see_other
   end
 
   def service_area

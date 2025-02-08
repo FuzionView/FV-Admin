@@ -46,7 +46,7 @@ class AccuracyClassesController < ApplicationController
   def destroy
     authorize AccuracyClass
     @accuracy_class.destroy!
-    redirect_to accuracy_classes_url, notice: 'Accuracy class was successfully destroyed.', status: :see_other
+    redirect_to accuracy_classes_url, notice: 'Accuracy class was successfully deleted.', status: :see_other
   end
 
   private

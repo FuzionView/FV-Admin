@@ -1,8 +1,10 @@
 class DatasetsController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit new create new_wizard create_step1 create_step2 create_step3 update destroy test_ticket ]
-  before_action :set_dataset, only: %i[ show edit update destroy ]
+  before_action :set_owner,
+                only: %i[show edit new create new_wizard create_step1 create_step2 create_step3 update destroy
+                         test_ticket]
+  before_action :set_dataset, only: %i[show edit update destroy]
 
   # GET /datasets/1
   def show
@@ -19,7 +21,7 @@ class DatasetsController < ApplicationController
     @dataset = @owner.datasets.new(dataset_params)
     authorize @dataset
     if @dataset.save(context: :basic)
-      redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
+      redirect_to [@owner, @dataset], notice: 'Dataset was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -44,7 +46,7 @@ class DatasetsController < ApplicationController
     authorize @dataset
     @layers = []
     @options = []
-    if (@dataset.name.blank? || @dataset.source_dataset.blank?)
+    if @dataset.name.blank? || @dataset.source_dataset.blank?
       @dataset.valid?
       @url = create_step1_owner_dataset_path(id: @owner)
       render :step1, status: :unprocessable_entity
@@ -91,9 +93,9 @@ class DatasetsController < ApplicationController
     @url = create_step3_owner_dataset_path(@owner)
     get_metadata
     if @dataset.source_dataset.present? &&
-        @dataset.layer_name.present? &&
-        @dataset.save
-      redirect_to [@owner, @dataset], notice: "Dataset was successfully created."
+       @dataset.layer_name.present? &&
+       @dataset.save
+      redirect_to [@owner, @dataset], notice: 'Dataset was successfully created.'
     else
       render :step3, status: :unprocessable_entity
     end
@@ -106,20 +108,21 @@ class DatasetsController < ApplicationController
   def get_metadata
     @layers, @geomFields, @options = @dataset.get_metadata
     if @layers.size == 0
-      raise "Unable to identify any layers in this service."
+      raise 'Unable to identify any layers in this service.'
     elsif @layers.size == 1
       @dataset.layer_name = @layers.first
     end
-    if @geomFields.size == 1
-      @dataset.geometry_name = @geomFields.first
-    end
+
+    return unless @geomFields.size == 1
+
+    @dataset.geometry_name = @geomFields.first
   end
 
   # PATCH/PUT /datasets/1
   def update
     authorize @dataset
     if @dataset.update(dataset_params)
-      redirect_to [@owner, @dataset], notice: "Dataset was successfully updated.", status: :see_other
+      redirect_to [@owner, @dataset], notice: 'Dataset was successfully updated.', status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -129,7 +132,7 @@ class DatasetsController < ApplicationController
   def destroy
     authorize @dataset
     @dataset.destroy!
-    redirect_to owner_url(@owner), notice: "Dataset was successfully destroyed.", status: :see_other
+    redirect_to owner_url(@owner), notice: 'Dataset was successfully deleted.', status: :see_other
   end
 
   def test_ticket
@@ -139,7 +142,7 @@ class DatasetsController < ApplicationController
       @ticket = @dataset.test_tickets.build(params.fetch(:ticket, {}).permit(:geom))
       @ticket.init_test_ticket
       if @ticket.save
-        redirect_to [@owner, @dataset], notice: "Test ticket created.", status: :see_other
+        redirect_to [@owner, @dataset], notice: 'Test ticket created.', status: :see_other
       else
         render :test_ticket, status: :unprocessable_entity
       end
@@ -149,34 +152,35 @@ class DatasetsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_dataset
-      @dataset = @owner.datasets.find(params[:id])
-    end
 
-    def set_owner
-      @owner = policy_scope(Owner).find(params[:owner_id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_dataset
+    @dataset = @owner.datasets.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def dataset_params
-      params.fetch(:dataset, {}).permit(:owner_id,
-                                        :provider_fid,
-                                        :source_dataset,
-                                        :layer_name,
-                                        :geometry_name,
-                                        :layer_name,
-                                        :feature_class,
-                                        :status,
-                                        :size,
-                                        :depth,
-                                        :accuracy_class,
-                                        :description,
-                                        :source_sql,
-                                        :name,
-                                        :source_srs,
-                                        :cache_whole_dataset,
-                                        :enabled,
-                                        :source_co_v)
-    end
+  def set_owner
+    @owner = policy_scope(Owner).find(params[:owner_id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def dataset_params
+    params.fetch(:dataset, {}).permit(:owner_id,
+                                      :provider_fid,
+                                      :source_dataset,
+                                      :layer_name,
+                                      :geometry_name,
+                                      :layer_name,
+                                      :feature_class,
+                                      :status,
+                                      :size,
+                                      :depth,
+                                      :accuracy_class,
+                                      :description,
+                                      :source_sql,
+                                      :name,
+                                      :source_srs,
+                                      :cache_whole_dataset,
+                                      :enabled,
+                                      :source_co_v)
+  end
 end
