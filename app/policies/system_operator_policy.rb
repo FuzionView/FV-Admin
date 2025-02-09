@@ -4,7 +4,7 @@ class SystemOperatorPolicy < ApplicationPolicy
   end
 
   def show?
-    false
+    update?
   end
 
   def edit?

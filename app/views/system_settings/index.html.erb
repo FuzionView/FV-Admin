@@ -9,6 +9,16 @@
   <tbody>
     <tr>
       <td>
+        Disclaimer 
+      </td>
+      <td>
+        <%= view_link 'View disclaimer', disclaimer_path(Disclaimer.default) %>
+        &nbsp;
+        <%= edit_link "Edit disclaimer", edit_disclaimer_path(Disclaimer.default) %>
+      </td>
+    </tr>
+    <tr>
+      <td>
         Feature accuracy classes
       </td>
       <td>

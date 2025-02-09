@@ -1,0 +1,29 @@
+<h1>
+  Disclaimer
+  <span class="float-end">
+    <%= edit_link('Edit', edit_disclaimer_path(@disclaimer)) %>
+  </span>
+</h1>
+
+<div class="container">
+  <div class="row">
+    <div class="col-2">
+      Disclaimer text:
+    </div>
+    <div class="col">
+      <%= @disclaimer.disclaimer_text %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
+      Remote URL: 
+    </div>
+    <div class="col text-break">
+      <%= @disclaimer.remote_url %> 
+    </div>
+  </div>
+</div>
+<div class="pt-3">
+  <%= link_to "Back to system settings", system_settings_path %>
+</div>
+

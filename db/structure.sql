@@ -38,11 +38,18 @@ CREATE FUNCTION fv.archive_deleted_tickets() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 	begin
-		insert into fv.archived_tickets(id,dataset_id,ticket_no,ticket_type,ticket_url,geom,publish_date,purge_date,is_latest,created_at) values((OLD).*);
+		insert into fv.archived_tickets
+		values((OLD).*, now());
 		return old;
 	end
-
 $$;
+
+
+--
+-- Name: FUNCTION archive_deleted_tickets(); Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON FUNCTION fv.archive_deleted_tickets() IS 'Trigger function to automatically move a ticket into the archived_tickets table when it is deleted from the tickets table.';
 
 
 SET default_tablespace = '';
@@ -81,6 +88,20 @@ CREATE TABLE fv.archived_tickets (
 
 
 --
+-- Name: TABLE archived_tickets; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.archived_tickets IS 'Stores tickets after they are purged from the tickets table.';
+
+
+--
+-- Name: COLUMN archived_tickets.archived_at; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.archived_tickets.archived_at IS 'Timestamp of when the ticket was archived.';
+
+
+--
 -- Name: ticket_type; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -90,6 +111,41 @@ CREATE TABLE fv.ticket_type (
     color_mapserv text,
     color_hex text
 );
+
+
+--
+-- Name: TABLE ticket_type; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.ticket_type IS 'Domain list for tickets.ticket_type.';
+
+
+--
+-- Name: COLUMN ticket_type.id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_type.id IS 'Code for the ticket type from the upstream ticketing system';
+
+
+--
+-- Name: COLUMN ticket_type.description; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_type.description IS 'Description for ticket type (presented in UI)';
+
+
+--
+-- Name: COLUMN ticket_type.color_mapserv; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_type.color_mapserv IS 'Display color for tickets of this type in integer RGB e.g. 128 120 0)';
+
+
+--
+-- Name: COLUMN ticket_type.color_hex; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_type.color_hex IS 'Display color for tickets of this type in HTML/CSS hex form e.g. #807800).  The update_colors cli tool will update this column from the color_mapserv column.';
 
 
 --
@@ -108,6 +164,76 @@ CREATE TABLE fv.tickets (
     is_latest boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone DEFAULT now()
 );
+
+
+--
+-- Name: TABLE tickets; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.tickets IS 'Represents a ticket from the upstream ticketing system.';
+
+
+--
+-- Name: COLUMN tickets.dataset_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.dataset_id IS 'NULL for normal upstream tickets.  If NOT NULL then this is a test ticket linked to this dataset id.  A test ticket will only fetch features for this dataset, will ignore the enabled flag, and will only show up in ticket lists for this dataset.';
+
+
+--
+-- Name: COLUMN tickets.ticket_no; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.ticket_no IS 'Upstream ticket identifier (stable between updates/revisions of the same ticket)';
+
+
+--
+-- Name: COLUMN tickets.ticket_type; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.ticket_type IS 'Type of ticket (ex. normal, emergency, ...).  The type is displayed to user and impacts display color.';
+
+
+--
+-- Name: COLUMN tickets.ticket_url; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.ticket_url IS 'URL of the upstream ticket';
+
+
+--
+-- Name: COLUMN tickets.geom; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.geom IS 'Geographic boundary of the ticket area.  Buffered and used to query datasets for features applicable to the ticket.';
+
+
+--
+-- Name: COLUMN tickets.publish_date; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.publish_date IS 'FuzionView will not show a ticket before this timestamp.';
+
+
+--
+-- Name: COLUMN tickets.purge_date; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.purge_date IS 'FuzionView will not show a ticket after this timestamp.  It will also archive the ticket and delete any features associated with this ticket shortly after this timestamp.';
+
+
+--
+-- Name: COLUMN tickets.is_latest; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.is_latest IS 'Internal flag marking a row that contains the latest version of the ticket.  (A row can be an older version if a ticket was updated upstream.  A new ticket row is created in that case to log the change and force the feature cache to be refreshed.';
+
+
+--
+-- Name: COLUMN tickets.created_at; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.tickets.created_at IS 'Timestamp when ticket was loaded into FuzionView. Optionally: timestamp when upstream ticket was created/edited?';
 
 
 --
@@ -135,20 +261,83 @@ CREATE VIEW fv.current_tickets AS
 
 
 --
+-- Name: VIEW current_tickets; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON VIEW fv.current_tickets IS 'Tickets that are currently active.  Also denormalizes as needed for map display.';
+
+
+--
 -- Name: datasets; Type: TABLE; Schema: fv; Owner: -
 --
 
 CREATE TABLE fv.datasets (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     owner_id integer NOT NULL,
-    name text,
+    name text NOT NULL,
     source_dataset text NOT NULL,
     source_sql text NOT NULL,
     source_co text[],
     source_srs text NOT NULL,
     cache_whole_dataset boolean DEFAULT false NOT NULL,
-    enabled boolean DEFAULT true NOT NULL
+    enabled boolean DEFAULT false NOT NULL
 );
+
+
+--
+-- Name: TABLE datasets; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.datasets IS 'Configuration of source datasets to query to pull features into FuzionView';
+
+
+--
+-- Name: COLUMN datasets.name; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.name IS 'Name of the dataset';
+
+
+--
+-- Name: COLUMN datasets.source_dataset; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.source_dataset IS 'OGR connection string for connecting to the dataset.';
+
+
+--
+-- Name: COLUMN datasets.source_sql; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.source_sql IS 'OGR SQLite SQL statement to query the dataset and transform it into the FuzionView features schema.';
+
+
+--
+-- Name: COLUMN datasets.source_co; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.source_co IS 'OGR configuration options to apply for connecting to the dataset.';
+
+
+--
+-- Name: COLUMN datasets.source_srs; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.source_srs IS 'OGR spatial-reference-system that will be used to query the dataset and that the dataset''s features are returned in.  Can be any OGR compatible SRS format such as EPSG:4326 or a full WKT2 SRS.';
+
+
+--
+-- Name: COLUMN datasets.cache_whole_dataset; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.cache_whole_dataset IS 'If true FuzionView will cache the entire dataset at once (saving the need to query the dataset for each ticket boundary).';
+
+
+--
+-- Name: COLUMN datasets.enabled; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.datasets.enabled IS 'If true FuzionView will query this dataset for features, otherwise it is ignored for regular tickets.  (The dataset will still be queried for test tickets created from the admin interface).';
 
 
 --
@@ -156,7 +345,6 @@ CREATE TABLE fv.datasets (
 --
 
 CREATE SEQUENCE fv.datasets_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -172,6 +360,19 @@ ALTER SEQUENCE fv.datasets_id_seq OWNED BY fv.datasets.id;
 
 
 --
+-- Name: disclaimers; Type: TABLE; Schema: fv; Owner: -
+--
+
+CREATE TABLE fv.disclaimers (
+    id character varying NOT NULL,
+    disclaimer_text text,
+    remote_url text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: feature_accuracy_class; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -179,6 +380,13 @@ CREATE TABLE fv.feature_accuracy_class (
     id text NOT NULL,
     name text NOT NULL
 );
+
+
+--
+-- Name: TABLE feature_accuracy_class; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.feature_accuracy_class IS 'Domain list for features.accuracy_class.  Represents the expected accuracy of a feature as reported from the data owner.';
 
 
 --
@@ -195,6 +403,48 @@ CREATE TABLE fv.feature_class (
 
 
 --
+-- Name: TABLE feature_class; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.feature_class IS 'Domain list for featuress.feature_class.  Feature class is how FV groups features for display.  Typically configured as APWA color codes.';
+
+
+--
+-- Name: COLUMN feature_class.id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.feature_class.id IS 'Code for the feature class.';
+
+
+--
+-- Name: COLUMN feature_class.name; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.feature_class.name IS 'Display name for this feature class.';
+
+
+--
+-- Name: COLUMN feature_class.code; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.feature_class.code IS 'Short (ex. 3 letter) abbreviation for feature class for map labeling.';
+
+
+--
+-- Name: COLUMN feature_class.color_mapserv; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.feature_class.color_mapserv IS 'Display color in integer RGB e.g. 128 120 0)';
+
+
+--
+-- Name: COLUMN feature_class.color_hex; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.feature_class.color_hex IS 'Display color in HTML/CSS hex form e.g. #807800).  The update_colors cli tool will update this column from the color_mapserv column.';
+
+
+--
 -- Name: feature_status; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -205,12 +455,19 @@ CREATE TABLE fv.feature_status (
 
 
 --
+-- Name: TABLE feature_status; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.feature_status IS 'Domain list for features.status.  Represents the status of the asset reprensented by this feature as reported from the data owner (ex. active or abandoned).';
+
+
+--
 -- Name: features; Type: TABLE; Schema: fv; Owner: -
 --
 
 CREATE TABLE fv.features (
     id bigint NOT NULL,
-    dataset_id integer,
+    dataset_id integer NOT NULL,
     ticket_id integer,
     provider_fid text,
     feature_class text NOT NULL,
@@ -222,6 +479,90 @@ CREATE TABLE fv.features (
     accuracy_class text,
     description text
 );
+
+
+--
+-- Name: TABLE features; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.features IS 'Cache of features (ex. points, lines, polygons, ...) from upstream datasets optionally associated with tickets.';
+
+
+--
+-- Name: COLUMN features.dataset_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.dataset_id IS 'Dataset this feature came from.';
+
+
+--
+-- Name: COLUMN features.ticket_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.ticket_id IS 'Ticket this feature is associated with (or NULL if this is a dataset where cache_whole_dataset is true)';
+
+
+--
+-- Name: COLUMN features.provider_fid; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.provider_fid IS 'From upstream dataset: represents a unique id to tie this row back to the original record from the dataset';
+
+
+--
+-- Name: COLUMN features.feature_class; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.feature_class IS 'From upstream dataset: feature_class id this feature belongs to.';
+
+
+--
+-- Name: COLUMN features.geom; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.geom IS 'From upstream dataset: Geometry (any type supported by PostGIS) of the feature.';
+
+
+--
+-- Name: COLUMN features.updated_at; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.updated_at IS 'Last time this feature was updated.';
+
+
+--
+-- Name: COLUMN features.status; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.status IS 'From upstream dataset: Feature status';
+
+
+--
+-- Name: COLUMN features.size; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.size IS 'From upstream dataset: Feature size';
+
+
+--
+-- Name: COLUMN features.depth; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.depth IS 'From upstream dataset: Feature depth';
+
+
+--
+-- Name: COLUMN features.accuracy_class; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.accuracy_class IS 'From upstream dataset: Accuracy class';
+
+
+--
+-- Name: COLUMN features.description; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.features.description IS 'From upstream dataset: Human readable description of the feature.';
 
 
 --
@@ -248,10 +589,31 @@ ALTER SEQUENCE fv.features_id_seq OWNED BY fv.features.id;
 --
 
 CREATE TABLE fv.owners (
-    id integer NOT NULL,
-    name text,
+    id bigint NOT NULL,
+    name text NOT NULL,
     service_area public.geometry(MultiPolygon,6344)
 );
+
+
+--
+-- Name: TABLE owners; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.owners IS 'Grouping of source datasets by data owners (organizations)';
+
+
+--
+-- Name: COLUMN owners.name; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.owners.name IS 'Name of entity that owns datasets';
+
+
+--
+-- Name: COLUMN owners.service_area; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.owners.service_area IS 'Optional boundary outside of which it is known there are no features for this owner.  Avoids querying this owner''s datasets for tickets outside of this area.';
 
 
 --
@@ -339,11 +701,17 @@ UNION ALL
 
 
 --
+-- Name: VIEW map_features; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON VIEW fv.map_features IS 'Denormalizes features for map display';
+
+
+--
 -- Name: owners_id_seq; Type: SEQUENCE; Schema: fv; Owner: -
 --
 
 CREATE SEQUENCE fv.owners_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -368,6 +736,13 @@ CREATE TABLE fv.schema_migrations (
 
 
 --
+-- Name: TABLE schema_migrations; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.schema_migrations IS 'Keep track of which schema migrations have been applied.';
+
+
+--
 -- Name: ticket_dataset_status; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -380,6 +755,62 @@ CREATE TABLE fv.ticket_dataset_status (
     attempt integer DEFAULT 1 NOT NULL,
     elapsed_time interval
 );
+
+
+--
+-- Name: TABLE ticket_dataset_status; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.ticket_dataset_status IS 'Keeps track of attempts of FuzionView to query a dataset, optionally on behalf of a ticket.';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.ticket_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.ticket_id IS 'ticket_id associated with this attempt (if not cache_whole_dataset).';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.dataset_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.dataset_id IS 'dataset_id associated with this attempt.';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.status; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.status IS 'Status message resulting from attempt.  Can be multiline separated by newlines.  Either SUCCESS or gives information about why an attempt failed.';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.feature_count; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.feature_count IS 'Number of features returned by this attempt (if successful).';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.updated_at; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.updated_at IS 'Timestamp of when this attempt finished.';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.attempt; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.attempt IS 'Number of attempts to query this dataset_id+ticket_id.  Used to implement a backoff-rate in case the query failed.';
+
+
+--
+-- Name: COLUMN ticket_dataset_status.elapsed_time; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.ticket_dataset_status.elapsed_time IS 'Runtime of the attempt.  Useful to troubleshoot datasets that might be unusually slow.';
 
 
 --
@@ -413,6 +844,13 @@ CREATE VIEW fv.ticket_dataset_retry AS
 
 
 --
+-- Name: VIEW ticket_dataset_retry; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON VIEW fv.ticket_dataset_retry IS 'Implements the logic for when a query for features for a dataset_id+ticket_id should be attempted next.';
+
+
+--
 -- Name: ticket_dataset_status_vw; Type: VIEW; Schema: fv; Owner: -
 --
 
@@ -437,6 +875,13 @@ CREATE VIEW fv.ticket_dataset_status_vw AS
     fv.datasets d,
     fv.owners o
   WHERE ((tds.ticket_id = t.id) AND (tds.dataset_id = d.id) AND (d.owner_id = o.id));
+
+
+--
+-- Name: VIEW ticket_dataset_status_vw; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON VIEW fv.ticket_dataset_status_vw IS 'Denormalizes ticket_dataset_status for API';
 
 
 --
@@ -526,16 +971,44 @@ UNION ALL
 
 
 --
+-- Name: VIEW update_feature_cache; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON VIEW fv.update_feature_cache IS 'Used by update_feature_cache program to determine which datasets (and for which tickets) need to be loaded into the features cache.';
+
+
+--
 -- Name: users; Type: TABLE; Schema: fv; Owner: -
 --
 
 CREATE TABLE fv.users (
     id bigint NOT NULL,
     owner_id bigint NOT NULL,
-    email_address character varying NOT NULL,
+    email_address text NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: TABLE users; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON TABLE fv.users IS 'Assocates a user accounts (people) with the rights to manage a (data) owners.';
+
+
+--
+-- Name: COLUMN users.owner_id; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.users.owner_id IS 'ID of owner that can be managed by this user.';
+
+
+--
+-- Name: COLUMN users.email_address; Type: COMMENT; Schema: fv; Owner: -
+--
+
+COMMENT ON COLUMN fv.users.email_address IS 'User identifier.';
 
 
 --
@@ -614,6 +1087,14 @@ ALTER TABLE ONLY fv.archived_tickets
 
 ALTER TABLE ONLY fv.datasets
     ADD CONSTRAINT datasets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: disclaimers disclaimers_pkey; Type: CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.disclaimers
+    ADD CONSTRAINT disclaimers_pkey PRIMARY KEY (id);
 
 
 --
@@ -697,17 +1178,24 @@ ALTER TABLE ONLY fv.users
 
 
 --
+-- Name: archived_tickets_geom_idx; Type: INDEX; Schema: fv; Owner: -
+--
+
+CREATE INDEX archived_tickets_geom_idx ON fv.archived_tickets USING gist (geom);
+
+
+--
+-- Name: archived_tickets_ticket_no_idx; Type: INDEX; Schema: fv; Owner: -
+--
+
+CREATE INDEX archived_tickets_ticket_no_idx ON fv.archived_tickets USING btree (ticket_no);
+
+
+--
 -- Name: features_gidx; Type: INDEX; Schema: fv; Owner: -
 --
 
 CREATE INDEX features_gidx ON fv.features USING gist (geom);
-
-
---
--- Name: index_users_on_owner_id; Type: INDEX; Schema: fv; Owner: -
---
-
-CREATE INDEX index_users_on_owner_id ON fv.users USING btree (owner_id);
 
 
 --
@@ -718,10 +1206,10 @@ CREATE INDEX tickets_geom_buffered_idx ON fv.tickets USING gist (public.st_buffe
 
 
 --
--- Name: tickets_geom_geom_idx; Type: INDEX; Schema: fv; Owner: -
+-- Name: tickets_geom_idx; Type: INDEX; Schema: fv; Owner: -
 --
 
-CREATE INDEX tickets_geom_geom_idx ON fv.tickets USING gist (geom);
+CREATE INDEX tickets_geom_idx ON fv.tickets USING gist (geom);
 
 
 --
@@ -732,6 +1220,13 @@ CREATE INDEX tickets_ticket_no_idx ON fv.tickets USING btree (ticket_no);
 
 
 --
+-- Name: users_owner_id_idx; Type: INDEX; Schema: fv; Owner: -
+--
+
+CREATE INDEX users_owner_id_idx ON fv.users USING btree (owner_id);
+
+
+--
 -- Name: tickets archive_deleted; Type: TRIGGER; Schema: fv; Owner: -
 --
 
@@ -739,59 +1234,51 @@ CREATE TRIGGER archive_deleted BEFORE DELETE ON fv.tickets FOR EACH ROW EXECUTE 
 
 
 --
--- Name: datasets datasets_owner; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: datasets datasets_owner_id_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.datasets
-    ADD CONSTRAINT datasets_owner FOREIGN KEY (owner_id) REFERENCES fv.owners(id) MATCH FULL;
+    ADD CONSTRAINT datasets_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES fv.owners(id);
 
 
 --
--- Name: features feature_accuracy_class; Type: FK CONSTRAINT; Schema: fv; Owner: -
---
-
-ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT feature_accuracy_class FOREIGN KEY (accuracy_class) REFERENCES fv.feature_accuracy_class(id) MATCH FULL;
-
-
---
--- Name: features feature_status; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: features features_accuracy_class_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT feature_status FOREIGN KEY (status) REFERENCES fv.feature_status(id) MATCH FULL;
+    ADD CONSTRAINT features_accuracy_class_fkey FOREIGN KEY (accuracy_class) REFERENCES fv.feature_accuracy_class(id);
 
 
 --
--- Name: features features_datasets_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
---
-
-ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT features_datasets_fkey FOREIGN KEY (dataset_id) REFERENCES fv.datasets(id) ON DELETE CASCADE;
-
-
---
--- Name: features features_feature_class; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: features features_dataset_id_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT features_feature_class FOREIGN KEY (feature_class) REFERENCES fv.feature_class(id);
+    ADD CONSTRAINT features_dataset_id_fkey FOREIGN KEY (dataset_id) REFERENCES fv.datasets(id) ON DELETE CASCADE;
 
 
 --
--- Name: features features_tickets_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: features features_feature_class_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.features
-    ADD CONSTRAINT features_tickets_fkey FOREIGN KEY (ticket_id) REFERENCES fv.tickets(id) ON DELETE CASCADE;
+    ADD CONSTRAINT features_feature_class_fkey FOREIGN KEY (feature_class) REFERENCES fv.feature_class(id);
 
 
 --
--- Name: users fk_rails_3b42a03d2f; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: features features_status_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
-ALTER TABLE ONLY fv.users
-    ADD CONSTRAINT fk_rails_3b42a03d2f FOREIGN KEY (owner_id) REFERENCES fv.owners(id);
+ALTER TABLE ONLY fv.features
+    ADD CONSTRAINT features_status_fkey FOREIGN KEY (status) REFERENCES fv.feature_status(id);
+
+
+--
+-- Name: features features_ticket_id_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.features
+    ADD CONSTRAINT features_ticket_id_fkey FOREIGN KEY (ticket_id) REFERENCES fv.tickets(id) ON DELETE CASCADE;
 
 
 --
@@ -811,19 +1298,27 @@ ALTER TABLE ONLY fv.ticket_dataset_status
 
 
 --
--- Name: tickets tickets_dataset_id_fk; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: tickets tickets_dataset_id_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.tickets
-    ADD CONSTRAINT tickets_dataset_id_fk FOREIGN KEY (dataset_id) REFERENCES fv.datasets(id);
+    ADD CONSTRAINT tickets_dataset_id_fkey FOREIGN KEY (dataset_id) REFERENCES fv.datasets(id);
 
 
 --
--- Name: tickets tickets_ticket_type_fk; Type: FK CONSTRAINT; Schema: fv; Owner: -
+-- Name: tickets tickets_ticket_type_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
 --
 
 ALTER TABLE ONLY fv.tickets
-    ADD CONSTRAINT tickets_ticket_type_fk FOREIGN KEY (ticket_type) REFERENCES fv.ticket_type(id);
+    ADD CONSTRAINT tickets_ticket_type_fkey FOREIGN KEY (ticket_type) REFERENCES fv.ticket_type(id);
+
+
+--
+-- Name: users users_owner_id_fkey; Type: FK CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.users
+    ADD CONSTRAINT users_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES fv.owners(id);
 
 
 --
@@ -833,4 +1328,8 @@ ALTER TABLE ONLY fv.tickets
 SET search_path TO fv,public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250209215624'),
+('20250112022845'),
+('20241206111420'),
 ('20240414204740');
+

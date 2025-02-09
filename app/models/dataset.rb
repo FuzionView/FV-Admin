@@ -160,14 +160,14 @@ class Dataset < ApplicationRecord
     geom_fields = ['geometry']
     json_layers = json['layers'] || []
     layer_names = json_layers&.map { |l| l['name'] } || []
+    options = []
+    tmp_layer = nil
+
 
     regex = %r{/#{esri_service_type(url)}/(\d+)(/|/query|)}
     layer_id = if (match = url.match(regex))
                  match[1]
                end
-    options = []
-    tmp_layer = nil
-
     if json_layers.empty?
       raise 'No layers identified.'
     elsif json_layers.size == 1

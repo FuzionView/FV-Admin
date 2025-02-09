@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   resources :ticket_types, except: [:show]
   resources :feature_statuses, except: [:show]
   resources :accuracy_classes, except: [:show]
+  resources :disclaimers, only: [:show, :edit, :update]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
