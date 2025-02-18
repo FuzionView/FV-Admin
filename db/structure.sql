@@ -360,19 +360,6 @@ ALTER SEQUENCE fv.datasets_id_seq OWNED BY fv.datasets.id;
 
 
 --
--- Name: disclaimers; Type: TABLE; Schema: fv; Owner: -
---
-
-CREATE TABLE fv.disclaimers (
-    id character varying NOT NULL,
-    disclaimer_text text,
-    remote_url text,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
 -- Name: feature_accuracy_class; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -743,6 +730,18 @@ COMMENT ON TABLE fv.schema_migrations IS 'Keep track of which schema migrations 
 
 
 --
+-- Name: system_configurations; Type: TABLE; Schema: fv; Owner: -
+--
+
+CREATE TABLE fv.system_configurations (
+    key character varying NOT NULL,
+    value text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: ticket_dataset_status; Type: TABLE; Schema: fv; Owner: -
 --
 
@@ -1090,14 +1089,6 @@ ALTER TABLE ONLY fv.datasets
 
 
 --
--- Name: disclaimers disclaimers_pkey; Type: CONSTRAINT; Schema: fv; Owner: -
---
-
-ALTER TABLE ONLY fv.disclaimers
-    ADD CONSTRAINT disclaimers_pkey PRIMARY KEY (id);
-
-
---
 -- Name: feature_accuracy_class feature_accuracy_class_pkey; Type: CONSTRAINT; Schema: fv; Owner: -
 --
 
@@ -1143,6 +1134,14 @@ ALTER TABLE ONLY fv.owners
 
 ALTER TABLE ONLY fv.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: system_configurations system_configurations_pkey; Type: CONSTRAINT; Schema: fv; Owner: -
+--
+
+ALTER TABLE ONLY fv.system_configurations
+    ADD CONSTRAINT system_configurations_pkey PRIMARY KEY (key);
 
 
 --
@@ -1328,7 +1327,7 @@ ALTER TABLE ONLY fv.users
 SET search_path TO fv,public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20250209215624'),
+('20250218231749'),
 ('20250112022845'),
 ('20241206111420'),
 ('20240414204740');
