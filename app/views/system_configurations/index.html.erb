@@ -1,0 +1,27 @@
+<h1>System Configurations</h1>
+
+<div id="system_configurationes">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @system_configurations.each do |system_configuration| %>
+        <tr>
+          <td><%= system_configuration.key %></td>
+          <td><%= system_configuration.value %></td>
+          <td>
+            <%= edit_link('Edit', edit_system_configuration_path(system_configuration)) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="pt-3">
+ <%= link_to "Back to system settings", system_settings_path %>
+</div>

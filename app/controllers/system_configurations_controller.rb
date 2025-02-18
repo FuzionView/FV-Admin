@@ -4,7 +4,8 @@ class SystemConfigurationsController < ApplicationController
   before_action :set_sys_config, only: %i[show edit update]
   
   def index
-    authorize SystemConfiguration 
+    authorize SystemConfiguration
+    @system_configurations = SystemConfiguration.all
   end
 
   # GET /system_configurations/1/show
