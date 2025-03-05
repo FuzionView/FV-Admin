@@ -44,10 +44,12 @@ A Ruby on Rails administration interface for FuzionView
 
     TEST_TICKET_URL=https://localhost/api/tickets/
     ```
+*  Most text in the application is externalized and can be updated in config/locales/en.yml.
 
 ## Deployment
 
 *  Phusion Passenger is the recommended production deployment method. 
+*  Precompile assets in production `RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/admin rails assets:precompile`
 
 ## Development
 
