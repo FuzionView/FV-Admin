@@ -1,46 +1,46 @@
-<h1>System Settings</h1>
+<h1><%= t('.title') %></h1>
 <table class="table">
   <thead>
     <tr>
-      <th>Domain table</th>
-      <th>Action</th>
+      <th><%= t('.domain_table') %></th>
+      <th><%= t('.action') %></th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>
-        Feature accuracy classes
+        <%= t('.feature_accuracy_classes') %>
       </td>
       <td>
-        <%= view_link 'Manage feature accuracy classes', accuracy_classes_path %>
-        <%= new_link "New feature accuracy class", new_accuracy_class_path, 'visually-hidden' %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Feature classes
-      </td>
-      <td>
-        <%= view_link 'Manage feature classes', feature_classes_path %>
-        <%= new_link "New feature class", new_feature_class_path, 'visually-hidden' %>
+        <%= view_link t('.manage', item: t('.feature_accuracy_classes').downcase), accuracy_classes_path %>
+        <%= new_link t('accuracy_classes.new_accuracy_class'), new_accuracy_class_path, 'visually-hidden' %>
       </td>
     </tr>
     <tr>
       <td>
-        Feature statuses
+        <%= t('.feature_classes') %>
       </td>
       <td>
-        <%= view_link 'Manage feature statuses', feature_statuses_path %>
-        <%= new_link "New feature status", new_feature_status_path, 'visually-hidden' %>
+        <%= view_link t('.manage', item: t('.feature_classes').downcase), feature_classes_path %>
+        <%= new_link t('feature_classes.new_feature_class'), new_feature_class_path, 'visually-hidden' %>
       </td>
     </tr>
     <tr>
       <td>
-        Ticket types
+        <%= t('.feature_statuses') %>
       </td>
       <td>
-        <%= view_link 'Manage ticket types', ticket_types_path %>
-        <%= new_link "New ticket type", new_ticket_type_path, 'visually-hidden' %>
+        <%= view_link t('.manage', item: t('.feature_statuses').downcase), feature_statuses_path %>
+        <%= new_link t('feature_statuses.new_feature_status'), new_feature_status_path, 'visually-hidden' %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= t('.ticket_types') %>
+      </td>
+      <td>
+        <%= view_link t('.manage', item: t('.ticket_types').downcase), ticket_types_path %>
+        <%= new_link t('ticket_types.new_ticket_type'), new_ticket_type_path, 'visually-hidden' %>
       </td>
     </tr>
   </tbody>

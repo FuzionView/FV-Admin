@@ -42,11 +42,273 @@ en:
       short: "%m/%d/%y"
       d_with_hour: "%m/%d/%Y %I:%M %p"
       long: "%B %d, %Y"
+  application:
+    title: "FuzionView Admin"
+    fuzionview_admin: "FuzionView Admin"
+    toggle_navigation: "Toggle navigation"
+    system_operator_dashboard: "System Operator Dashboard"
+    ticket_map: "Ticket Map"
+    ticket_list: "Ticket List"
+    system_operator_admin: "System Operator Admin"
+    system_settings: "System Settings"
+    system_profile: "System Profile"
+    documentation: "Documentation"
+    log_out: "Log out"
+    version: "Version %{version}"
+  accuracy_classes:
+    delete_confirmation: "Delete feature accuracy class?"
+    new_accuracy_class: "New accuracy class"
+    back: "Back to accuracy classes"
+    edit: "Edit"
+    delete: "Delete"
+    index:
+      feature_accuracy_classes: "Feature accuracy classes"
+    new:
+      new_accuracy_class: "New accuracy class"
+    edit:
+      editing_accuracy_class: "Editing accuracy class"
+    form:
+      submit: "Submit"
+    create:
+      success: "Accuracy class was successfully created."
+    update:
+      success: "Accuracy class was successfully updated."
+    destroy:
+      success: "Accuracy class was successfully deleted."
+      foreign_key_error: "Accuracy class is associated with other records and can't be deleted."
+  datasets:
+    datasets: "Datasets"
+    name: "Name"
+    source: "Source"
+    actions: "Actions"
+    view: "View"
+    dedit: "Edit"
+    test_ticket: "Test Ticket"
+    delete: "Delete"
+    confirm_delete: "Delete this dataset?"
+    no_datasets: "No datasets yet."
+    dnew: "New Dataset"
+    dataset:
+      edit: "Edit"
+      test_ticket: "Test Ticket"
+      delete_dataset: "Delete this dataset"
+      delete_dataset_confirm: "Delete this dataset?"
+      name_label: "Name"
+      source_dataset_label: "Source Dataset"
+      source_sql_label: "Source SQL"
+      source_co_label: "Source CO"
+      source_srs_label: "Source SRS"
+      cache_whole_dataset_label: "Cache whole dataset?"
+      enabled_label: "Enabled?"
+    form:
+      submit: "Submit"
+      source_dataset_hint: "The URL for the source ESRI or WFS."
+      source_srs_hint: "The EPSG code for the coordinate system"
+    _test_tickets:
+      test_tickets: "Test Tickets"
+      ticket_no: "Ticket No."
+      status: "Status"
+      feature_count: "Feature Count"
+      attempt: "Attempt"
+      publish_date: "Publish Date"
+      pending: "PENDING"
+    edit:
+      editing_dataset: "Editing dataset %{name}"
+      show_dataset: "Show dataset"
+    new:
+      new_dataset_for: "%{name}: New dataset"
+      minimal_validation: "This method of dataset entry provides minimal validation."
+    step1:
+      new_dataset_for: "%{name}: New dataset"
+      step1_instructions_html: "Enter the name and URL of your dataset. ESRIJSON and WFS are supported. Use a 'WFS:' prefix before WFS dataset urls. ESRIJSON Sources should start with 'ESRIJSON:'. %{link}"
+      basic_dataset_entry: "Basic dataset entry"
+      source_dataset_hint: "The URL for the source ESRI or WFS."
+      submit: "Submit"
+    step2:
+      new_dataset_for: "%{name}: New dataset"
+      select_layer: "Your datasource has multiple layers. Please select one."
+      source_dataset_label: "Source Dataset"
+      layer_name_label: "Layer name"
+      submit: "Submit"
+    step3:
+      new_dataset_for: "%{name}: New dataset"
+      map_data_attributes: '"Map" your data attributes to the FuzionView Schema.'
+      source_dataset_label: "Source Dataset"
+      layer_name_label: "Layer name"
+      your_data: "Your Data"
+      fuzionview_schema_attribute: "FuzionView Schema Attribute"
+      geometry: "Geometry"
+      provider_fid: "Provider FID"
+      feature_class: "Feature Class"
+      status: "Status"
+      size: "Size"
+      depth: "Depth"
+      accuracy_value: "Accuracy Value"
+      description: "Description"
+      source_srs_hint: "The EPSG code for the coordinate system"
+      submit: "Submit"
+    create:
+      success: "Dataset was successfully created."
+    update:
+      success: "Dataset was successfully updated."
+    destroy:
+      success: "Dataset was successfully deleted."
+    test_ticket:
+      success: "Test ticket created."
+    error: "Error: %{message}"
+    metadata:
+      no_layers: "Unable to identify any layers in this service."
+  owners:
+    data_providers: "Data Providers"
+    new_data_provider: "New Data Provider"
+    edit_data_provider: "Edit Data Provider"
+    delete_this_data_provider: "Delete this data provider"
+    delete_data_provider_confirmation: "Delete this data provider?"
+    back_to_data_providers: "Back to data providers"
+    new: "New"
+    edit_data_provider_link: "Edit data provider"
+    manage_users: "Manage Users"
+    view: "View"
+    owner_details: "Data Provider Details"
+    form:
+      submit: "Submit"
+      name_label: "Name"
+    create:
+      success: "Data provider was successfully created."
+    update:
+      success: "Data provider was successfully updated."
+    destroy:
+      success: "Data provider was successfully deleted."
+    service_area:
+      success: "Service area set."
+      delete_success: "Service area deleted."
+  service_area:
+    title: "Service Area"
+    description: "Define a service area. This will allow the system to optimize service requests."
+    submit: "Submit"
+    delete_service_area: "Delete service area"
+    confirm_delete: "Are you sure?"
+    define: "Define a Service Area"
+  users:
+    back_to_data_provider_users: "Back to data provider users"
+    index:
+      users: "Users"
+      users_title: "%{name}: Users"
+      users_explanation: "People in this list who are assigned the 'Data Provider' role will be able to add, modify and delete datasets for this data provider."
+      email_address: "Email Address"
+      actions: "Actions"
+      no_users: "No users yet."
+      new: "New user"
+      edit: "Edit"
+      delete: "Delete"
+      delete_confirmation: "Delete this user?"
+    new:
+      new_user_title: "%{name}: New user"
+      allow_manage_datasets: "Allow this user to manage %{name} datasets."
+    form:
+      submit: "Submit"
+      name_label: "Name"
+    create:
+      success: "User was successfully created."
+    update:
+      success: "User was successfully updated."
+    destroy:
+      success: "User was successfully deleted."
   attributes:
     id: "ID"
+    name: "Name"
+    action: "Action"
+    back_to_data_provider: "Back to data provider"
+  feature_classes:
+    delete_confirmation: "Delete feature class?"
+    new_feature_class: "New feature class"
+    back: "Back to feature classes"
+    code: "Code"
+    color_mapserv: "Color Mapserver"
+    color_hex: "Color Hex"
+    dedit: "Edit"
+    delete: "Delete"
+    index:
+      feature_classes: "Feature classes"
+    new:
+      new_feature_class: "New feature class"
+    edit:
+      editing_feature_class: "Editing feature class"
+    form:
+      submit: "Submit"
+    create:
+      success: "Feature class was successfully created."
+    update:
+      success: "Feature class was successfully updated."
+    destroy:
+      success: "Feature class was successfully deleted."
+      foreign_key_error: "Feature class is associated with other records and can't be deleted."
+  feature_statuses:
+    back: "Back to feature statuses"
+    delete_confirmation: "Delete feature status?"
+    new_feature_status: "New feature status"
+    name: "Name"
+    dedit: "Edit"
+    delete: "Delete"
+    index:
+      feature_statuses: "Feature statuses"
+    new:
+      new_feature_status: "New feature status"
+    edit:
+      editing_feature_status: "Editing feature status"
+    form:
+      submit: "Submit"
+    create:
+      success: "Feature status was successfully created."
+    update:
+      success: "Feature status was successfully updated."
+    destroy:
+      success: "Feature status was successfully deleted."
+    destroy:
+      foreign_key_error: "Feature status is associated with other records and can't be deleted."
+  ticket_types:
+    back: "Back to ticket types"
+    create:
+      success: "Ticket type was successfully created."
+    update:
+      success: "Ticket type was successfully updated."
+    destroy:
+      success: "Ticket type was successfully deleted."
+    destroy:
+      foreign_key_error: "Ticket type is associated with other records and can't be deleted."
+    delete_confirmation: "Delete ticket type?"
+    new_ticket_type: "New ticket type"
+    description: "Description"
+    color_mapserv: "Color Mapserver"
+    color_hex: "Color Hex"
+    dedit: "Edit"
+    delete: "Delete"
+    index:
+      ticket_types: "Ticket types"
+    new:
+      new_ticket_type: "New ticket type"
+    edit:
+      editing_ticket_type: "Editing ticket type"
+    form:
+      submit: "Submit"
+  system_settings:
+    index:
+      title: "System Settings"
+      domain_table: "Domain table"
+      action: "Action"
+      feature_accuracy_classes: "Feature accuracy classes"
+      feature_classes: "Feature classes"
+      feature_statuses: "Feature statuses"
+      ticket_types: "Ticket types"
+      manage: "Manage %{item}"
   activerecord:
     models:
       owner: "Data Provider"
+      accuracy_class: "Feature accuracy class"
+      feature_class: "Feature class"
+      feature_status: "Feature status"
+      ticket_type: "Ticket type"
+      dataset: "Dataset"
     attributes:
       ticket:
         geom: 'Test ticket polygon'
@@ -55,3 +317,18 @@ en:
         source_co: "Source CO"
         source_co_v: "Source CO"
         source_srs: "Source SRS"
+        provider_fid: "Provider FID"
+      accuracy_class:
+        id: "ID"
+        code: "Code"
+      feature_class:
+        id: "ID"
+        code: "Code"
+        name: "Name"
+        color_mapserv: "Color Mapserver"
+        color_hex: "Color Hex"
+      ticket_type:
+        id: "ID"
+        description: "Description"
+        color_mapserv: "Color Mapserver"
+        color_hex: "Color Hex"

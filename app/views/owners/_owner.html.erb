@@ -1,48 +1,51 @@
-<h1>Data Provider: <%= owner.name %></h1>
+<h1><%= t('owners.owner_details') %>: <%= owner.name %></h1>
 
-<h2>Datasets</h2>
+<h2><%= t('datasets.datasets') %></h2>
 
 <% if owner.datasets.any? %>
   <table class="table">
-    <tr>
-      <th>Name</th>
-      <th>Source</th>
-      <th>Actions</th>
-    </tr>
-    <% owner.datasets.each do |dataset| %>
+    <thead>
       <tr>
-        <td>
-          <%= dataset.name %>
-        </td>
-        <td class="text-break">
-          <%= dataset.source_dataset %>
-        </td>
-        <td>
-          <%= view_link('View', owner_dataset_path(owner, dataset)) %>
-          &nbsp;
-          <%= edit_link('Edit', edit_owner_dataset_path(owner, dataset)) %>
-          &nbsp;
-          <%= ticket_link('Test Ticket', owner_dataset_test_ticket_path(owner, dataset)) %>
-          &nbsp;
-          <%= delete_link('Delete', [owner, dataset], "Delete this dataset") %>
-        </td>
-        </td>
+        <th><%= t('datasets.name') %></th>
+        <th><%= t('datasets.source') %></th>
+        <th><%= t('datasets.actions') %></th>
       </tr>
-    <% end %>
+    </thead>
+    <tbody>
+      <% owner.datasets.each do |dataset| %>
+        <tr>
+          <td>
+            <%= dataset.name %>
+          </td>
+          <td class="text-break">
+            <%= dataset.source_dataset %>
+          </td>
+          <td>
+            <%= view_link(t('datasets.view'), owner_dataset_path(owner, dataset)) %>
+            &nbsp;
+            <%= edit_link(t('datasets.dedit'), edit_owner_dataset_path(owner, dataset)) %>
+            &nbsp;
+            <%= ticket_link(t('datasets.test_ticket'), owner_dataset_test_ticket_path(owner, dataset)) %>
+            &nbsp;
+            <%= delete_link(t('datasets.delete'), [owner, dataset], t('datasets.confirm_delete')) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 <% else %>
   <p>
-    No datasets yet.
+    <%= t('datasets.no_datasets') %>
   </p>
 <% end %>
 <span>
-<%= new_link 'New dataset', new_wizard_owner_dataset_path(@owner) %>
+  <%= new_link t('datasets.dnew'), new_wizard_owner_dataset_path(@owner) %>
 </span>
 <span>
-<%=
-    link_to service_area_owner_path(owner_id: @owner), class: 'text-body' do
-        content_tag(:i, '', title: 'Service Area', class: 'ms-2 bi-map', style: 'font-size: 2rem;') +
-      content_tag(:span, 'Define a Service Area', class: 'ms-2 me-2')
-    end
-%>
+  <%=
+      link_to service_area_owner_path(owner_id: @owner), class: 'text-body' do
+          content_tag(:i, '', title: t('service_area.title'), class: 'ms-2 bi-map', style: 'font-size: 2rem;') +
+        content_tag(:span, t('service_area.define'), class: 'ms-2 me-2')
+      end
+  %>
 </span>

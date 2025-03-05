@@ -1,13 +1,13 @@
-<h1>Ticket types</h1>
+<h1><%= t('.ticket_types') %></h1>
 <div id="ticket_types">
   <table class="table">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Description</th>
-        <th>Color Mapserver</th>
-        <th>Color Hex</th>
-        <th>Action</th>
+        <th><%= t('attributes.id') %></th>
+        <th><%= t('ticket_types.description') %></th>
+        <th><%= t('ticket_types.color_mapserv') %></th>
+        <th><%= t('ticket_types.color_hex') %></th>
+        <th><%= t('attributes.action') %></th>
       </tr>
     </thead>
     <tbody>
@@ -18,9 +18,9 @@
           <td><%= ticket_type.color_mapserv %></td>
           <td><%= ticket_type.color_hex %></td>
           <td>
-            <%= edit_link('Edit', edit_ticket_type_path(ticket_type)) %>
+            <%= edit_link(t('ticket_types.dedit'), edit_ticket_type_path(ticket_type)) %>
             &nbsp;
-            <%= delete_link('Delete', ticket_type, "Delete ticket type?") %>
+            <%= delete_link(t('ticket_types.delete'), ticket_type, t('ticket_types.delete_confirmation')) %>
           </td>
         </tr>
       <% end %>
@@ -28,5 +28,4 @@
   </table>
 </div>
 
-
-<%= new_link "New ticket type", new_ticket_type_path %>
+<%= new_link t('ticket_types.new_ticket_type'), new_ticket_type_path %>

@@ -1,9 +1,10 @@
-<h1>Editing <%= @owner.name %> user</h1>
+<h1><%= t('.editing_user', name: @owner.name) %></h1>
 
 <%= render "form", user: @user, url: owner_user_path(@owner, @user)  %>
 
 <br>
 
 <div>
-  <%= link_to "Back to data provider users", owner_users_path(@owner) %>
+  <%= link_to t('.back_to_data_provider_users'), owner_users_path(@owner) %>
 </div>
+

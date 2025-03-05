@@ -1,7 +1,7 @@
 class OwnersController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner, only: %i[ show edit update destroy service_area delete_service_area ]
+  before_action :set_owner, only: %i[show edit update destroy service_area delete_service_area]
 
   # GET /owners
   def index
@@ -31,7 +31,7 @@ class OwnersController < ApplicationController
     @owner = Owner.new(owner_params)
 
     if @owner.save
-      redirect_to @owner, notice: "Data provider was successfully created."
+      redirect_to @owner, notice: t('owners.create.success')
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class OwnersController < ApplicationController
   def update
     authorize @owner
     if @owner.update(owner_params)
-      redirect_to @owner, notice: "Data provider was successfully updated.", status: :see_other
+      redirect_to @owner, notice: t('owners.update.success'), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -51,40 +51,43 @@ class OwnersController < ApplicationController
   def destroy
     authorize @owner
     @owner.destroy!
-    redirect_to owners_url, notice: "Data provider was successfully deleted.", status: :see_other
+    redirect_to owners_url, notice: t('owners.destroy.success'), status: :see_other
   end
 
   def service_area
     authorize @owner
-    if request.post?
-      @owner.service_area = params[:owner][:service_area]
-      if @owner.save
-        redirect_to service_area_owner_path(owner_id: @owner), notice: "Service area set.", status: :see_other
-      else
-        render :service_area, status: :unprocessable_entity
-      end
+    return unless request.post?
+
+    @owner.service_area = params[:owner][:service_area]
+    if @owner.save
+      redirect_to service_area_owner_path(owner_id: @owner), notice: t('owners.service_area.success'),
+                                                             status: :see_other
+    else
+      render :service_area, status: :unprocessable_entity
     end
   end
 
   def delete_service_area
     authorize @owner
-    if request.post?
-      if @owner.update_column(:service_area, nil)
-        redirect_to service_area_owner_path(owner_id: @owner), notice: "Service area deleted.", status: :see_other
-      else
-        render :service_area, status: :unprocessable_entity
-      end
+    return unless request.post?
+
+    if @owner.update_column(:service_area, nil)
+      redirect_to service_area_owner_path(owner_id: @owner), notice: t('owners.service_area.delete_success'),
+                                                             status: :see_other
+    else
+      render :service_area, status: :unprocessable_entity
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_owner
-      @owner = policy_scope(Owner).find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def owner_params
-      params.fetch(:owner, {}).permit(:name)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_owner
+    @owner = policy_scope(Owner).find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def owner_params
+    params.fetch(:owner, {}).permit(:name)
+  end
 end

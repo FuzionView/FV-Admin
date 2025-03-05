@@ -1,9 +1,9 @@
-<h1>Editing feature status</h1>
+<h1><%= t('.editing_feature_status') %></h1>
 
 <%= render "form", feature_status: @feature_status %>
 
 <br>
 
 <div>
-  <%= link_to "Back to feature statuses", feature_statuses_path %>
+  <%= link_to t('feature_statuses.back'), feature_statuses_path %>
 </div>

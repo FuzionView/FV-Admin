@@ -1,6 +1,6 @@
-<h1>Editing dataset <%= @dataset.name %>
+<h1><%= t('.editing_dataset', name: @dataset.name) %>
 <span class="float-end">
-  <%= view_link('Show dataset', owner_dataset_path(@owner, @dataset)) %>
+  <%= view_link(t('.show_dataset'), owner_dataset_path(@owner, @dataset)) %>
 </span>
 </h1>
 
@@ -9,5 +9,7 @@
 <br>
 
 <div>
-  <%= link_to "Back to data provider", owner_path(@dataset.owner) %>
+  <%= link_to t('attributes.back_to_data_provider'), owner_path(@dataset.owner) %>
 </div>
+
+

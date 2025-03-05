@@ -1,16 +1,15 @@
-<h1><%= @owner.name %>: Users</h1>
+<h1><%= t('.users_title', name: @owner.name) %></h1>
 
 <div class="pt-3">
-  <h2>Users</h2>
-  <p>People in this list who are assigned the 'Data Provider' role
-  will be able to add, modify and delete datasets for this data provider.</p>
+  <h2><%= t('.users') %></h2>
+  <p><%= t('.users_explanation') %></p>
 
   <% if @owner.users.any? %>
     <table class="table">
       <thead>
         <tr>
-          <th>Email Address</th>
-          <th>Actions</th>
+          <th><%= t('.email_address') %></th>
+          <th><%= t('.actions') %></th>
         </tr>
       </thead>
       <tbody>
@@ -21,8 +20,8 @@
             </td>
             <td>
               <% if policy(user).edit? %>
-                <%= edit_link 'Edit', edit_owner_user_path(@owner, user) %>
-                <%= delete_link 'Delete', [@owner, user], 'Delete this user?' %>
+                <%= edit_link t('.edit'), edit_owner_user_path(@owner, user) %>
+                <%= delete_link t('.delete'), [@owner, user], t('.delete_confirmation') %>
               <% end %>
             </td>
           </tr>
@@ -30,13 +29,13 @@
       </tbody>
     </table>
   <% else %>
-    <p>
-    No users yet.
-    </p>
+    <p><%= t('.no_users') %></p>
   <% end %>
+
   <% if policy(User).create? %>
-    <%= new_user_link 'New user', new_owner_user_path(@owner) %>
+    <%= new_user_link t('.new'), new_owner_user_path(@owner) %>
   <% end %>
   <br>
-  <%= link_to "Back to data providers", owners_path %>
+  <%= link_to t('attributes.back_to_data_providers'), owners_path %>
 </div>
+

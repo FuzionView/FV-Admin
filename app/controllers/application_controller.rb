@@ -1,8 +1,7 @@
 class ApplicationController < ActionController::Base
-
   OIDC_FLOW_START = "#{ENV['RAILS_RELATIVE_URL_ROOT']}/auth/oidc".freeze
 
-  before_action :authorize_user, except: %w(authentication_callback login not_authorized logout)
+  before_action :authorize_user, except: %w[authentication_callback login not_authorized logout]
   helper_method :current_user
 
   def authentication_callback
@@ -24,8 +23,7 @@ class ApplicationController < ActionController::Base
     redirect_to "#{logout_url}?id_token_hint=#{id_token}&post_logout_redirect_uri=#{root_url}", allow_other_host: true
   end
 
-  def not_authorized
-  end
+  def not_authorized; end
 
   def role
     if request.post?
@@ -41,11 +39,9 @@ class ApplicationController < ActionController::Base
   private
 
   def user_not_authorized
-    flash[:error] = "You are not authorized to perform this action."
+    flash[:error] = t('application.unauthorized')
     redirect_back(fallback_location: root_path)
   end
-
-  private
 
   def authorize_user
     return true if current_user.present?
@@ -60,12 +56,12 @@ class ApplicationController < ActionController::Base
 
   def open_id_authorize(auth)
     id_token = auth.dig('credentials', 'id_token')
-    first_name = auth.dig('extra', 'raw_info', 'first_name')
-    last_name = auth.dig('extra', 'raw_info', 'last_name')
+    auth.dig('extra', 'raw_info', 'first_name')
+    auth.dig('extra', 'raw_info', 'last_name')
     email_address = auth.dig('extra', 'raw_info', 'email')
     roles = auth.dig('extra', 'raw_info', 'roles')
 
-    raise AuthorizationException, 'No roles assigned.' if roles.empty?
+    raise AuthorizationException, t('application.no_roles_assigned') if roles.empty?
 
     session[:id_token] = id_token
     session[:email_address] = email_address

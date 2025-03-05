@@ -1,17 +1,17 @@
 <% tickets = @dataset.test_tickets %>
 <% if tickets.size.positive? %>
   <div class="alert alert-secondary" role="alert">
-    Test Tickets
+    <%= t('.test_tickets') %>
   </div>
 
   <table class="table caption-top">
     <thead>
       <tr>
-        <th>Ticket No.</th>
-        <th>Status</th>
-        <th>Feature Count</th>
-        <th>Attempt</th>
-        <th>Publish Date</th>
+        <th><%= t('.ticket_no') %></th>
+        <th><%= t('.status') %></th>
+        <th><%= t('.feature_count') %></th>
+        <th><%= t('.attempt') %></th>
+        <th><%= t('.publish_date') %></th>
       </tr>
     </thead>
   <% end %>
@@ -19,7 +19,7 @@
     <tbody>
       <tr>
         <td><%= report_link(t.ticket_no) %></td>
-        <td class="text-wrap"><%= t.status&.sub(/: \d+/, '') || 'PENDING' %></td>
+        <td class="text-wrap"><%= t.status&.sub(/: \d+/, '') || t('.pending') %></td>
         <td><%= t.feature_count %></td>
         <td><%= t.attempt %></td>
         <td><%= sdt t.publish_date %></td>
@@ -29,3 +29,4 @@
   <% if tickets.size.positive? %>
     </table>
   <% end %>
+

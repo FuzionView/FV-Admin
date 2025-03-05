@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en-US" class="h-100">
+<html lang="<%= I18n.locale %>" class="h-100">
   <head>
-    <title>FuzionView Admin</title>
+    <title><%= t('application.title') %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -26,13 +26,13 @@
   <body class="d-flex flex-column h-100">
     <nav class="navbar navbar-light bg-light">
       <div class="container">
-        <%= link_to 'FuzionView Admin', root_path, class: 'navbar-brand' %>
+        <%= link_to t('application.fuzionview_admin'), root_path, class: 'navbar-brand' %>
         <% if current_user %>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                                                      data-bs-target="#navbarSupportedContent"
                                                      aria-controls="navbarSupportedContent"
                                                      aria-expanded="false"
-                                                     aria-label="Toggle navigation">
+                                                     aria-label="<%= t('application.toggle_navigation') %>">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -40,31 +40,31 @@
               <% if current_user.administrator? %>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    System Operator Dashboard
+                    <%= t('application.system_operator_dashboard') %>
                   </a>
                     <ul class="dropdown-menu">
                       <li>
-                        <a class="dropdown-item" href="#">Ticket Map</a>
+                        <a class="dropdown-item" href="#"><%= t('application.ticket_map') %></a>
                       </li>
                       <li>
-                        <a class="dropdown-item" href="#">Ticket List</a>
+                        <a class="dropdown-item" href="#"><%= t('application.ticket_list') %></a>
                       </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    System Operator Admin
+                    <%= t('application.system_operator_admin') %>
                   </a>
                     <ul class="dropdown-menu">
                       <li>
-                        <%= link_to 'Data Providers', owners_path,
+                        <%= link_to t('owners.data_providers'), owners_path,
                           class: 'dropdown-item'%>
                       <li>
-                        <%= link_to 'New Data Provider', new_owner_path,
+                        <%= link_to t('owners.new_data_provider'), new_owner_path,
                           class: 'dropdown-item'%>
                       </li>
                       <li>
-                        <%= link_to 'System Settings', system_settings_path, class: 'dropdown-item' %>
+                        <%= link_to t('application.system_settings'), system_settings_path, class: 'dropdown-item' %>
                       </li>
                     </ul>
                 </li>
@@ -75,24 +75,24 @@
                       <%= owner.name %>
                     </a>
                     <ul class="dropdown-menu">
-                      <%= link_to 'Datasets', owner_path(owner), class: 'dropdown-item' %>
-                      <%= link_to 'Users', owner_users_path(owner), class: 'dropdown-item' %>
+                      <%= link_to t('datasets.datasets'), owner_path(owner), class: 'dropdown-item' %>
+                      <%= link_to t('users.index.users'), owner_users_path(owner), class: 'dropdown-item' %>
                     </ul>
                   </li>
                 <% end %>
               <% end  %>
               <li class="nav-item">
                 <a class="nav-link" href="/start.html">
-                  System Profile
+                  <%= t('application.system_profile') %>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/docs/" target="_blank">
-                  Documentation
+                  <%= t('application.documentation') %>
                 </a>
               </li>
               <li class="nav-item">
-                <%= link_to 'Log out', application_logout_path, class: 'nav-link', data: { turbo: false } %>
+                <%= link_to t('application.log_out'), application_logout_path, class: 'nav-link', data: { turbo: false } %>
               </li>
               <%# link_to "Change role (current: #{current_user&.current_role})", application_role_path, class: 'nav-link' %>
           </ul>
@@ -130,7 +130,7 @@
 
     <footer class="footer mt-auto py-3 bg-light">
       <div class="container">
-        <span class="fs-6 text-muted"><%= "Version #{`git describe --tags --always`.strip}" rescue '' %></span>
+        <span class="fs-6 text-muted"><%= t('application.version', version: (`git describe --tags --always`.strip rescue '')) %></span>
       </div>
     </footer>
   </body>

@@ -1,20 +1,20 @@
-<h1><%= @owner.name %>: New dataset</h1>
+<h1><%= t('.new_dataset_for', name: @owner.name) %></h1>
 
 <%= simple_form_for(@dataset, url: @url, data: { turbo: false }) do |f| %>
   <%= f.error_notification %>
   <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
-  <p>"Map" your data attributes to the FuztionView Schema.</p>
+  <p><%= t('.map_data_attributes') %></p>
 
   <div class="row">
     <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
-          <div class='mb-1'>Source Dataset:</div>
+          <div class='mb-1'><%= t('.source_dataset_label') %>:</div>
            <%= f.hidden_field :source_dataset %>
            <p><%= f.object.source_dataset %></p>
           <% if @layers && @layers.any? %>
             <% if f.object.layer_name.present? %>
-              <div class='mb-1'>Layer name:</div>
+              <div class='mb-1'><%= t('.layer_name_label') %>:</div>
               <%= f.hidden_field :layer_name %>
               <p><%= f.object.layer_name %></p>
             <% else %>
@@ -24,10 +24,10 @@
           <% if @options && @options.any? %>
             <div class="row">
               <div class="col">
-                <strong>Your Data</strong>
+                <strong><%= t('.your_data') %></strong>
               </div>
               <div class="col">
-                <strong>FuzionView Schema Attribute</strong>
+                <strong><%= t('.fuzionview_schema_attribute') %></strong>
               </div>
             </div>
             <div class="row">
@@ -35,7 +35,7 @@
                 <%= f.input :geometry_name, collection: @geomFields %>
               </div>
               <div class="col d-flex align-items-center">
-                Geometry
+                <%= t('.geometry') %>
               </div>
             </div>
             <div class="row">
@@ -43,7 +43,7 @@
                 <%= f.input :provider_fid, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Provider FID
+                <%= t('.provider_fid') %>
               </div>
             </div>
             <div class="row">
@@ -51,7 +51,7 @@
                 <%= f.input :feature_class, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Feature Class
+                <%= t('.feature_class') %>
               </div>
             </div>
             <div class="row">
@@ -59,7 +59,7 @@
                 <%= f.input :status, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Status
+                <%= t('.status') %>
               </div>
             </div>
             <div class="row">
@@ -67,7 +67,7 @@
                 <%= f.input :size, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Size
+                <%= t('.size') %>
               </div>
             </div>
             <div class="row">
@@ -75,7 +75,7 @@
                 <%= f.input :depth, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Depth
+                <%= t('.depth') %>
               </div>
             </div>
             <div class="row">
@@ -83,7 +83,7 @@
                 <%= f.input :accuracy_class, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Accuracy Value
+                <%= t('.accuracy_value') %>
               </div>
             </div>
             <div class="row">
@@ -91,20 +91,21 @@
                 <%= f.input :description, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
-                Description
+                <%= t('.description') %>
               </div>
             </div>
         <% end %>
-        <%= f.input :source_srs, as: :string, hint: 'The EPSG code for the coordinate system' %>
+        <%= f.input :source_srs, as: :string, hint: t('.source_srs_hint') %>
       </div>
     </div>
   </div>
   <div class="form-actions">
-    <%= f.button :submit, 'Submit', class: 'btn btn-primary' %>
+    <%= f.button :submit, t('.submit'), class: 'btn btn-primary' %>
   </div>
 <% end %>
 <br>
 
 <div>
-  <%= link_to "Back to data provider", owner_path(@dataset.owner_id) %>
+  <%= link_to t('attributes.back_to_data_provider'), owner_path(@dataset.owner_id) %>
 </div>
+

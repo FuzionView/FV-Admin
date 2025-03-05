@@ -27,7 +27,7 @@ class UsersController < ApplicationController
     @user = @owner.users.build(user_params)
 
     if @user.save
-      redirect_to owner_users_path(@owner), notice: "User was successfully created."
+      redirect_to owner_users_path(@owner), notice: t('users.create.success')
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
   def update
     authorize @user
     if @user.update(user_params)
-      redirect_to owner_users_path(@owner), notice: "User was successfully updated.", status: :see_other
+      redirect_to owner_users_path(@owner), notice: t('users.update.success'), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -47,21 +47,21 @@ class UsersController < ApplicationController
   def destroy
     authorize @user
     @user.destroy!
-    redirect_to owner_users_path(@owner), notice: "User was successfully deleted.", status: :see_other
+    redirect_to owner_users_path(@owner), notice: t('users.destroy.success'), status: :see_other
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = @owner.users.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = @owner.users.find(params[:id])
+  end
 
-    def set_owner
-      @owner = policy_scope(Owner).find(params[:owner_id])
-    end
+  def set_owner
+    @owner = policy_scope(Owner).find(params[:owner_id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit(:email_address)
-    end
+  # Only allow a list of trusted parameters through.
+  def user_params
+    params.require(:user).permit(:email_address)
+  end
 end

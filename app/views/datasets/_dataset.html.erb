@@ -1,15 +1,15 @@
 <h1>
   <%= dataset.owner&.name %>: <%= dataset.name %>
   <span class="float-end">
-    <%= edit_link('Edit', edit_owner_dataset_path(@owner, @dataset)) %>
-    <%= ticket_link('Test Ticket', owner_dataset_test_ticket_path(@owner, @dataset)) %>
-    <%= delete_link "Delete this dataset", [@owner, @dataset], 'Delete this dataset?' %>
+    <%= edit_link(t('.edit'), edit_owner_dataset_path(@owner, @dataset)) %>
+    <%= ticket_link(t('.test_ticket'), owner_dataset_test_ticket_path(@owner, @dataset)) %>
+    <%= delete_link t('.delete_dataset'), [@owner, @dataset], t('.delete_dataset_confirm') %>
   </span>
 </h1>
 <div class="container">
   <div class="row">
     <div class="col-2">
-      Name:
+      <%= t('.name_label') %>:
     </div>
     <div class="col">
       <%= dataset.name %>
@@ -17,7 +17,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Source Dataset:
+      <%= t('.source_dataset_label') %>:
     </div>
     <div class="col text-break">
       <%= dataset.source_dataset %>
@@ -25,7 +25,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Source SQL:
+      <%= t('.source_sql_label') %>:
     </div>
     <div class="col">
       <pre class="prettyprint">
@@ -35,7 +35,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Source CO:
+      <%= t('.source_co_label') %>:
     </div>
     <div class="col">
       <%= dataset.source_co %>
@@ -43,7 +43,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Source SRS:
+      <%= t('.source_srs_label') %>:
     </div>
     <div class="col">
       <%= dataset.source_srs %>
@@ -51,7 +51,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Cache whole dataset?:
+      <%= t('.cache_whole_dataset_label') %>:
     </div>
     <div class="col">
       <%= dataset.cache_whole_dataset %>
@@ -59,7 +59,7 @@
   </div>
   <div class="row">
     <div class="col-2">
-      Enabled?:
+      <%= t('.enabled_label') %>:
     </div>
     <div class="col">
       <%= dataset.enabled %>

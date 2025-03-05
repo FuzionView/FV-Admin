@@ -1,11 +1,11 @@
-<h1>Feature statuses</h1>
+<h1><%= t('.feature_statuses') %></h1>
 <div id="feature_status">
   <table class="table">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Action</th>
+        <th><%= t('attributes.id') %></th>
+        <th><%= t('feature_statuses.name') %></th>
+        <th><%= t('attributes.action') %></th>
       </tr>
     </thead>
     <tbody>
@@ -14,9 +14,9 @@
           <td><%= feature_status.id %></td>
           <td><%= feature_status.name %></td>
           <td>
-            <%= edit_link('Edit', edit_feature_status_path(feature_status)) %>
+            <%= edit_link(t('feature_statuses.dedit'), edit_feature_status_path(feature_status)) %>
             &nbsp;
-            <%= delete_link('Delete', feature_status, "Delete feature status?") %>
+            <%= delete_link(t('feature_statuses.delete'), feature_status, t('feature_statuses.delete_confirmation')) %>
           </td>
         </tr>
       <% end %>
@@ -25,4 +25,4 @@
 </div>
 
 
-<%= new_link "New feature status", new_feature_status_path %>
+<%= new_link t('feature_statuses.new_feature_status'), new_feature_status_path %>

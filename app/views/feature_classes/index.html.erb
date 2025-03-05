@@ -1,26 +1,28 @@
-<h1>Feature classes</h1>
+<h1><%= t('.feature_classes') %></h1>
 <div id="feature_class">
   <table class="table">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Description</th>
-        <th>Color Mapserver</th>
-        <th>Color Hex</th>
-        <th>Action</th>
+        <th><%= t('attributes.id') %></th>
+        <th><%= t('feature_classes.code') %></th>
+        <th><%= t('attributes.name') %></th>
+        <th><%= t('feature_classes.color_mapserv') %></th>
+        <th><%= t('feature_classes.color_hex') %></th>
+        <th><%= t('attributes.action') %></th>
       </tr>
     </thead>
     <tbody>
       <% @feature_classes.each do |feature_class| %>
         <tr>
           <td><%= feature_class.id %></td>
+          <td><%= feature_class.code %></td>
           <td><%= feature_class.name %></td>
           <td><%= feature_class.color_mapserv %></td>
           <td><%= feature_class.color_hex %></td>
           <td>
-            <%= edit_link('Edit', edit_feature_class_path(feature_class)) %>
+            <%= edit_link(t('feature_classes.dedit'), edit_feature_class_path(feature_class)) %>
             &nbsp;
-            <%= delete_link('Delete', feature_class, "Delete feature class?") %>
+            <%= delete_link(t('feature_classes.delete'), feature_class, t('feature_classes.delete_confirmation')) %>
           </td>
         </tr>
       <% end %>
@@ -28,5 +30,5 @@
   </table>
 </div>
 
+<%= new_link t('feature_classes.new_feature_class'), new_feature_class_path %>
 
-<%= new_link "New feature class", new_feature_class_path %>

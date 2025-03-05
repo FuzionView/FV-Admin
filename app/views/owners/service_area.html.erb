@@ -1,7 +1,6 @@
-<h1>Service Area for <%= @owner&.name %></h1>
+<h1><%= t('service_area.title') %> <%= @owner&.name %></h1>
 
-<p>Define a service area. This will allow the system to optimize service
-requests.</p>
+<p><%= t('service_area.description') %></p>
 
 <div id="map" class="leaflet-container" style="min-height: 500px">
   <div data-controller="service-area-map"></div>
@@ -16,7 +15,7 @@ requests.</p>
   <%= f.input :service_area, as: :hidden %>
 
   <div class="form-actions">
-    <%= f.button :submit, 'Submit', class: 'btn btn-primary' %>
+    <%= f.button :submit, t('service_area.submit'), class: 'btn btn-primary' %>
   </div>
 <% end %>
 
@@ -27,11 +26,11 @@ requests.</p>
 
 
   <div class="form-actions">
-    <%= f.button :submit, 'Delete service area', class: 'btn btn-danger',
-      data: { turbo: true, turbo_confirm: 'Are you sure?' } %>
+    <%= f.button :submit, t('service_area.delete_service_area'), class: 'btn btn-danger',
+      data: { turbo: true, turbo_confirm: t('service_area.confirm_delete') } %>
   </div>
 <% end %>
 
 <div class="pt-3">
-  <%= link_to "Back to data provider", owner_path(@owner) %>
+  <%= link_to t('attributes.back_to_data_provider'), owner_path(@owner) %>
 </div>

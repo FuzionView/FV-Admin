@@ -1,7 +1,7 @@
 class TicketTypesController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_ticket_type, only: %i[ edit update destroy ]
+  before_action :set_ticket_type, only: %i[edit update destroy]
 
   # GET /ticket_types
   def index
@@ -26,7 +26,7 @@ class TicketTypesController < ApplicationController
     @ticket_type = TicketType.new(ticket_type_params)
 
     if @ticket_type.save
-      redirect_to ticket_types_path, notice: "Ticket type was successfully created."
+      redirect_to ticket_types_path, notice: t('ticket_types.create.success')
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class TicketTypesController < ApplicationController
   def update
     authorize @ticket_type
     if @ticket_type.update(ticket_type_params)
-      redirect_to ticket_types_path, notice: "Ticket type was successfully updated.", status: :see_other
+      redirect_to ticket_types_path, notice: t('ticket_types.update.success'), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,20 +46,21 @@ class TicketTypesController < ApplicationController
   def destroy
     authorize @ticket_type
     @ticket_type.destroy!
-    redirect_to ticket_types_path, notice: "Ticket type was successfully deleted.", status: :see_other
+    redirect_to ticket_types_path, notice: t('ticket_types.destroy.success'), status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
-    redirect_to(ticket_types_path, notice: "Ticket type is associated with other records and can't be deleted.",
-                status: :see_other)
+    redirect_to(ticket_types_path, notice: t('ticket_types.destroy.foreign_key_error'),
+                                   status: :see_other)
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ticket_type
-      @ticket_type = TicketType.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def ticket_type_params
-      params.fetch(:ticket_type, {}).permit(:id, :description, :color_mapserv, :color_hex)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ticket_type
+    @ticket_type = TicketType.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def ticket_type_params
+    params.fetch(:ticket_type, {}).permit(:id, :description, :color_mapserv, :color_hex)
+  end
 end

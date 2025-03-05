@@ -1,11 +1,11 @@
-<h1>Data Providers</h1>
+<h1><%= t('owners.data_providers') %></h1>
 <div id="owners">
   <table class="table">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Action</th>
+        <th><%= t('attributes.id') %></th>
+        <th><%= t('attributes.name') %></th>
+        <th><%= t('attributes.action') %></th>
       </tr>
     </thead>
     <tbody>
@@ -14,17 +14,17 @@
           <td><%= owner.id %></td>
           <td><%= owner.name %></td>
           <td>
-            <%= view_link 'View', owner_path(owner) %>
+            <%= view_link t('owners.view'), owner_path(owner) %>
             <% if policy(owner).edit? %>
               &nbsp;
-              <%= edit_link 'Edit data provider', edit_owner_path(owner) %>
+              <%= edit_link t('owners.edit_data_provider_link'), edit_owner_path(owner) %>
               &nbsp;
-              <%= users_link 'Manage Users', owner_users_path(owner) %>
+              <%= users_link t('owners.manage_users'), owner_users_path(owner) %>
             <% end %>
             <% if policy(owner).destroy? %>
               &nbsp;
-              <%= delete_link "Delete this data provider", owner,
-                'Delete this data provider?' %>
+              <%= delete_link t('owners.delete_this_data_provider'), owner,
+                t('owners.delete_data_provider_confirmation') %>
             <% end %>
           </td>
         </tr>
@@ -35,6 +35,6 @@
 
 <% if policy(Owner).new? %>
   <p>
-  <%= new_link "New data provider", new_owner_path %>
+  <%= new_link t('owners.new_data_provider'), new_owner_path %>
   </p>
 <% end %>

@@ -1,9 +1,10 @@
-<h1>Editing Data Provider</h1>
+<h1><%= t('owners.edit_data_provider') %></h1>
 
 <%= render "form", owner: @owner %>
 
 <br>
 
 <div>
-  <%= link_to "Back to data providders", owners_path %>
+  <%= link_to t('owners.back_to_data_providers'), owners_path %>
 </div>
+
