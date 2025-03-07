@@ -5,4 +5,5 @@ import  "@popperjs/core";
 import "bootstrap";
 import  "leaflet"
 import '@bopen/leaflet-area-selection';
+import 'prettify';
 Turbo.session.drive = false

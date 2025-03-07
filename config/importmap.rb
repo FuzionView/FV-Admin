@@ -10,3 +10,4 @@ pin "@popperjs/core", to: "@popperjs--core--esm.js" # @2.11.8
 pin "leaflet" # @1.9.4
 # pin "leaflet-css" # @0.1.0
 pin "@bopen/leaflet-area-selection", to: "@bopen--leaflet-area-selection.js" # @0.7.0
+pin "prettify", to: "prettify.js"
