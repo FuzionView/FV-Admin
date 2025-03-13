@@ -5,6 +5,14 @@ module ApplicationHelper
     l(time, format: format)
   end
 
+  def to_yes_no(bool)
+    if bool
+      t('attributes.yes')
+    else
+      t('attributes.no')
+    end
+  end
+
   def report_link(ticket_no)
     base_link = ENV['TEST_TICKET_URL']
     link_to ticket_no, "#{base_link}#{ticket_no}/map", target: '_blank'

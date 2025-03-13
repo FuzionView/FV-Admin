@@ -8,6 +8,7 @@
       <tr>
         <th><%= t('datasets.name') %></th>
         <th><%= t('datasets.source') %></th>
+        <th><%= t('datasets.enabled') %></th>
         <th><%= t('datasets.actions') %></th>
       </tr>
     </thead>
@@ -19,6 +20,9 @@
           </td>
           <td class="text-break">
             <%= dataset.source_dataset %>
+          </td>
+          <td>
+            <%= to_yes_no dataset.enabled %>
           </td>
           <td>
             <%= view_link(t('datasets.view'), owner_dataset_path(owner, dataset)) %>

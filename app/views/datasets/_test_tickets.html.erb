@@ -19,7 +19,7 @@
     <tbody>
       <tr>
         <td><%= report_link(t.ticket_no) %></td>
-        <td class="text-wrap"><%= t.status&.sub(/: \d+/, '') || t('.pending') %></td>
+        <td class="text-break"><%= t.status&.sub(/: \d+/, '') || t('.pending') %></td>
         <td><%= t.feature_count %></td>
         <td><%= t.attempt %></td>
         <td><%= sdt t.publish_date %></td>

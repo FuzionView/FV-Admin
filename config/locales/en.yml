@@ -79,7 +79,8 @@ en:
   datasets:
     datasets: "Datasets"
     name: "Name"
-    source: "Source"
+    source: "Source Dataset URL"
+    enabled: "Enabled?"
     actions: "Actions"
     view: "View"
     dedit: "Edit"
@@ -94,7 +95,7 @@ en:
       delete_dataset: "Delete this dataset"
       delete_dataset_confirm: "Delete this dataset?"
       name_label: "Name"
-      source_dataset_label: "Source Dataset"
+      source_dataset_label: "Source Dataset URL"
       source_sql_label: "Source SQL"
       source_co_label: "Source CO"
       source_srs_label: "Source SRS"
@@ -219,6 +220,8 @@ en:
     name: "Name"
     action: "Action"
     back_to_data_provider: "Back to data provider"
+    yes: "Yes"
+    no: "No"
   feature_classes:
     delete_confirmation: "Delete feature class?"
     new_feature_class: "New feature class"
@@ -313,6 +316,7 @@ en:
       ticket:
         geom: 'Test ticket polygon'
       dataset:
+        source_dataset: "Source Dataset URL"
         source_sql: "Source SQL"
         source_co: "Source CO"
         source_co_v: "Source CO"

@@ -203,7 +203,7 @@ class Dataset < ApplicationRecord
     uri = URI(url)
     tmp = "#{ESRIJSON}#{uri.scheme}://" \
       "#{uri.host}" \
-      "#{format_feature_server_url(uri.path)}" \
+      "#{format_feature_server_url(uri.path, layer_id)}" \
       "#{uri.query.present? ? validate_esri_query_string(uri.query) : ESRI_QUERY_DEFAULT}"
     self.source_dataset = tmp
 
@@ -212,10 +212,14 @@ class Dataset < ApplicationRecord
     self.source_dataset = "#{source_dataset}&"
   end
 
-  def format_feature_server_url(path)
+  def format_feature_server_url(path, layer_id)
     path.chomp!('/')
     path.chomp!('/query')
-    "#{path}/query?"
+    if path.ends_with?(layer_id.to_s)
+      "#{path}/query?"
+    else
+      "#{path}/#{layer_id}/query?"
+    end
   end
 
   def validate_esri_query_string(query_string)

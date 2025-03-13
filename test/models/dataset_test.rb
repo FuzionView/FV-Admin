@@ -202,7 +202,7 @@ class DatasetTest < ActiveSupport::TestCase
 
   test 'format map server url' do
     path = '/test/MapServer/1'
-    formatted_url = @dataset.format_feature_server_url(path)
+    formatted_url = @dataset.format_feature_server_url(path, 1)
     assert formatted_url.include?('MapServer/1/query?')
   end
 
