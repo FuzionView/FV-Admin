@@ -1,0 +1,10 @@
+<h1><%= t('service_authentication_configurations.edit.title') %></h1>
+
+<%= render "form", service_authentication_configuration: @service_authentication_configuration,
+                   url: owner_service_authentication_configuration_path(@owner, @service_authentication_configuration) %>
+
+<br>
+
+<div>
+  <%= link_to t('attributes.back_to_data_provider'), owner_path(@owner) %>
+</div>

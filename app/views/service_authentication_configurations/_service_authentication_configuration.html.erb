@@ -1,0 +1,33 @@
+<h1>
+  <%= service_authentication_configuration&.owner.name %>: <%= t('service_authentication_configurations.show.title') %>
+  <span class="float-end">
+    <%= edit_link(t('service_authentication_configurations.actions.edit'), edit_owner_service_authentication_configuration_path(@owner, service_authentication_configuration)) %>
+    <%= delete_link t('service_authentication_configurations.actions.delete'), [@owner, service_authentication_configuration], t('service_authentication_configurations.delete_confirmation') %>
+  </span>
+</h1>
+<div id="<%= dom_id service_authentication_configuration %>">
+  <p>
+    <strong><%= t('attributes.name') %>:</strong>
+    <%= service_authentication_configuration.name %>
+  </p>
+  <p>
+    <strong><%= t('activerecord.attributes.service_authentication_configuration.auth_type') %>:</strong>
+    <%= service_authentication_configuration&.authentication_type&.name %>
+  </p>
+
+  <p>
+    <strong><%= t('activerecord.attributes.service_authentication_configuration.auth_url') %>:</strong>
+    <%= service_authentication_configuration.auth_url %>
+  </p>
+
+  <p>
+    <strong><%= t('activerecord.attributes.service_authentication_configuration.auth_uid') %>:</strong>
+    <%= service_authentication_configuration.auth_uid %>
+  </p>
+
+  <p>
+    <strong><%= t('activerecord.attributes.service_authentication_configuration.auth_key') %>:</strong>
+    <%= obfuscate_string(service_authentication_configuration.auth_key) %>
+  </p>
+
+</div>

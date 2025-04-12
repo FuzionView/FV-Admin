@@ -94,6 +94,7 @@
           content_class = case k.to_s
                           when 'notice' then 'alert-info'
                           when 'error' then 'alert-danger'
+                          when 'alert' then 'alert-danger'
                           end
           content_class = "alert #{content_class}"
         %>

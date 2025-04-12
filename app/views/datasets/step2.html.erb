@@ -9,6 +9,9 @@
     <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
+        <div class='mb-1'>Service Authentication:</div>
+        <p><%= f.object&.service_authentication_configuration&.name || 'None' %></p>
+        <%= f.hidden_field :credential_id %>
         <div class='mb-1'><%= t('.source_dataset_label') %>:</div>
         <%= f.hidden_field :source_dataset %>
         <p><%= f.object.source_dataset %></p>

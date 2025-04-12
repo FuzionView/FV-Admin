@@ -10,6 +10,11 @@ Rails.application.routes.draw do
       match :service_area, via: %i[get post]
       post :delete_service_area
     end
+    resources :service_authentication_configurations do
+      member do
+        post :verify
+      end
+    end
     resources :datasets do
       match :test_ticket, via: %i[get post]
       member do
@@ -17,6 +22,7 @@ Rails.application.routes.draw do
         post :create_step1
         post :create_step2
         post :create_step3
+        post :verify_metadata
       end
     end
     resources :users, except: [:show]

@@ -1,0 +1,34 @@
+
+<%# Connects the auth-form Stimulus controller and enables Turbo %>
+<%= simple_form_for(service_authentication_configuration, url: url,
+                    data: { controller: "auth-form" }) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :name, as: :string %>
+    <%# Triggers the toggleFields action in the Stimulus controller on change %>
+    <%= f.input :auth_type,
+    collection: AuthType.all.map { |t| [t.name, t.id] },
+    selected: f.object&.authentication_type&.id,
+    input_html: { data: { action: "change->auth-form#toggleFields" } } %>
+
+    <%# Container for fields that change based on auth_type %>
+    <div data-auth-form-target="fieldsContainer">
+      <%# Add data attributes to target specific fields %>
+      <div data-auth-form-target="endpointUrlField">
+        <%= f.input :auth_url, as: :string %>
+      </div>
+      <div data-auth-form-target="clientIdField">
+        <%= f.input :auth_uid, as: :string %>
+      </div>
+      <div data-auth-form-target="clientSecretField">
+        <%= f.input :auth_key, as: :string %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, t('service_authentication_configurations.form.submit'), class: 'btn btn-primary'  %>
+  </div>
+<% end %>

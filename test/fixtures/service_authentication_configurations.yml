@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  owner: one 
+  name: one
+  auth_type: Basic
+  auth_url: MyText
+  auth_uid: MyString
+  auth_key: MyString
+
+two:
+  owner: two 
+  name: two
+  auth_type: Basic 
+  auth_url: MyText
+  auth_uid: MyString
+  auth_key: MyString

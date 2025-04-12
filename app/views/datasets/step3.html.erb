@@ -9,6 +9,9 @@
     <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
+        <div class='mb-1'>Service Authentication:</div>
+        <p><%= f.object&.service_authentication_configuration&.name || 'None' %></p>
+        <%= f.hidden_field :credential_id %>
           <div class='mb-1'><%= t('.source_dataset_label') %>:</div>
            <%= f.hidden_field :source_dataset %>
            <p><%= f.object.source_dataset %></p>
@@ -87,13 +90,23 @@
               </div>
             </div>
             <div class="row">
-              <div class="col d-flex align-items-center">
+              <div class="col">
                 <%= f.input :description, collection: @options %>
               </div>
               <div class="col d-flex align-items-center">
                 <%= t('.description') %>
               </div>
             </div>
+            <% if @dataset.esrijson? %>
+              <div class="row">
+                <div class="col">
+                  <%= f.input :order_by, collection: @options, default: 'OBJECTID' %>
+                </div>
+                <div class="col d-flex align-items-center">
+                  <%= t('.order_by') %>
+                </div>
+              </div>
+            <% end %>
         <% end %>
         <%= f.input :source_srs, as: :string, hint: t('.source_srs_hint') %>
       </div>

@@ -9,7 +9,7 @@ class Dataset < ApplicationRecord
 
   WFS = 'WFS:'
   ESRIJSON = 'ESRIJSON:'
-  ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&orderByFields=OBJECTID&resultRecordCount=1000&'
+  ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&resultRecordCount=1000'
 
   GEOM_TYPES_BASE = [
     'gml:PointPropertyType',
@@ -38,11 +38,13 @@ class Dataset < ApplicationRecord
   ESRI_WFS_XPATH_FEATURES = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[@name and not(#{GEOM_TYPES})]/@name"
 
   belongs_to :owner
+  belongs_to :service_authentication_configuration, foreign_key: :credential_id, required: false
   has_many :test_tickets, -> { order(publish_date: :desc) }, class_name: 'Ticket', dependent: :destroy
   has_many :ticket_dataset_statuses, through: :test_tickets, dependent: :destroy
 
   attribute :layers, default: []
   attribute :layer, default: {}
+  attribute :order_by, :string, default: 'OBJECTID'
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status, :size, :depth, :accuracy_class,
@@ -56,6 +58,7 @@ class Dataset < ApplicationRecord
 
   before_validation :set_sql_from_template, on: :create
   before_validation :set_source_co, on: :update
+  after_validation :update_order_by_fields, on: :create
 
   normalizes :name, :source_srs, :source_dataset, with: ->(attr) { attr&.strip }
 
@@ -63,6 +66,12 @@ class Dataset < ApplicationRecord
     return if source_co_v.blank?
 
     self.source_co = source_co_v.split(',')
+  end
+
+  def update_order_by_fields
+    return unless esrijson? && order_by.present?
+
+    source_dataset.sub!('OBJECTID', order_by)
   end
 
   def set_sql_from_template
@@ -83,8 +92,12 @@ class Dataset < ApplicationRecord
     self.source_sql = sql_template
   end
 
+  def esrijson?
+    source_dataset&.starts_with?(ESRIJSON)
+  end
+
   def layer_name_for_source
-    if source_dataset&.starts_with?(ESRIJSON)
+    if esrijson?
       'ESRIJSON'
     else
       "\"#{layer_name}\""
@@ -101,7 +114,7 @@ class Dataset < ApplicationRecord
   end
 
   def get_metadata
-    if source_dataset.starts_with?(ESRIJSON)
+    if esrijson?
       return esri_metadata
     elsif source_dataset.starts_with?(WFS)
       return wfs_metadata
@@ -204,12 +217,17 @@ class Dataset < ApplicationRecord
     tmp = "#{ESRIJSON}#{uri.scheme}://" \
       "#{uri.host}" \
       "#{format_feature_server_url(uri.path, layer_id)}" \
-      "#{uri.query.present? ? validate_esri_query_string(uri.query) : ESRI_QUERY_DEFAULT}"
+      "#{uri.query.present? ? validate_esri_query_string(uri.query) : esri_query_default}"
     self.source_dataset = tmp
 
     # ESRIJSON urls must end with a &
     source_dataset.chomp!('&')
     self.source_dataset = "#{source_dataset}&"
+  end
+
+  def esri_query_default
+    tmp = "&orderByFields=#{order_by}&"
+    ESRI_QUERY_DEFAULT + tmp
   end
 
   def format_feature_server_url(path, layer_id)
@@ -229,7 +247,7 @@ class Dataset < ApplicationRecord
     missing_keys = expected_keys - actual_keys
 
     if missing_keys.any?
-      raise "Missing query parmeters: #{missing_keys.join(', ')}. ESRIJSON requires a query string similar to the following: '#{ESRI_QUERY_DEFAULT}'"
+      raise "Missing query parmeters: #{missing_keys.join(', ')}. ESRIJSON requires a query string similar to the following: '#{esri_query_default}'"
     end
 
     query_string
@@ -286,11 +304,24 @@ class Dataset < ApplicationRecord
   end
 
   def get_request(url, timeout)
-    HTTParty.get(url, timeout: timeout)
+    auth = if service_authentication_configuration&.basic?
+             {
+               username: service_authentication_configuration.auth_uid,
+               password: service_authentication_configuration.auth_key
+             }
+           else
+             {}
+           end
+    HTTParty.get(url, timeout: timeout, basic_auth: auth)
   end
 
   def post_request(url, query, timeout)
-    HTTParty.post(url, body: query, timeout: timeout)
+    headers = if token = service_authentication_configuration&.esritoken&.fetch('token', nil)
+                {'Authorization': "Bearer #{token}"}
+              else
+                {}
+              end
+    HTTParty.post(url, body: query, headers: headers, timeout: timeout)
   rescue StandardError => e
     Rails.logger.error('ArcGIS query: ' \
                        "#{url}?" \

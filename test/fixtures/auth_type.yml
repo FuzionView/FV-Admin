@@ -1,0 +1,12 @@
+basic:
+  id: Basic
+  name: HTTP Basic Auth
+
+esri_token:
+  id: ESRIToken
+  name: ESRI Portal Token
+
+oauth2_client:
+  id: OAuth2 Client
+  name: OAuth 2.0 Client Credentials Grant
+

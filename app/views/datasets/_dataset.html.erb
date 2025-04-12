@@ -3,6 +3,7 @@
   <span class="float-end">
     <%= edit_link(t('.edit'), edit_owner_dataset_path(@owner, @dataset)) %>
     <%= ticket_link(t('.test_ticket'), owner_dataset_test_ticket_path(@owner, @dataset)) %>
+    <%= test_health_link(t('datasets.verify_metadata.button_text'), verify_metadata_owner_dataset_path(@owner, @dataset)) %>
     <%= delete_link t('.delete_dataset'), [@owner, @dataset], t('.delete_dataset_confirm') %>
   </span>
 </h1>
@@ -21,6 +22,14 @@
     </div>
     <div class="col text-break">
       <%= dataset.source_dataset %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2">
+      Service Authentication Configuration:
+    </div>
+    <div class="col text-break">
+      <%= dataset&.service_authentication_configuration&.label || 'None' %>
     </div>
   </div>
   <div class="row">

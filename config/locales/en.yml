@@ -130,6 +130,7 @@ en:
       select_layer: "Your datasource has multiple layers. Please select one."
       source_dataset_label: "Source Dataset"
       layer_name_label: "Layer name"
+      order_by: "Order By Fields"
       submit: "Submit"
     step3:
       new_dataset_for: "%{name}: New dataset"
@@ -146,6 +147,7 @@ en:
       depth: "Depth"
       accuracy_value: "Accuracy Value"
       description: "Description"
+      order_by: "Order By Fields"
       source_srs_hint: "The EPSG code for the coordinate system"
       submit: "Submit"
     create:
@@ -156,6 +158,10 @@ en:
       success: "Dataset was successfully deleted."
     test_ticket:
       success: "Test ticket created."
+    verify_metadata:
+      button_text: "Verify Source Dataset Connection"
+      success: "Successfully verified source dataset connection."
+      error: "Failed to verify source dataset connection: %{message}"
     error: "Error: %{message}"
     metadata:
       no_layers: "Unable to identify any layers in this service."
@@ -336,3 +342,40 @@ en:
         description: "Description"
         color_mapserv: "Color Mapserver"
         color_hex: "Color Hex"
+      service_authentication_configuration:
+        name: "Name"
+        auth_type: "Authentication Scheme Type"
+        auth_uid: "Client ID"
+        auth_url: "Endpoint URL"
+        auth_key: "Client Secret"
+  service_authentication_configurations:
+    index:
+      title: "Service Authentication Configurations"
+      type: "Type"
+      endpoint: "Endpoint"
+      associated_datasets: "Associated Datasets"
+      none: "No service authentication configurations yet."
+    show:
+      title: "Service Authentication Configuration"
+    new:
+      title: "New Service Authentication Configuration"
+    edit:
+      title: "Editing Service Authentication Configuration"
+    form:
+      submit: "Submit"
+    actions:
+      new: "New Service Authentication Configuration"
+      view: "View"
+      edit: "Edit"
+      delete: "Delete"
+      verify: "Verify configuration"
+    delete_confirmation: "Delete this config?"
+    create:
+      success: "Service authentication configuration was successfully created."
+    update:
+      success: "Service authentication configuration was successfully updated."
+    destroy:
+      success: "Service authentication configuration was successfully deleted."
+    verify:
+      success: "Verification successful"
+      failure: "Verification error: %{message}"

@@ -1,10 +1,11 @@
 class DatasetsController < ApplicationController
   include Pundit::Authorization
   after_action :verify_authorized
-  before_action :set_owner,
-                only: %i[show edit new create new_wizard create_step1 create_step2 create_step3 update destroy
-                         test_ticket]
-  before_action :set_dataset, only: %i[show edit update destroy]
+  before_action :set_owner, only: %i[show edit new create new_wizard create_step1 create_step2 create_step3 update
+                                     destroy test_ticket verify_metadata]
+  before_action :set_dataset, only: %i[show edit update destroy verify_metadata]
+  before_action :verify_credential_id, only: %i[edit update create create_step1 create_step2 create_step3]
+
 
   # GET /datasets/1
   def show
@@ -151,6 +152,18 @@ class DatasetsController < ApplicationController
     end
   end
 
+  # POST /owners/1/datasets/1/verify_metadata
+  def verify_metadata
+    authorize @dataset
+    begin
+      @dataset.get_metadata
+      flash[:notice] = t('datasets.verify_metadata.success')
+    rescue StandardError => e
+      flash[:error] = t('datasets.verify_metadata.error', message: e.message)
+    end
+    redirect_to [@owner, @dataset]
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -162,10 +175,19 @@ class DatasetsController < ApplicationController
     @owner = policy_scope(Owner).find(params[:owner_id])
   end
 
+  # Verify the credential id is one that is accessible by the owner
+  def verify_credential_id
+    return unless dataset_params[:credential_id].present?
+
+    credential_id = dataset_params[:credential_id]
+    raise Pundit::NotAuthorizedError unless @owner.service_authentication_configurations.find_by(id: credential_id)
+  end
+
   # Only allow a list of trusted parameters through.
   def dataset_params
     params.fetch(:dataset, {}).permit(:owner_id,
                                       :provider_fid,
+                                      :owner_fid,
                                       :source_dataset,
                                       :layer_name,
                                       :geometry_name,
@@ -181,6 +203,8 @@ class DatasetsController < ApplicationController
                                       :source_srs,
                                       :cache_whole_dataset,
                                       :enabled,
-                                      :source_co_v)
+                                      :source_co_v,
+                                      :order_by,
+                                      :credential_id)
   end
 end

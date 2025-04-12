@@ -53,3 +53,50 @@
       end
   %>
 </span>
+
+<h2 class="pt-4"><%= t('service_authentication_configurations.index.title') %></h2>
+<% if owner.service_authentication_configurations.any? %>
+  <table class="table">
+    <tr>
+      <th><%= t('attributes.name') %></th>
+      <th><%= t('service_authentication_configurations.index.type') %></th>
+      <th><%= t('service_authentication_configurations.index.endpoint') %></th>
+      <th><%= t('service_authentication_configurations.index.associated_datasets') %></th>
+      <th><%= t('attributes.actions') %></th>
+    </tr>
+    <% owner.service_authentication_configurations.each do |sac| %>
+      <tr>
+        <td>
+          <%= sac.name %>
+        </td>
+        <td>
+          <%= sac&.authentication_type&.name %>
+        </td>
+        <td class="text-break">
+          <%= sac.auth_url %>
+        </td>
+        <td class="text-break">
+          <%= sac.datasets.map(&:name).join(', ') %>
+        </td>
+        <td>
+          <%= view_link(t('service_authentication_configurations.actions.view'), owner_service_authentication_configuration_path(owner, sac)) %>
+          &nbsp;
+          <%= edit_link(t('service_authentication_configurations.actions.edit'), edit_owner_service_authentication_configuration_path(owner, sac)) %>
+          &nbsp;
+          <%= test_health_link(t('service_authentication_configurations.actions.verify'), verify_owner_service_authentication_configuration_path(owner, sac)) %>
+          &nbsp;
+          <%= delete_link(t('service_authentication_configurations.actions.delete'), [owner, sac], t('service_authentication_configurations.delete_confirmation')) %>
+        </td>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>
+    <%= t('service_authentication_configurations.index.none') %>
+  </p>
+<% end %>
+<span>
+  <%= new_link t('service_authentication_configurations.actions.new'),
+    new_owner_service_authentication_configuration_path(@owner) %>
+</span>

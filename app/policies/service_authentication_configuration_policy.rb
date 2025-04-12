@@ -1,4 +1,4 @@
-class DatasetPolicy < ApplicationPolicy
+class ServiceAuthenticationConfigurationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       if user.administrator?
@@ -17,10 +17,6 @@ class DatasetPolicy < ApplicationPolicy
     true
   end
 
-  def test_ticket?
-    true
-  end
-
   def edit?
     update?
   end
@@ -33,31 +29,15 @@ class DatasetPolicy < ApplicationPolicy
     create?
   end
 
-  def new_wizard?
-    create?
-  end
-
   def create?
     user.administrator? || user.data_provider?
   end
 
-  def create_step1?
-    create?
-  end
-
-  def create_step2?
-    create?
-  end
-
-  def create_step3?
-    create?
-  end
-
-  def verify_metadata?
-    update?
-  end
-
   def destroy?
     create?
+  end
+
+  def verify?
+    update? # Reuse update permissions for verification
   end
 end
