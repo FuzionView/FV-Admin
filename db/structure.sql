@@ -15,7 +15,7 @@ SET row_security = off;
 
 CREATE SCHEMA fv;
 
-CREATE EXTENSION postgis SCHEMA public;
+-- CREATE EXTENSION postgis SCHEMA public;
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --

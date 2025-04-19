@@ -35,7 +35,7 @@ module Normalization
       end
     end
 
-    def normalize_attribute(attribute, value, normalization_proc, apply_to_nil)
+    def normalize_attribute(_attribute, value, normalization_proc, apply_to_nil)
       return value if value.nil? && !apply_to_nil
       normalization_proc.call(value)
     end

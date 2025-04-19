@@ -4,7 +4,6 @@ ruby "~> 3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3"
-gem "rack", "~> 2.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -34,22 +33,15 @@ gem "bootsnap", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "bundler-audit"
+  gem "brakeman", "~> 6.0" # Required for Ruby 3.0"
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
-end
-
-group :development do
-  # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
-
-  # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
-  # gem "rack-mini-profiler"
-
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
+  gem "rubocop-rails"
 end
 
 group :test do
    gem "mocha"
+   gem 'simplecov'
 end
 
 gem "dotenv", "~> 3.1"
@@ -62,3 +54,10 @@ gem "omniauth-rails_csrf_protection"
 gem "pundit", "~> 2.3"
 
 gem "httparty", "~> 0.22.0"
+
+# Pin
+gem "rack", "~> 2.2" # Need to verify if passenger version works with 3.0
+gem "securerandom", "= 0.3.2" # Required for Ruby 3.0"
+gem "nokogiri", "~> 1.17.0" # Required for Ruby 3.0"
+gem "zeitwerk", "~> 2.6.0" # Required for Ruby 3.0
+gem "net-imap", "~> 0.4.18" # Required for Ruby 3.0

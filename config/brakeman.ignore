@@ -1,0 +1,149 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "05824c090390a0d5c8b42e9cb5bbb879a6a07918287ecdf623883d2b4296d992",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/datasets/show.html.erb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => policy_scope(Owner).find(params[:owner_id]).datasets.find(params[:id]), {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "DatasetsController",
+          "method": "show",
+          "line": 13,
+          "file": "app/controllers/datasets_controller.rb",
+          "rendered": {
+            "name": "datasets/show",
+            "file": "app/views/datasets/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "datasets/show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "7458417817c8788332669bb6af8bfb6a6e2af26720939260551e38b2290646ed",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/service_authentication_configurations/show.html.erb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => policy_scope(Owner).find(params[:owner_id]).service_authentication_configurations.find(params[:id]), {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ServiceAuthenticationConfigurationsController",
+          "method": "show",
+          "line": 15,
+          "file": "app/controllers/service_authentication_configurations_controller.rb",
+          "rendered": {
+            "name": "service_authentication_configurations/show",
+            "file": "app/views/service_authentication_configurations/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "service_authentication_configurations/show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "HTTP Verb Confusion",
+      "warning_code": 118,
+      "fingerprint": "a6992eced3e259c386ff450a2fbccd9bb48928cfdb4ba482540d300ce1a6d9a3",
+      "check_name": "VerbConfusion",
+      "message": "Potential HTTP verb confusion. `HEAD` is routed like `GET` but `request.get?` will return `false`",
+      "file": "app/controllers/application_controller.rb",
+      "line": 49,
+      "link": "https://brakemanscanner.org/docs/warning_types/http_verb_confusion/",
+      "code": "session[:return_to] = request.fullpath if request.get?",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ApplicationController",
+        "method": "authorize_user"
+      },
+      "user_input": "request.get?",
+      "confidence": "Weak",
+      "cwe_id": [
+        352
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Unmaintained Dependency",
+      "warning_code": 121,
+      "fingerprint": "edf687f759ec9765bd5db185dbc615c80af77d6e7e19386fc42934e7a80307af",
+      "check_name": "EOLRuby",
+      "message": "Support for Ruby 3.0.2 ended on 2024-03-31",
+      "file": ".ruby-version",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/unmaintained_dependency/",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High",
+      "cwe_id": [
+        1104
+      ],
+      "note": "Support provided by Debain"
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "f20112d49a97a41efdc4e890fc0fc776e7d2bb27cd3718c1cba1df3b28c0428d",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/owners/show.html.erb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => policy_scope(Owner).find(params[:id]), {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "OwnersController",
+          "method": "show",
+          "line": 15,
+          "file": "app/controllers/owners_controller.rb",
+          "rendered": {
+            "name": "owners/show",
+            "file": "app/views/owners/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "owners/show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.0.0"
+}

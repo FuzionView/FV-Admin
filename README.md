@@ -1,5 +1,7 @@
 # FV-Admin
 
+[![Ruby on Rails CI](https://github.com/FuzionView/FV-Admin/actions/workflows/rubyonrails.yml/badge.svg?branch=main)](https://github.com/FuzionView/FV-Admin/actions/workflows/rubyonrails.yml)
+
 A Ruby on Rails administration interface for FuzionView
 
 *   Ruby version: 3.0+
