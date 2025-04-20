@@ -5,7 +5,9 @@
       <tr>
         <th><%= t('attributes.id') %></th>
         <th><%= t('attributes.name') %></th>
-        <th><%= t('attributes.action') %></th>
+        <th><%= t('users.index.users') %></th>
+        <th class="text-end"><%= t('.dataset_count') %></th>
+        <th class="text-center"><%= t('attributes.action') %></th>
       </tr>
     </thead>
     <tbody>
@@ -13,7 +15,9 @@
         <tr>
           <td><%= owner.id %></td>
           <td><%= owner.name %></td>
-          <td>
+          <td><%= owner.users.map(&:email_address).join(', ') %></td>
+          <td class="text-end"><%= owner.datasets.count %></td>
+          <td class="text-center">
             <%= view_link t('owners.view'), owner_path(owner) %>
             <% if policy(owner).edit? %>
               &nbsp;

@@ -177,6 +177,8 @@ en:
     manage_users: "Manage Users"
     view: "View"
     owner_details: "Data Provider Details"
+    index: 
+      dataset_count: "Dataset Count" 
     form:
       submit: "Submit"
       name_label: "Name"
@@ -376,6 +378,7 @@ en:
       success: "Service authentication configuration was successfully updated."
     destroy:
       success: "Service authentication configuration was successfully deleted."
+      foreign_key_error: "Credential is associated with other records and can't be deleted."
     verify:
       success: "Verification successful"
       failure: "Verification error: %{message}"

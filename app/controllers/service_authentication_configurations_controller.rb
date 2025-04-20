@@ -55,6 +55,9 @@ class ServiceAuthenticationConfigurationsController < ApplicationController
     @service_authentication_configuration.destroy!
     redirect_to owner_url(@owner),
                 notice: t('.success'), status: :see_other
+  rescue StandardError => e
+    flash[:alert] = t('service_authentication_configurations.destroy.foreign_key_error')
+    render 'owners/show', status: :unprocessable_entity
   end
 
   # POST /owners/:owner_id/service_authentication_configurations/:id/verify

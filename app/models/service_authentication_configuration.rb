@@ -8,6 +8,13 @@ class ServiceAuthenticationConfiguration < ApplicationRecord
 
   delegate :basic?, to: :authentication_type, allow_nil: true
 
+  def before_destroy
+    return true if datasets.count == 0
+
+    errors.add(:base, :credentials_assigned)
+    throw(:abort)
+  end
+
   def label
     "#{name} (#{authentication_type&.name})"
   end
