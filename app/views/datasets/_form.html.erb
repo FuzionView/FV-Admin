@@ -6,14 +6,13 @@
     <div class="col-6 col-md-8 col-sm-12">
       <div class="form-inputs">
         <%= f.input :name, as: :string %>
-        <%= f.input :source_dataset, as: :string,
-          hint: t('.source_dataset_hint') %>
+        <%= f.input :source_dataset, as: :string, hint: t('.source_dataset_hint') %>
         <%= f.input :credential_id,
           collection: @owner.service_authentication_configurations.all.map { |s| [s.label, s.id] },
           hint: "Leave as 'No authentication required' or select the appropriate authentication configuration. You may need to setup the service authentication configuration first.",
           include_blank: 'No authentication required' %>
-          <%= f.input :source_sql, input_html: { rows: 15 } %>
-          <%= f.input :source_co_v, input_html: { value: f.object.source_co&.join(',') } %>
+          <%= f.input :source_sql, input_html: { rows: 15 }, hint:  t('.source_sql_hint_html') %>
+          <%= f.input :source_co_v, input_html: { value: f.object.source_co&.join(',') }, hint: t('.source_co_hint') %>
           <%= f.input :cache_whole_dataset, as: :boolean %>
           <%= f.input :enabled, as: :boolean %>
           <%= f.input :source_srs, as: :string, hint: t('.source_srs_hint') %>

@@ -13,8 +13,7 @@
           collection: @owner.service_authentication_configurations.all.map { |s| [s.label, s.id] },
           hint: "Leave as 'No authentication required' or select the appropriate authentication configuration. You may need to setup the service authentication configuration first.",
           include_blank: 'No authentication required' %>
-        <%= f.input :source_dataset, as: :string,
-          hint: t('.source_dataset_hint') %>
+        <%= f.input :source_dataset, as: :string, hint: t('datasets.form.source_dataset_hint') %>
       </div>
     </div>
   </div>

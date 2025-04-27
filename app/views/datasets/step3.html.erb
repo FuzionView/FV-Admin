@@ -43,7 +43,7 @@
             </div>
             <div class="row">
               <div class="col">
-                <%= f.input :provider_fid, collection: @options %>
+                <%= f.input :provider_fid, collection: @options, hint: t('.provider_fid_hint') %>
               </div>
               <div class="col d-flex align-items-center">
                 <%= t('.provider_fid') %>
@@ -51,7 +51,11 @@
             </div>
             <div class="row">
               <div class="col">
-                <%= f.input :feature_class, collection: @options %>
+                <% feature_class_tooltip = link_to 'feature class values', '#', 
+                  data: {'bs-toggle': 'tooltip',
+                         'bs-title': "Valid feature class values are #{FeatureClass.all.map(&:id).sort.join(', ')}" } %>
+                <%= f.input :feature_class, collection: @options,
+                  hint: t('.feature_class_hint_html', tooltip: feature_class_tooltip) %>
               </div>
               <div class="col d-flex align-items-center">
                 <%= t('.feature_class') %>
@@ -59,7 +63,11 @@
             </div>
             <div class="row">
               <div class="col">
-                <%= f.input :status, collection: @options %>
+                <% feature_status_tooltip = link_to 'feature status values', '#', 
+                  data: {'bs-toggle': 'tooltip',
+                         'bs-title': "Valid feature status values are #{FeatureStatus.all.map(&:id).sort.join(', ')}" } %>
+               <%= f.input :status, collection: @options,
+                 hint: t('.feature_status_hint_html', tooltip: feature_status_tooltip) %>
               </div>
               <div class="col d-flex align-items-center">
                 <%= t('.status') %>
@@ -83,7 +91,11 @@
             </div>
             <div class="row">
               <div class="col">
-                <%= f.input :accuracy_class, collection: @options %>
+                <% accuracy_class_tooltip = link_to 'accuracy values', '#', 
+                  data: {'bs-toggle': 'tooltip',
+                         'bs-title': "Valid accuracy class values are #{AccuracyClass.all.map(&:id).sort.join(', ')}" } %>
+                <%= f.input :accuracy_class, collection: @options,
+                 hint: t('.accuracy_class_hint_html', tooltip: accuracy_class_tooltip) %>
               </div>
               <div class="col d-flex align-items-center">
                 <%= t('.accuracy_value') %>
@@ -100,7 +112,7 @@
             <% if @dataset.esrijson? %>
               <div class="row">
                 <div class="col">
-                  <%= f.input :order_by, collection: @options, default: 'OBJECTID' %>
+                  <%= f.input :order_by, collection: @options, default: 'OBJECTID', hint: t('.order_by_hint') %>
                 </div>
                 <div class="col d-flex align-items-center">
                   <%= t('.order_by') %>
@@ -108,7 +120,7 @@
               </div>
             <% end %>
         <% end %>
-        <%= f.input :source_srs, as: :string, hint: t('.source_srs_hint') %>
+        <%= f.input :source_srs, as: :string, hint: t('datasets.form.source_srs_hint') %>
       </div>
     </div>
   </div>

@@ -2,8 +2,12 @@
 import "controllers"
 import "@hotwired/turbo-rails"
 import  "@popperjs/core";
-import "bootstrap";
+import * as bootstrap from 'bootstrap'
 import  "leaflet"
 import '@bopen/leaflet-area-selection';
 import 'prettify';
 Turbo.session.drive = false
+
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
