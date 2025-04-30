@@ -111,10 +111,10 @@ en:
       enabled_label: "Enabled?"
     form:
       submit: "Submit"
-      source_dataset_hint: "The URL for the source ESRI or WFS service. URLS must use an ESRIJSON: or WFS: prefix."
-      source_srs_hint: "The EPSG code, ESRI code or well-known text PROJ4 description of the coordinate system. E.g., EPSG:6344 or ESRI:102100"
+      source_dataset_hint: "The URL for the source ESRI or WFS service. URLS must start with an ESRIJSON: or WFS: prefix."
+      source_srs_hint: "The EPSG code, ESRI code or PROJ4 well-known text description of the coordinate system. E.g., EPSG:6344 or ESRI:102100"
       source_co_hint: "GDAL configuration options. A comma separated list. E.g, CPL_DEBUG=ON"
-      source_sql_hint_html: "The FuzionView engine uses a SQL-like language to query your dataset. You can use certain SQL functions like case statements to help transform your data to meet the FuzionView schema requirements." 
+      source_sql_hint_html: "The FuzionView engine uses a SQL SQLite dialect to query your dataset. You can use certain SQL functions like case statements to help transform your data to meet the FuzionView schema requirements." 
       credential_id_hint: "Leave as 'No authentication required' or select the appropriate authentication configuration. You may need to setup the service authentication configuration first."
       credential_id_blank: "No authentication required"
     edit:
@@ -332,6 +332,7 @@ en:
         geom: 'Test ticket polygon'
       dataset:
         source_dataset: "Source Dataset URL"
+        credential_id: "Service Authentication"
         source_sql: "Source SQL"
         source_co: "Source Configuration Options"
         source_co_v: "Source Configuration Options"
