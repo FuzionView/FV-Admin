@@ -4,4 +4,8 @@ class AuthType < ApplicationRecord
   def basic?
     id == 'Basic'
   end
+
+  def bearer?
+    id == 'Bearer'
+  end
 end

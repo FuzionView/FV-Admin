@@ -2,6 +2,10 @@ basic:
   id: Basic
   name: HTTP Basic Auth
 
+bearer:
+  id: Bearer
+  name: HTTP Bearer Token Auth
+
 esri_token:
   id: ESRIToken
   name: ESRI Portal Token

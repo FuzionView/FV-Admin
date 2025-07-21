@@ -316,7 +316,7 @@ class Dataset < ApplicationRecord
   end
 
   def post_request(url, query, timeout)
-    headers = if (token = service_authentication_configuration&.esritoken&.fetch('token', nil))
+    headers = if (token = service_authentication_configuration&.fetch_token())
                 {'Authorization': "Bearer #{token}"}
               else
                 {}
