@@ -5,8 +5,11 @@ class ServiceAuthenticationConfiguration < ApplicationRecord
   has_many :datasets, foreign_key: :credential_id
   validates :auth_type, :name, presence: true
   validates :auth_uid, :auth_key, presence: true, if: :basic?
+  validates :auth_key, presence: true, if: :bearer?
 
   delegate :basic?, to: :authentication_type, allow_nil: true
+  delegate :bearer?, to: :authentication_type, allow_nil: true
+
 
   def before_destroy
     return true if datasets.count == 0
@@ -20,7 +23,9 @@ class ServiceAuthenticationConfiguration < ApplicationRecord
   end
 
   def fetch_token
-    if auth_type == 'ESRIToken'
+    if auth_type == 'Bearer'
+      auth_key
+    elsif auth_type == 'ESRIToken'
       esritoken.fetch('token', nil)
     elsif auth_type == 'OAuth2 Client'
       oauth2.fetch('access_token', nil)

@@ -30,6 +30,13 @@ export default class extends Controller {
         this.show(this.clientSecretFieldTarget)
         this.hide(this.endpointUrlFieldTarget)
         break;
+      case 'Bearer':
+        // Bearer auth typically needs a token (client_secret)
+        this.show(this.endpointUrlFieldTarget)
+        this.updateLabel(this.clientSecretFieldTarget, "Token")
+        this.show(this.clientSecretFieldTarget)
+        this.hide(this.endpointUrlFieldTarget)
+        break;
       case 'ESRIToken':
         this.show(this.endpointUrlFieldTarget)
         this.updateLabel(this.clientIdFieldTarget, "Username")
