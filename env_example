@@ -1,4 +1,6 @@
-SECRET_TOKEN=
+# In production, Rails will look in ENV or credentials for this value. One or the other
+# must be present. In dev and test, rails will generate this value.
+SECRET_KEY_BASE=
 
 PG_DB=
 PG_USER=
