@@ -1,5 +1,7 @@
 require 'openid_connect'
 
+OmniAuth.config.request_validation_phase = OmniAuth::AuthenticityTokenProtection.new(key: :_csrf_token)
+
 Rails.application.config.middleware.use OmniAuth::Builder do
   # OpenIDConnect.debug! if Rails.env.development?
   host = ENV['OP_HOST']
