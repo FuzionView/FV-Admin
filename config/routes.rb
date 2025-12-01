@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  match '/auth/:provider/callback' => 'application#authentication_callback',
+  match "/auth/:provider/callback" => "application#authentication_callback",
         via: %i[get post]
-  get 'application/login'
-  get 'application/logout'
+  get "application/login"
+  get "application/logout"
   # match "application/role", via: [:get, :post]
 
   resources :owners do
@@ -25,21 +25,21 @@ Rails.application.routes.draw do
         post :verify_metadata
       end
     end
-    resources :users, except: [:show]
+    resources :users, except: [ :show ]
   end
 
-  get 'system_settings' => 'system_settings#index'
-  resources :feature_classes, except: [:show]
-  resources :ticket_types, except: [:show]
-  resources :feature_statuses, except: [:show]
-  resources :accuracy_classes, except: [:show]
+  get "system_settings" => "system_settings#index"
+  resources :feature_classes, except: [ :show ]
+  resources :ticket_types, except: [ :show ]
+  resources :feature_statuses, except: [ :show ]
+  resources :accuracy_classes, except: [ :show ]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  root 'owners#index'
+  root "owners#index"
 end

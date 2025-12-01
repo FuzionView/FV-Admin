@@ -22,7 +22,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
-    user.administrator? #|| (user.data_provider? && !record.id.in?(user.users))
+    user.administrator? # || (user.data_provider? && !record.id.in?(user.users))
   end
 
   def new?
@@ -30,7 +30,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def create?
-    user.administrator? #||  user.data_provider?
+    user.administrator? # ||  user.data_provider?
   end
 
   def destroy?

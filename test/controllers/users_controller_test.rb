@@ -7,10 +7,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     OmniAuth.config.test_mode = true
     omni_hash =  {  uid: "12345",
                     extra: { raw_info: { email: "bob@example.org",
-                                         first_name: 'Bob',
-                                         last_name: 'B',
-                                         roles: ['Administrator'] }},
-                  credentials: {token: "abcd"} }
+                                         first_name: "Bob",
+                                         last_name: "B",
+                                         roles: [ "Administrator" ] } },
+                  credentials: { token: "abcd" } }
     OmniAuth.config.add_mock(:oidc, omni_hash)
     Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
     get "/auth/oidc/callback"

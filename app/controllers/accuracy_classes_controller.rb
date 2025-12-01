@@ -26,7 +26,7 @@ class AccuracyClassesController < ApplicationController
     @accuracy_class = AccuracyClass.new(accuracy_class_params)
 
     if @accuracy_class.save
-      redirect_to accuracy_classes_path, notice: t('accuracy_classes.create.success')
+      redirect_to accuracy_classes_path, notice: t("accuracy_classes.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class AccuracyClassesController < ApplicationController
   def update
     authorize AccuracyClass
     if @accuracy_class.update(accuracy_class_params)
-      redirect_to accuracy_classes_path, notice: t('accuracy_classes.update.success'), status: :see_other
+      redirect_to accuracy_classes_path, notice: t("accuracy_classes.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,9 +46,9 @@ class AccuracyClassesController < ApplicationController
   def destroy
     authorize AccuracyClass
     @accuracy_class.destroy!
-    redirect_to accuracy_classes_url, notice: t('accuracy_classes.destroy.success'), status: :see_other
+    redirect_to accuracy_classes_url, notice: t("accuracy_classes.destroy.success"), status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
-    redirect_to(feature_classes_url, notice: t('accuracy_classes.destroy.foreign_key_error'),
+    redirect_to(feature_classes_url, notice: t("accuracy_classes.destroy.foreign_key_error"),
                                      status: :see_other)
   end
 

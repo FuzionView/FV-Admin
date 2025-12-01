@@ -6,10 +6,10 @@ class TicketTypesControllerTest < ActionDispatch::IntegrationTest
     OmniAuth.config.test_mode = true
     omni_hash =  {  uid: "12345",
                     extra: { raw_info: { email: "bob@example.org",
-                                         first_name: 'Bob',
-                                         last_name: 'B',
-                                         roles: ['Administrator'] }},
-                  credentials: {token: "abcd"} }
+                                         first_name: "Bob",
+                                         last_name: "B",
+                                         roles: [ "Administrator" ] } },
+                  credentials: { token: "abcd" } }
     OmniAuth.config.add_mock(:oidc, omni_hash)
     Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
     get "/auth/oidc/callback"
@@ -27,7 +27,7 @@ class TicketTypesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create ticket_type" do
     assert_difference("TicketType.count") do
-      post ticket_types_url, params: { ticket_type: { id: 'normal', description: 'Normal', color_mapserv: '0 0 255', color_hex: '#0000ff' } }
+      post ticket_types_url, params: { ticket_type: { id: "normal", description: "Normal", color_mapserv: "0 0 255", color_hex: "#0000ff" } }
     end
 
     assert_redirected_to ticket_types_url
@@ -39,7 +39,7 @@ class TicketTypesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update ticket_type" do
-    patch ticket_type_url(@ticket_type), params: { ticket_type: {  } }
+    patch ticket_type_url(@ticket_type), params: { ticket_type: {} }
     assert_redirected_to ticket_types_url
   end
 

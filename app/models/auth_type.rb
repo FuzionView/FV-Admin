@@ -2,10 +2,10 @@ class AuthType < ApplicationRecord
   self.table_name = :auth_type
 
   def basic?
-    id == 'Basic'
+    id == "Basic"
   end
 
   def bearer?
-    id == 'Bearer'
+    id == "Bearer"
   end
 end

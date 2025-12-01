@@ -6,10 +6,10 @@ class OwnersControllerTest < ActionDispatch::IntegrationTest
     OmniAuth.config.test_mode = true
     omni_hash =  {  uid: "12345",
                     extra: { raw_info: { email: "bob@example.org",
-                                         first_name: 'Bob',
-                                         last_name: 'B',
-                                         roles: ['Administrator'] }},
-                  credentials: {token: "abcd"} }
+                                         first_name: "Bob",
+                                         last_name: "B",
+                                         roles: [ "Administrator" ] } },
+                  credentials: { token: "abcd" } }
     OmniAuth.config.add_mock(:oidc, omni_hash)
     Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:oidc]
     get "/auth/oidc/callback"
@@ -27,7 +27,7 @@ class OwnersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create owner" do
     assert_difference("Owner.count") do
-      post owners_url, params: { owner: { name: 'Owner 3' } }
+      post owners_url, params: { owner: { name: "Owner 3" } }
     end
 
     assert_redirected_to owner_url(Owner.last)
@@ -44,7 +44,7 @@ class OwnersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update owner" do
-    patch owner_url(@owner), params: { owner: {  } }
+    patch owner_url(@owner), params: { owner: {} }
     assert_redirected_to owner_url(@owner)
   end
 

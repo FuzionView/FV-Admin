@@ -31,7 +31,7 @@ class OwnersController < ApplicationController
     @owner = Owner.new(owner_params)
 
     if @owner.save
-      redirect_to @owner, notice: t('owners.create.success')
+      redirect_to @owner, notice: t("owners.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class OwnersController < ApplicationController
   def update
     authorize @owner
     if @owner.update(owner_params)
-      redirect_to @owner, notice: t('owners.update.success'), status: :see_other
+      redirect_to @owner, notice: t("owners.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -51,7 +51,7 @@ class OwnersController < ApplicationController
   def destroy
     authorize @owner
     @owner.destroy!
-    redirect_to owners_url, notice: t('owners.destroy.success'), status: :see_other
+    redirect_to owners_url, notice: t("owners.destroy.success"), status: :see_other
   end
 
   def service_area
@@ -60,7 +60,7 @@ class OwnersController < ApplicationController
 
     @owner.service_area = params[:owner][:service_area]
     if @owner.save
-      redirect_to service_area_owner_path(owner_id: @owner), notice: t('owners.service_area.success'),
+      redirect_to service_area_owner_path(owner_id: @owner), notice: t("owners.service_area.success"),
                                                              status: :see_other
     else
       render :service_area, status: :unprocessable_entity
@@ -72,7 +72,7 @@ class OwnersController < ApplicationController
     return unless request.post?
 
     if @owner.update_column(:service_area, nil)
-      redirect_to service_area_owner_path(owner_id: @owner), notice: t('owners.service_area.delete_success'),
+      redirect_to service_area_owner_path(owner_id: @owner), notice: t("owners.service_area.delete_success"),
                                                              status: :see_other
     else
       render :service_area, status: :unprocessable_entity

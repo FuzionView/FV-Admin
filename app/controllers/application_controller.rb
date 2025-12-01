@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def authentication_callback
-    auth = request.env['omniauth.auth']
+    auth = request.env["omniauth.auth"]
     open_id_authorize(auth)
     redirect_to session[:return_to] || root_path
   rescue AuthenticationException => _e
@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
 
   def role
     if request.post?
-      session[:roles] = [params['user']['role']]
+      session[:roles] = [ params["user"]["role"] ]
       redirect_to root_path
     else
       # display page
@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   private
 
   def user_not_authorized
-    flash[:error] = t('application.unauthorized')
+    flash[:error] = t("application.unauthorized")
     redirect_back(fallback_location: root_path)
   end
 
@@ -55,13 +55,13 @@ class ApplicationController < ActionController::Base
   end
 
   def open_id_authorize(auth)
-    id_token = auth.dig('credentials', 'id_token')
-    auth.dig('extra', 'raw_info', 'first_name')
-    auth.dig('extra', 'raw_info', 'last_name')
-    email_address = auth.dig('extra', 'raw_info', 'email')
-    roles = auth.dig('extra', 'raw_info', 'roles')
+    id_token = auth.dig("credentials", "id_token")
+    auth.dig("extra", "raw_info", "first_name")
+    auth.dig("extra", "raw_info", "last_name")
+    email_address = auth.dig("extra", "raw_info", "email")
+    roles = auth.dig("extra", "raw_info", "roles")
 
-    raise AuthorizationException, t('application.no_roles_assigned') if roles.empty?
+    raise AuthorizationException, t("application.no_roles_assigned") if roles.empty?
 
     session[:id_token] = id_token
     session[:email_address] = email_address

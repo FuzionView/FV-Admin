@@ -22,7 +22,7 @@ class DatasetsController < ApplicationController
     @dataset = @owner.datasets.new(dataset_params)
     authorize @dataset
     if @dataset.save(context: :basic)
-      redirect_to [@owner, @dataset], notice: t('datasets.create.success')
+      redirect_to [ @owner, @dataset ], notice: t("datasets.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -64,7 +64,7 @@ class DatasetsController < ApplicationController
   rescue StandardError => e
     @url = create_step1_owner_dataset_path(id: @owner)
     @dataset.source_error = e.message
-    flash[:error] = t('datasets.error', message: e.message)
+    flash[:error] = t("datasets.error", message: e.message)
     render :step1, status: :unprocessable_entity
   end
 
@@ -84,7 +84,7 @@ class DatasetsController < ApplicationController
     end
   rescue StandardError => e
     @dataset.source_error = e.message
-    flash[:error] = t('datasets.error', message: e.message)
+    flash[:error] = t("datasets.error", message: e.message)
     render :step2, status: :unprocessable_entity
   end
 
@@ -96,20 +96,20 @@ class DatasetsController < ApplicationController
     if @dataset.source_dataset.present? &&
        @dataset.layer_name.present? &&
        @dataset.save
-      redirect_to [@owner, @dataset], notice: t('datasets.create.success')
+      redirect_to [ @owner, @dataset ], notice: t("datasets.create.success")
     else
       render :step3, status: :unprocessable_entity
     end
   rescue StandardError => e
     @dataset.source_error = e.message
-    flash[:error] = t('datasets.error', message: e.message)
+    flash[:error] = t("datasets.error", message: e.message)
     render :step3, status: :unprocessable_entity
   end
 
   def get_metadata
     @layers, @geomFields, @options = @dataset.get_metadata
     if @layers.size == 0
-      raise t('datasets.metadata.no_layers')
+      raise t("datasets.metadata.no_layers")
     elsif @layers.size == 1
       @dataset.layer_name = @layers.first
     end
@@ -123,7 +123,7 @@ class DatasetsController < ApplicationController
   def update
     authorize @dataset
     if @dataset.update(dataset_params)
-      redirect_to [@owner, @dataset], notice: t('datasets.update.success'), status: :see_other
+      redirect_to [ @owner, @dataset ], notice: t("datasets.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -133,7 +133,7 @@ class DatasetsController < ApplicationController
   def destroy
     authorize @dataset
     @dataset.destroy!
-    redirect_to owner_url(@owner), notice: t('datasets.destroy.success'), status: :see_other
+    redirect_to owner_url(@owner), notice: t("datasets.destroy.success"), status: :see_other
   end
 
   def test_ticket
@@ -143,7 +143,7 @@ class DatasetsController < ApplicationController
       @ticket = @dataset.test_tickets.build(params.fetch(:ticket, {}).permit(:geom))
       @ticket.init_test_ticket
       if @ticket.save
-        redirect_to [@owner, @dataset], notice: t('datasets.test_ticket.success'), status: :see_other
+        redirect_to [ @owner, @dataset ], notice: t("datasets.test_ticket.success"), status: :see_other
       else
         render :test_ticket, status: :unprocessable_entity
       end
@@ -157,11 +157,11 @@ class DatasetsController < ApplicationController
     authorize @dataset
     begin
       @dataset.get_metadata
-      flash[:notice] = t('datasets.verify_metadata.success')
+      flash[:notice] = t("datasets.verify_metadata.success")
     rescue StandardError => e
-      flash[:error] = t('datasets.verify_metadata.error', message: e.message)
+      flash[:error] = t("datasets.verify_metadata.error", message: e.message)
     end
-    redirect_to [@owner, @dataset]
+    redirect_to [ @owner, @dataset ]
   end
 
   private

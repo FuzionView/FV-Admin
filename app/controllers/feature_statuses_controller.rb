@@ -26,7 +26,7 @@ class FeatureStatusesController < ApplicationController
     @feature_status = FeatureStatus.new(feature_status_params)
 
     if @feature_status.save
-      redirect_to feature_statuses_path, notice: t('feature_statuses.create.success')
+      redirect_to feature_statuses_path, notice: t("feature_statuses.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class FeatureStatusesController < ApplicationController
   def update
     authorize @feature_status
     if @feature_status.update(feature_status_params)
-      redirect_to feature_statuses_path, notice: t('feature_statuses.update.success'), status: :see_other
+      redirect_to feature_statuses_path, notice: t("feature_statuses.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,9 +46,9 @@ class FeatureStatusesController < ApplicationController
   def destroy
     authorize @feature_status
     @feature_status.destroy!
-    redirect_to feature_statuses_url, notice: t('feature_statuses.destroy.success'), status: :see_other
+    redirect_to feature_statuses_url, notice: t("feature_statuses.destroy.success"), status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
-    redirect_to(feature_statuses_url, notice: t('feature_statuses.destroy.foreign_key_error'),
+    redirect_to(feature_statuses_url, notice: t("feature_statuses.destroy.foreign_key_error"),
                                       status: :see_other)
   end
 

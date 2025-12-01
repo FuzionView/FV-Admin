@@ -1,6 +1,5 @@
 # app/types/geom_as_string.rb
 class GeomAsString < ActiveRecord::Type::Value
-
   # Cast value before it's stored in the database
   def serialize(value)
     return if value.nil?

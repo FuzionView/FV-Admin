@@ -41,7 +41,7 @@ end
 
 group :test do
    gem "mocha"
-   gem 'simplecov'
+   gem "simplecov"
 end
 
 gem "dotenv"
@@ -53,5 +53,3 @@ gem "omniauth_openid_connect"
 gem "pundit"
 
 gem "httparty"
-
-
