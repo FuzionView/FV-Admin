@@ -32,7 +32,7 @@ class ServiceAuthenticationConfigurationsController < ApplicationController
 
     if @service_authentication_configuration.save
       redirect_to owner_service_authentication_configuration_path(@owner, @service_authentication_configuration),
-                  notice: t('.success')
+                  notice: t(".success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -43,7 +43,7 @@ class ServiceAuthenticationConfigurationsController < ApplicationController
     authorize @service_authentication_configuration
     if @service_authentication_configuration.update(service_authentication_configuration_params)
       redirect_to owner_service_authentication_configuration_path(@owner, @service_authentication_configuration),
-                  notice: t('.success'), status: :see_other
+                  notice: t(".success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -54,10 +54,10 @@ class ServiceAuthenticationConfigurationsController < ApplicationController
     authorize @service_authentication_configuration
     @service_authentication_configuration.destroy!
     redirect_to owner_url(@owner),
-                notice: t('.success'), status: :see_other
+                notice: t(".success"), status: :see_other
   rescue StandardError => _e
-    flash[:alert] = t('service_authentication_configurations.destroy.foreign_key_error')
-    render 'owners/show', status: :unprocessable_entity
+    flash[:alert] = t("service_authentication_configurations.destroy.foreign_key_error")
+    render "owners/show", status: :unprocessable_entity
   end
 
   # POST /owners/:owner_id/service_authentication_configurations/:id/verify
@@ -65,9 +65,9 @@ class ServiceAuthenticationConfigurationsController < ApplicationController
     authorize @service_authentication_configuration
     begin
       @service_authentication_configuration.test_configuration
-      flash[:notice] = t('.success')
+      flash[:notice] = t(".success")
     rescue StandardError => e
-      flash[:alert] = t('.failure', message: e.message)
+      flash[:alert] = t(".failure", message: e.message)
     end
     redirect_to owner_url(@owner)
   end

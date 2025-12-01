@@ -10,7 +10,7 @@ module Normalization
 
   class_methods do
     def normalizes(*attributes, with:, apply_to_nil: false)
-      self._normalizations = _normalizations.merge(attributes.map { |attr| [attr, { proc: with, apply_to_nil: apply_to_nil }] }.to_h)
+      self._normalizations = _normalizations.merge(attributes.map { |attr| [ attr, { proc: with, apply_to_nil: apply_to_nil } ] }.to_h)
 
       attributes.each do |attribute|
         define_method("#{attribute}=") do |value|
@@ -51,4 +51,3 @@ module Normalization
     end
   end
 end
-

@@ -1,37 +1,37 @@
 # frozen_string_literal: true
 
-require 'httparty'
-require 'uri'
-require 'cgi'
+require "httparty"
+require "uri"
+require "cgi"
 
 class Dataset < ApplicationRecord
   include Normalization
 
-  WFS = 'WFS:'
-  ESRIJSON = 'ESRIJSON:'
-  ESRI_QUERY_DEFAULT = 'f=json&where=1%3D1&outFields=*&resultRecordCount=1000'
+  WFS = "WFS:"
+  ESRIJSON = "ESRIJSON:"
+  ESRI_QUERY_DEFAULT = "f=json&where=1%3D1&outFields=*&resultRecordCount=1000"
 
   GEOM_TYPES_BASE = [
-    'gml:PointPropertyType',
-    'gml:LineStringPropertyType',
-    'gml:PolygonPropertyType',
-    'gml:GeometryPropertyType',
-    'gml:MultiPointPropertyType',
-    'gml:MultiLineStringPropertyType',
-    'gml:MultiPolygonPropertyType',
-    'gml:CurvePropertyType',
-    'gml:SurfacePropertyType',
-    'gml:MultiCurvePropertyType',
-    'gml:MultiSurfacePropertyType',
-    'gml:CompositeCurvePropertyType',
-    'gml:CompositeSurfacePropertyType',
-    'gml:OrientableSurfacePropertyType',
-    'gml:RingPropertyType',
-    'gml:LinearRingPropertyType',
-    'gml:GeometryCollectionPropertyType',
-    'gml:MultiGeometryPropertyType'
+    "gml:PointPropertyType",
+    "gml:LineStringPropertyType",
+    "gml:PolygonPropertyType",
+    "gml:GeometryPropertyType",
+    "gml:MultiPointPropertyType",
+    "gml:MultiLineStringPropertyType",
+    "gml:MultiPolygonPropertyType",
+    "gml:CurvePropertyType",
+    "gml:SurfacePropertyType",
+    "gml:MultiCurvePropertyType",
+    "gml:MultiSurfacePropertyType",
+    "gml:CompositeCurvePropertyType",
+    "gml:CompositeSurfacePropertyType",
+    "gml:OrientableSurfacePropertyType",
+    "gml:RingPropertyType",
+    "gml:LinearRingPropertyType",
+    "gml:GeometryCollectionPropertyType",
+    "gml:MultiGeometryPropertyType"
   ]
-  GEOM_TYPES = GEOM_TYPES_BASE.map { |g| "@type='#{g}'" }.join(' or ')
+  GEOM_TYPES = GEOM_TYPES_BASE.map { |g| "@type='#{g}'" }.join(" or ")
   WFS_XPATH_GEOM = "//xsd:complexType//xsd:element[#{GEOM_TYPES}]/@name"
   WFS_XPATH_FEATURES = "//xsd:complexType//xsd:element[@name and not(#{GEOM_TYPES})]/@name"
   ESRI_WFS_XPATH_GEOM = "//xsd:extension[@base='gml:AbstractFeatureType']//xsd:element[#{GEOM_TYPES}]/@name"
@@ -39,12 +39,12 @@ class Dataset < ApplicationRecord
 
   belongs_to :owner
   belongs_to :service_authentication_configuration, foreign_key: :credential_id, required: false
-  has_many :test_tickets, -> { order(publish_date: :desc) }, class_name: 'Ticket', dependent: :destroy
+  has_many :test_tickets, -> { order(publish_date: :desc) }, class_name: "Ticket", dependent: :destroy
   has_many :ticket_dataset_statuses, through: :test_tickets, dependent: :destroy
 
   attribute :layers, default: []
   attribute :layer, default: {}
-  attribute :order_by, :string, default: 'OBJECTID'
+  attribute :order_by, :string, default: "OBJECTID"
 
   attr_accessor :geometry_name, :layer_name, :feature_class,
                 :status, :size, :depth, :accuracy_class,
@@ -65,13 +65,13 @@ class Dataset < ApplicationRecord
   def set_source_co
     return if source_co_v.blank?
 
-    self.source_co = source_co_v.split(',')
+    self.source_co = source_co_v.split(",")
   end
 
   def update_order_by_fields
     return unless esrijson? && order_by.present?
 
-    source_dataset.sub!('OBJECTID', order_by)
+    source_dataset.sub!("OBJECTID", order_by)
   end
 
   def set_sql_from_template
@@ -98,7 +98,7 @@ class Dataset < ApplicationRecord
 
   def layer_name_for_source
     if esrijson?
-      'ESRIJSON'
+      "ESRIJSON"
     else
       "\"#{layer_name}\""
     end
@@ -125,24 +125,24 @@ class Dataset < ApplicationRecord
 
   def clean_wfs_url(url_string)
     uri = URI.parse(url_string)
-    raise 'Invalid URL' unless uri.scheme && uri.host
+    raise "Invalid URL" unless uri.scheme && uri.host
 
     modified_query = if uri.query.present?
                        params = CGI.parse(uri.query)
-                       params.delete('service')
-                       params.delete('request')
+                       params.delete("service")
+                       params.delete("request")
                        tmp = []
                        params.each do |k, v|
                          tmp << "#{k}=#{v.first}" if v.first.present?
                        end
-                       tmp.join('&')
-                     end
+                       tmp.join("&")
+    end
     base_url = "#{uri.scheme}://#{uri.host}#{uri.path}"
-    [base_url, modified_query]
+    [ base_url, modified_query ]
   end
 
   def wfs_metadata
-    url = source_dataset.sub(WFS, '')
+    url = source_dataset.sub(WFS, "")
     clean_base, clean_query = clean_wfs_url(url)
 
     cap_url = "#{clean_base}?service=WFS&request=GetCapabilities&#{clean_query}"
@@ -160,50 +160,50 @@ class Dataset < ApplicationRecord
     end
     # WFS urls must end with a ? or & b/c additional parameters are added to ogrinfo in FV-Engine
     self.source_dataset = "WFS:#{clean_base}#{clean_query.present? ? "?#{clean_query}&" : '?'}"
-    [feature_types, geom_name, feature_attributes]
+    [ feature_types, geom_name, feature_attributes ]
   rescue StandardError => e
     Rails.logger.error("Error: #{e.message}: \n\t#{e.backtrace.join("\n\t")}")
     raise e
   end
 
   def esri_metadata
-    url = source_dataset.sub(ESRIJSON, '')
+    url = source_dataset.sub(ESRIJSON, "")
     json = post_esri_layers(url)
 
-    geom_fields = ['geometry']
-    json_layers = json['layers'] || []
-    layer_names = json_layers&.map { |l| l['name'] } || []
+    geom_fields = [ "geometry" ]
+    json_layers = json["layers"] || []
+    layer_names = json_layers&.map { |l| l["name"] } || []
 
     regex = %r{/#{esri_service_type(url)}/(\d+)(/|/query|)}
     layer_id = if (match = url.match(regex))
                  match[1]
-               end
+    end
     options = []
     tmp_layer = nil
 
     if json_layers.empty?
-      raise 'No layers identified.'
+      raise "No layers identified."
     elsif json_layers.size == 1
       self.layer_name = layer_names.first
       tmp_layer = json_layers.first
-      layer_id = tmp_layer['id']
-      options = tmp_layer['fields'].map { |f| f['name'] }
+      layer_id = tmp_layer["id"]
+      options = tmp_layer["fields"].map { |f| f["name"] }
     elsif json_layers.size > 1
 
       tmp_layer = if layer_id.present?
-                    json_layers.find { |l| l['id'] == layer_id.to_i }
-                  else
-                    json_layers.find { |l| l['name'] == layer_name }
-                  end
+                    json_layers.find { |l| l["id"] == layer_id.to_i }
+      else
+                    json_layers.find { |l| l["name"] == layer_name }
+      end
       if tmp_layer
-        layer_id = tmp_layer['id']
-        self.layer_name = tmp_layer['name']
-        options = tmp_layer['fields'].map { |f| f['name'] }
+        layer_id = tmp_layer["id"]
+        self.layer_name = tmp_layer["name"]
+        options = tmp_layer["fields"].map { |f| f["name"] }
       end
     end
 
     rebuild_esri_url(url, layer_id)
-    [layer_names, geom_fields, options]
+    [ layer_names, geom_fields, options ]
   rescue StandardError => e
     Rails.logger.error("Error: #{e.message}: \n\t#{e.backtrace.join("\n\t")}")
     raise e
@@ -221,7 +221,7 @@ class Dataset < ApplicationRecord
     self.source_dataset = tmp
 
     # ESRIJSON urls must end with a &
-    source_dataset.chomp!('&')
+    source_dataset.chomp!("&")
     self.source_dataset = "#{source_dataset}&"
   end
 
@@ -231,8 +231,8 @@ class Dataset < ApplicationRecord
   end
 
   def format_feature_server_url(path, layer_id)
-    path.chomp!('/')
-    path.chomp!('/query')
+    path.chomp!("/")
+    path.chomp!("/query")
     if path.ends_with?(layer_id.to_s)
       "#{path}/query?"
     else
@@ -258,7 +258,7 @@ class Dataset < ApplicationRecord
   def parse_get_capabilities(xml)
     cap_doc = Nokogiri::XML(xml)
     cap_doc.remove_namespaces!
-    cap_doc.xpath('//FeatureType/Name').map(&:text)
+    cap_doc.xpath("//FeatureType/Name").map(&:text)
   end
 
   def parse_describe_feature(xml)
@@ -267,7 +267,7 @@ class Dataset < ApplicationRecord
     feature_attributes = feat_doc.xpath(WFS_XPATH_FEATURES).map(&:value) if feature_attributes.empty?
     geom_name = feat_doc.xpath(ESRI_WFS_XPATH_GEOM).map(&:value)
     geom_name = feat_doc.xpath(WFS_XPATH_GEOM).map(&:value) if geom_name.blank?
-    [feature_attributes, geom_name]
+    [ feature_attributes, geom_name ]
   end
 
   def adjusted_esri_url(url)
@@ -279,16 +279,16 @@ class Dataset < ApplicationRecord
   end
 
   def esri_service_type(url)
-    if url.include?('FeatureServer')
-      'FeatureServer'
-    elsif url.include?('MapServer')
-      'MapServer'
+    if url.include?("FeatureServer")
+      "FeatureServer"
+    elsif url.include?("MapServer")
+      "MapServer"
     end
   end
 
   def post_esri_layers(url)
     base_query_url = adjusted_esri_url(url)
-    query = { f: 'json' }
+    query = { f: "json" }
     response = post_request("#{base_query_url}/layers", query, 3)
     JSON.parse(response.body)
   end
@@ -309,21 +309,21 @@ class Dataset < ApplicationRecord
                username: service_authentication_configuration.auth_uid,
                password: service_authentication_configuration.auth_key
              }
-           else
+    else
              {}
-           end
+    end
     HTTParty.get(url, timeout: timeout, basic_auth: auth)
   end
 
   def post_request(url, query, timeout)
     headers = if (token = service_authentication_configuration&.fetch_token())
-                {'Authorization': "Bearer #{token}"}
-              else
+                { 'Authorization': "Bearer #{token}" }
+    else
                 {}
-              end
+    end
     HTTParty.post(url, body: query, headers: headers, timeout: timeout)
   rescue StandardError => e
-    Rails.logger.error('ArcGIS query: ' \
+    Rails.logger.error("ArcGIS query: " \
                        "#{url}?" \
                        "#{query.map { |k, v| "#{k}=#{v}" }.join('&')}")
     raise e

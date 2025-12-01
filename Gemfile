@@ -1,23 +1,23 @@
 source "https://rubygems.org"
 
-ruby "~> 3"
+ruby "~> 3.3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.3"
+gem "rails", "~> 8.1.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+gem "pg"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem "puma"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 gem "turbo-rails"
-gem 'stimulus-rails'
+gem "stimulus-rails"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -34,30 +34,22 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "bundler-audit"
-  gem "brakeman", "~> 6.0" # Required for Ruby 3.0"
+  gem "brakeman"
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
-  gem "rubocop-rails"
+  gem "rubocop-rails-omakase"
 end
 
 group :test do
    gem "mocha"
-   gem 'simplecov'
+   gem "simplecov"
 end
 
-gem "dotenv", "~> 3.1"
+gem "dotenv"
 
-gem "simple_form", "~> 5.3"
+gem "simple_form"
 
-gem "omniauth_openid_connect", "~> 0.7.1"
-gem "omniauth-rails_csrf_protection"
+gem "omniauth_openid_connect"
 
-gem "pundit", "~> 2.3"
+gem "pundit"
 
-gem "httparty", "~> 0.22.0"
-
-# Pin
-gem "rack", "~> 2.2" # Need to verify if passenger version works with 3.0
-gem "securerandom", "= 0.3.2" # Required for Ruby 3.0"
-gem "nokogiri", "~> 1.17.0" # Required for Ruby 3.0"
-gem "zeitwerk", "~> 2.6.0" # Required for Ruby 3.0
-gem "net-imap", "~> 0.4.18" # Required for Ruby 3.0
+gem "httparty"

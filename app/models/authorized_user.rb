@@ -1,10 +1,10 @@
 class AuthorizedUser
-  unless ENV['FV_ADMINISTRATOR'].present? && ENV['FV_DATA_PROVIDER'].present?
+  unless ENV["FV_ADMINISTRATOR"].present? && ENV["FV_DATA_PROVIDER"].present?
     raise "Configuration error. FV_ADMINISTRATOR and/or FV_DATA_PROVIDER environment variables not set."
   end
   ROLES = [
-    FV_ADMINISTRATOR = ENV['FV_ADMINISTRATOR'], # Setup Data Providers
-    FV_DATA_PROVIDER = ENV['FV_DATA_PROVIDER']
+    FV_ADMINISTRATOR = ENV["FV_ADMINISTRATOR"], # Setup Data Providers
+    FV_DATA_PROVIDER = ENV["FV_DATA_PROVIDER"]
   ]
   def initialize(email_address, roles)
     @email_address = email_address
@@ -28,6 +28,6 @@ class AuthorizedUser
   end
 
   def current_role
-    @roles.join(', ')
+    @roles.join(", ")
   end
 end

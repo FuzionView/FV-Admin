@@ -4,8 +4,8 @@
 
 A Ruby on Rails administration interface for FuzionView
 
-*   Ruby version: 3.0+
-*   Rails version: 7.1.x
+*   Ruby version: 3.3+
+*   Rails version: 8.1.x
 *   Database: PostgreSQL
 *   Authentication: OpenID Connect (Keycloak or other OIDC provider)
 *   Authorization: Pundit, based on two externally defined roles set in
@@ -15,7 +15,7 @@ A Ruby on Rails administration interface for FuzionView
 ## System dependencies
 
 *   Fuzionview PostgreSQL based implementation
-*   Ruby 3.0+
+*   Ruby 3.3+
 
 ## Configuration
 

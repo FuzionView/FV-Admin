@@ -26,7 +26,7 @@ class TicketTypesController < ApplicationController
     @ticket_type = TicketType.new(ticket_type_params)
 
     if @ticket_type.save
-      redirect_to ticket_types_path, notice: t('ticket_types.create.success')
+      redirect_to ticket_types_path, notice: t("ticket_types.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class TicketTypesController < ApplicationController
   def update
     authorize @ticket_type
     if @ticket_type.update(ticket_type_params)
-      redirect_to ticket_types_path, notice: t('ticket_types.update.success'), status: :see_other
+      redirect_to ticket_types_path, notice: t("ticket_types.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,9 +46,9 @@ class TicketTypesController < ApplicationController
   def destroy
     authorize @ticket_type
     @ticket_type.destroy!
-    redirect_to ticket_types_path, notice: t('ticket_types.destroy.success'), status: :see_other
+    redirect_to ticket_types_path, notice: t("ticket_types.destroy.success"), status: :see_other
   rescue ActiveRecord::InvalidForeignKey => _e
-    redirect_to(ticket_types_path, notice: t('ticket_types.destroy.foreign_key_error'),
+    redirect_to(ticket_types_path, notice: t("ticket_types.destroy.foreign_key_error"),
                                    status: :see_other)
   end
 

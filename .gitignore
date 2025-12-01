@@ -35,4 +35,4 @@
 /config/master.key
 
 /vendor/bundle/*
-.aider*
+/coverage

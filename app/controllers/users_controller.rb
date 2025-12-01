@@ -27,7 +27,7 @@ class UsersController < ApplicationController
     @user = @owner.users.build(user_params)
 
     if @user.save
-      redirect_to owner_users_path(@owner), notice: t('users.create.success')
+      redirect_to owner_users_path(@owner), notice: t("users.create.success")
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
   def update
     authorize @user
     if @user.update(user_params)
-      redirect_to owner_users_path(@owner), notice: t('users.update.success'), status: :see_other
+      redirect_to owner_users_path(@owner), notice: t("users.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -47,7 +47,7 @@ class UsersController < ApplicationController
   def destroy
     authorize @user
     @user.destroy!
-    redirect_to owner_users_path(@owner), notice: t('users.destroy.success'), status: :see_other
+    redirect_to owner_users_path(@owner), notice: t("users.destroy.success"), status: :see_other
   end
 
   private

@@ -1,7 +1,7 @@
 class Ticket < ApplicationRecord
-  TICKET_NO = 'TEST'
+  TICKET_NO = "TEST"
   attribute :geom, GeomAsString.new
-  validates :geom, presence: { message: 'is required.' }
+  validates :geom, presence: { message: "is required." }
   belongs_to :dataset, optional: true
   has_one :ticket_dataset_status
   delegate :status, :feature_count, :attempt, :updated_at,
@@ -13,6 +13,6 @@ class Ticket < ApplicationRecord
     self.publish_date = publish_date
     self.purge_date = publish_date + 1.day
     self.is_latest = true
-    self.ticket_type = 'normal'
+    self.ticket_type = "normal"
   end
 end
