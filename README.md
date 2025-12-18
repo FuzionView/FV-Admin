@@ -69,3 +69,7 @@ A Ruby on Rails administration interface for FuzionView
 ### Migrations
 
 *   `bin/rails db:migrate`
+
+### License
+
+The files in this project are released under the [MIT](LICENSE.txt) license.
