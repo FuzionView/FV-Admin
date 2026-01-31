@@ -288,9 +288,15 @@ class Dataset < ApplicationRecord
 
   def post_esri_layers(url)
     base_query_url = adjusted_esri_url(url)
-    query = { f: "json" }
-    response = post_request("#{base_query_url}/layers", query, 3)
+    # ESRI requires format to be in query string
+    response = post_request("#{base_query_url}/layers?f=json", {}, 3)
     JSON.parse(response.body)
+  rescue JSON::ParserError => e
+    Rails.logger.error("JSON parse error: #{e.message}, URL: #{url}")
+    raise "service returned invalid response"
+  rescue StandardError => e
+    Rails.logger.error("Error: #{e.message}: \n\t#{e.backtrace.join("\n\t")}")
+    raise e.message
   end
 
   def get_wfs_capabilities(url)
@@ -321,11 +327,16 @@ class Dataset < ApplicationRecord
     else
                 {}
     end
-    HTTParty.post(url, body: query, headers: headers, timeout: timeout)
+    response = HTTParty.post(url, body: query, headers: headers, timeout: timeout)
+
+    unless response.success?
+      raise "service returned HTTP #{response.code}"
+    end
+
+    response
   rescue StandardError => e
-    Rails.logger.error("ArcGIS query: " \
-                       "#{url}?" \
-                       "#{query.map { |k, v| "#{k}=#{v}" }.join('&')}")
-    raise e
+    query_string = "#{url}?#{query.map { |k, v| "#{k}=#{v}" }.join('&')}"
+    Rails.logger.error("Error: #{e.message}, ArcGIS query: #{query_string}: \n\t#{e.backtrace.join("\n\t")}")
+    raise "unable to connect to ESRI service"
   end
 end

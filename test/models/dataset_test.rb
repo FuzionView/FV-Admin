@@ -159,7 +159,7 @@ class DatasetTest < ActiveSupport::TestCase
         { "id" => 1, "name" => "Layer2", "fields" => [ { "name" => "field1" }, { "name" => "field2" } ] }
       ]
     }.to_json
-    HTTParty.stubs(:post).returns(stub(body: mock_response))
+    HTTParty.stubs(:post).returns(stub(body: mock_response, success?: true))
     layer_names, geom_fields, options = @dataset.esri_metadata
     assert_equal %w[Layer1 Layer2], layer_names
     assert_equal [ "geometry" ], geom_fields
@@ -173,7 +173,7 @@ class DatasetTest < ActiveSupport::TestCase
         { "id" => 0, "name" => "Layer1", "fields" => [ { "name" => "field1" }, { "name" => "field2" } ] }
       ]
     }.to_json
-    HTTParty.stubs(:post).returns(stub(body: mock_response))
+    HTTParty.stubs(:post).returns(stub(body: mock_response, success?: true))
     layer_names, geom_fields, options = @dataset.esri_metadata
     assert_equal [ "Layer1" ], layer_names
     assert_equal [ "geometry" ], geom_fields
