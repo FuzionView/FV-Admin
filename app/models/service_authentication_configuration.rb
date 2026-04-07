@@ -52,21 +52,22 @@ class ServiceAuthenticationConfiguration < ApplicationRecord
               password: auth_key,
               referer: "https://www.arcgis.com",
               client: "referer" }
-    raw_response = post_request(auth_url, query, 3)
+    raw_response = post_request(auth_url, query, 3, { 'Content-Type': "application/x-www-form-urlencoded" })
     JSON.parse(raw_response.body)
   end
 
   def test_token
-    if fetch_token
+    json_response = auth_type == "ESRIToken" ? esritoken : oauth2
+    if json_response.fetch("token", nil) || json_response.fetch("access_token", nil)
       "SUCCESS"
     else
-      msg = "#{json_response.dig('error', 'message')} #{json_response.dig('error', 'details').join}"
+      msg = "#{json_response.dig('error', 'message')} #{json_response.dig('error', 'details')&.join}"
       raise msg
     end
   end
 
-  def post_request(url, query, timeout)
-    HTTParty.post(url, body: query, timeout: timeout)
+  def post_request(url, query, timeout, headers = {})
+    HTTParty.post(url, body: query, timeout: timeout, headers: headers)
   rescue StandardError => e
     Rails.logger.error("POST: " \
                        "#{url}?" \
